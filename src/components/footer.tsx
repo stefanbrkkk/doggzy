@@ -130,18 +130,27 @@ export function Footer() {
               Together, we can save more lives.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+            <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto" onSubmit={(e) => {
+              e.preventDefault()
+              const email = (e.target as HTMLFormElement).email.value
+              if (email) {
+                alert('Thank you for subscribing! We\'ll keep you updated on our rescue efforts.')
+                ;(e.target as HTMLFormElement).reset()
+              }
+            }}>
               <input
+                name="email"
                 type="email"
                 placeholder="Enter your email"
+                required
                 className="flex-1 px-4 py-3 rounded-lg border border-gray-600 bg-gray-800 text-white placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500 focus:outline-none"
               />
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white px-8 py-3 rounded-lg">
+                <Button type="submit" className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white px-8 py-3 rounded-lg">
                   Subscribe
                 </Button>
               </motion.div>
-            </div>
+            </form>
           </div>
         </motion.div>
 

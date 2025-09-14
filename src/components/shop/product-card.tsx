@@ -244,29 +244,3 @@ export function ProductCard({ product, onAddToCart, onAddToWishlist }: ProductCa
   )
 }
 
-// Badge component (simple implementation)
-function Badge({ 
-  children, 
-  className, 
-  variant = "default" 
-}: { 
-  children: React.ReactNode
-  className?: string
-  variant?: "default" | "secondary" | "outline"
-}) {
-  const variants = {
-    default: "bg-orange-500 text-white",
-    secondary: "bg-gray-100 text-gray-900",
-    outline: "border border-gray-300 text-gray-700 bg-white"
-  }
-
-  return (
-    <span className={cn(
-      "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
-      variants[variant],
-      className
-    )}>
-      {children}
-    </span>
-  )
-}

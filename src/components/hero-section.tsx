@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, useAnimation } from 'framer-motion'
+import Link from 'next/link'
 import { Heart, Play, ArrowRight, Star, Users, Globe } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -142,18 +143,22 @@ export function HeroSection() {
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
             >
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button size="xl" variant="glow" className="group">
-                  <Heart className="h-5 w-5 mr-2 group-hover:animate-pulse" />
-                  Donate Now
-                  <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                </Button>
+                <Link href="/donate">
+                  <Button size="xl" variant="glow" className="group">
+                    <Heart className="h-5 w-5 mr-2 group-hover:animate-pulse" />
+                    Donate Now
+                    <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
               </motion.div>
               
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button size="xl" variant="outline" className="group">
-                  <Play className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
-                  Watch Our Story
-                </Button>
+                <Link href="/about">
+                  <Button size="xl" variant="outline" className="group">
+                    <Play className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
+                    Learn More
+                  </Button>
+                </Link>
               </motion.div>
             </motion.div>
 

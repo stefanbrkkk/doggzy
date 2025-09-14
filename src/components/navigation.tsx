@@ -82,36 +82,42 @@ export function Navigation() {
           {/* Action Buttons */}
           <div className="flex items-center space-x-4">
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-              <Button variant="ghost" size="icon" className="relative">
-                <Heart className="h-5 w-5" />
-                <motion.div
-                  className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  3
-                </motion.div>
-              </Button>
+              <Link href="/favorites">
+                <Button variant="ghost" size="icon" className="relative">
+                  <Heart className="h-5 w-5" />
+                  <motion.div
+                    className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    3
+                  </motion.div>
+                </Button>
+              </Link>
             </motion.div>
 
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-              <Button variant="ghost" size="icon" className="relative">
-                <ShoppingBag className="h-5 w-5" />
-                <motion.div
-                  className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-                >
-                  2
-                </motion.div>
-              </Button>
+              <Link href="/basket">
+                <Button variant="ghost" size="icon" className="relative">
+                  <ShoppingBag className="h-5 w-5" />
+                  <motion.div
+                    className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+                  >
+                    2
+                  </motion.div>
+                </Button>
+              </Link>
             </motion.div>
 
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button variant="glow" size="sm" className="hidden sm:flex">
-                <Heart className="h-4 w-4 mr-2" />
-                Donate Now
-              </Button>
+              <Link href="/donate">
+                <Button variant="glow" size="sm" className="hidden sm:flex">
+                  <Heart className="h-4 w-4 mr-2" />
+                  Donate Now
+                </Button>
+              </Link>
             </motion.div>
 
             {/* Mobile Menu Button */}
@@ -182,10 +188,12 @@ export function Navigation() {
                 transition={{ delay: navItems.length * 0.1 }}
                 className="pt-4 border-t border-border"
               >
-                <Button variant="glow" className="w-full">
-                  <Heart className="h-4 w-4 mr-2" />
-                  Donate Now
-                </Button>
+                <Link href="/donate">
+                  <Button variant="glow" className="w-full">
+                    <Heart className="h-4 w-4 mr-2" />
+                    Donate Now
+                  </Button>
+                </Link>
               </motion.div>
             </div>
           </motion.div>
