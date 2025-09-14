@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Navigation } from "@/components/navigation";
+import { Footer } from "@/components/footer";
 
 export const metadata: Metadata = {
   title: "Doggzy - Global Dog Rescue Charity | Donate & Shop to Save Lives",
@@ -69,6 +70,7 @@ export default function RootLayout({
         <main className="pt-16 lg:pt-20">
           {children}
         </main>
+        <Footer />
       </body>
     </html>
   );
