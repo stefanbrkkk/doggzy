@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { Heart, Users, Globe, Award, Clock, TrendingUp } from 'lucide-react'
 
@@ -111,7 +111,7 @@ function AnimatedCounter({
   return <span>{count.toLocaleString()}{suffix}</span>
 }
 
-export function ImpactStats() {
+function ImpactStats() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "-100px" })
 
@@ -209,7 +209,7 @@ export function ImpactStats() {
                   whileHover={{ rotate: 360, scale: 1.1 }}
                   transition={{ duration: 0.6 }}
                 >
-                  <stat.icon className="h-8 w-8" />
+                  {React.createElement(stat.icon, { className: "h-8 w-8" })}
                 </motion.div>
 
                 {/* Number */}
@@ -284,3 +284,5 @@ export function ImpactStats() {
     </section>
   )
 }
+
+export { ImpactStats }

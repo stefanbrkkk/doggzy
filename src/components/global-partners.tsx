@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { MapPin, Users, Heart, Globe, ArrowRight, Star, Phone, Mail } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -288,7 +289,7 @@ export function GlobalPartners() {
                     whileHover={{ rotate: 360, scale: 1.1 }}
                     transition={{ duration: 0.6 }}
                   >
-                    <stat.icon className="h-8 w-8" />
+                    {React.createElement(stat.icon, { className: "h-8 w-8" })}
                   </motion.div>
                   <div className="text-3xl font-bold text-gray-900 mb-2">
                     {stat.value}
@@ -496,10 +497,12 @@ export function GlobalPartners() {
               transition={{ delay: 0.6, duration: 0.5 }}
               viewport={{ once: true }}
             >
-              <Button className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white">
-                View All Partners
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
+              <Link href="/partners">
+                <Button className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white">
+                  View All Partners
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
             </motion.div>
           </motion.div>
         </div>
@@ -512,20 +515,22 @@ export function GlobalPartners() {
           viewport={{ once: true }}
           className="text-center mt-16"
         >
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center gap-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
-          >
-            <Globe className="h-6 w-6" />
-            <span className="text-lg font-semibold">Join Our Global Network</span>
+          <Link href="/partners">
             <motion.div
-              animate={{ x: [0, 5, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="inline-flex items-center gap-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
             >
-              →
+              <Globe className="h-6 w-6" />
+              <span className="text-lg font-semibold">Join Our Global Network</span>
+              <motion.div
+                animate={{ x: [0, 5, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                →
+              </motion.div>
             </motion.div>
-          </motion.div>
+          </Link>
         </motion.div>
       </div>
 

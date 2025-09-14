@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import React, { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Search, Filter, ShoppingCart, Heart, Star, Truck, Shield, Leaf } from 'lucide-react'
 import { ProductCard } from '@/components/shop/product-card'
@@ -232,7 +232,7 @@ export default function ShopPage() {
                       whileHover={{ rotate: 360, scale: 1.1 }}
                       transition={{ duration: 0.6 }}
                     >
-                      <feature.icon className="h-8 w-8" />
+                      {React.createElement(feature.icon, { className: "h-8 w-8" })}
                     </motion.div>
                     <h3 className="text-xl font-bold mb-2 text-gray-900">
                       {feature.title}

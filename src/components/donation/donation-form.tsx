@@ -1,13 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Heart, CreditCard, Gift, Repeat, User, Mail, Phone } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
-export function DonationForm() {
+export default function DonationForm() {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
   const [currentStep, setCurrentStep] = useState<'amount' | 'details' | 'payment'>('amount')
@@ -48,55 +48,96 @@ export function DonationForm() {
     setIsProcessing(true)
     
     try {
-      // Simulate payment processing
+      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000))
       
-      // Here you would integrate with Stripe
-      console.log('Donation data:', formData)
-      
       // Show success message
-      alert(`Thank you for your ${formData.frequency === 'one-time' ? '$' + formData.amount : '$' + formData.amount + ' ' + formData.frequency} donation!`)
+      alert('Thank you for your donation! You will receive a confirmation email shortly.')
       
+      // Reset form
+      setFormData({
+        amount: 0,
+        frequency: 'one-time',
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        isAnonymous: false,
+        dedication: ''
+      })
+      setSelectedAmount(null)
+      setCurrentStep('amount')
     } catch (error) {
-      console.error('Payment failed:', error)
-      alert('Payment failed. Please try again.')
+      alert('There was an error processing your donation. Please try again.')
     } finally {
       setIsProcessing(false)
     }
   }
 
+  const nextStep = () => {
+    if (currentStep === 'amount') {
+      setCurrentStep('details')
+    } else if (currentStep === 'details') {
+      setCurrentStep('payment')
+    }
+  }
+
+  const prevStep = () => {
+    if (currentStep === 'details') {
+      setCurrentStep('amount')
+    } else if (currentStep === 'payment') {
+      setCurrentStep('details')
+    }
+  }
+
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-4xl mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="space-y-8"
       >
         {/* Progress Steps */}
-        <div className="flex items-center justify-center space-x-4 mb-8">
-          {['amount', 'details', 'payment'].map((step, index) => (
-            <div key={step} className="flex items-center">
-              <div className={cn(
-                "w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300",
-                currentStep === step 
-                  ? "bg-orange-500 text-white shadow-lg shadow-orange-500/50" 
-                  : index < ['amount', 'details', 'payment'].indexOf(currentStep)
-                  ? "bg-green-500 text-white"
-                  : "bg-gray-200 text-gray-600"
-              )}>
-                {index + 1}
-              </div>
-              {index < 2 && (
-                <div className={cn(
-                  "w-16 h-1 mx-2 transition-all duration-300",
-                  index < ['amount', 'details', 'payment'].indexOf(currentStep) 
-                    ? "bg-green-500" 
-                    : "bg-gray-200"
-                )} />
-              )}
-            </div>
-          ))}
+        <div className="flex items-center justify-center mb-8">
+          <div className="flex items-center space-x-4">
+            {[
+              { step: 'amount', label: 'Amount', icon: Heart },
+              { step: 'details', label: 'Details', icon: User },
+              { step: 'payment', label: 'Payment', icon: CreditCard }
+            ].map((step, index) => {
+              const isActive = currentStep === step.step
+              const isCompleted = 
+                (step.step === 'amount' && currentStep !== 'amount') ||
+                (step.step === 'details' && currentStep === 'payment')
+              
+              return (
+                <div key={step.step} className="flex items-center">
+                  <div className={cn(
+                    "flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-300",
+                    isActive && "border-orange-500 bg-orange-500 text-white",
+                    isCompleted && "border-green-500 bg-green-500 text-white",
+                    !isActive && !isCompleted && "border-gray-300 bg-white text-gray-500"
+                  )}>
+                    {React.createElement(step.icon, { className: "h-5 w-5" })}
+                  </div>
+                  <span className={cn(
+                    "ml-2 text-sm font-medium",
+                    isActive && "text-orange-600",
+                    isCompleted && "text-green-600",
+                    !isActive && !isCompleted && "text-gray-500"
+                  )}>
+                    {step.label}
+                  </span>
+                  {index < 2 && (
+                    <div className={cn(
+                      "w-8 h-0.5 mx-4",
+                      isCompleted ? "bg-green-500" : "bg-gray-300"
+                    )} />
+                  )}
+                </div>
+              )
+            })}
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -130,13 +171,13 @@ export function DonationForm() {
                         )}
                       >
                         <div className="text-2xl font-bold">${amount}</div>
-                        <div className="text-sm opacity-75">
-                          {amount === 25 && "Feeds a dog for a week"}
-                          {amount === 50 && "Covers medical checkup"}
-                          {amount === 100 && "Pays for vaccinations"}
-                          {amount === 250 && "Covers spay/neuter"}
-                          {amount === 500 && "Emergency medical care"}
-                          {amount === 1000 && "Complete rescue package"}
+                        <div className="text-sm opacity-80">
+                          {amount === 25 && "Feed a dog for a week"}
+                          {amount === 50 && "Medical checkup"}
+                          {amount === 100 && "Emergency treatment"}
+                          {amount === 250 && "Complete rehabilitation"}
+                          {amount === 500 && "Save a life"}
+                          {amount === 1000 && "Transform a life"}
                         </div>
                       </button>
                     ))}
@@ -144,28 +185,23 @@ export function DonationForm() {
 
                   {/* Custom Amount */}
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">Custom Amount</label>
+                    <label className="text-sm font-medium text-gray-700">Or enter custom amount</label>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
                       <input
                         type="number"
+                        placeholder="0"
+                        value={formData.amount || ''}
+                        onChange={(e) => handleAmountSelect(Number(e.target.value))}
+                        className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                         min="1"
-                        placeholder="Enter amount"
-                        className="w-full pl-8 pr-4 py-3 border border-gray-200 rounded-xl focus:border-orange-500 focus:ring-orange-500"
-                        value={selectedAmount && !presetAmounts.includes(selectedAmount) ? selectedAmount : ''}
-                        onChange={(e) => {
-                          const value = parseFloat(e.target.value)
-                          if (value > 0) {
-                            handleAmountSelect(value)
-                          }
-                        }}
                       />
                     </div>
                   </div>
 
                   {/* Frequency Selection */}
                   <div className="space-y-3">
-                    <label className="block text-sm font-medium text-gray-700">Donation Frequency</label>
+                    <label className="text-sm font-medium text-gray-700">Donation Frequency</label>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                       {frequencyOptions.map((option) => (
                         <button
@@ -173,29 +209,28 @@ export function DonationForm() {
                           type="button"
                           onClick={() => handleFrequencyChange(option.value)}
                           className={cn(
-                            "p-3 rounded-lg border-2 transition-all duration-300 hover:scale-105 hover:shadow-lg flex items-center gap-2",
+                            "flex items-center justify-center gap-2 p-3 rounded-lg border-2 transition-all duration-300",
                             formData.frequency === option.value
-                              ? "border-orange-500 bg-orange-500 text-white shadow-lg shadow-orange-500/50"
+                              ? "border-orange-500 bg-orange-500 text-white"
                               : "border-gray-200 bg-white hover:border-orange-300"
                           )}
                         >
-                          <option.icon className="h-4 w-4" />
+                          {React.createElement(option.icon, { className: "h-4 w-4" })}
                           <span className="text-sm font-medium">{option.label}</span>
                         </button>
                       ))}
                     </div>
                   </div>
 
-                  <div className="flex justify-center">
-                    <Button
-                      type="button"
-                      onClick={() => setCurrentStep('details')}
-                      disabled={!selectedAmount}
-                      className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg shadow-orange-500/50 hover:shadow-xl hover:shadow-orange-500/75"
-                    >
-                      Continue to Details
-                    </Button>
-                  </div>
+                  <Button
+                    type="button"
+                    onClick={nextStep}
+                    disabled={!selectedAmount}
+                    className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white py-4 text-lg font-semibold"
+                  >
+                    Continue to Details
+                    <Heart className="h-5 w-5 ml-2" />
+                  </Button>
                 </CardContent>
               </Card>
             </motion.div>
@@ -218,97 +253,103 @@ export function DonationForm() {
                 <CardContent className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="block text-sm font-medium text-gray-700">First Name *</label>
+                      <label className="text-sm font-medium text-gray-700">First Name</label>
                       <div className="relative">
                         <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                         <input
                           type="text"
-                          required
-                          className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:border-orange-500 focus:ring-orange-500"
+                          placeholder="Enter your first name"
                           value={formData.firstName}
                           onChange={(e) => handleInputChange('firstName', e.target.value)}
+                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          required
                         />
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <label className="block text-sm font-medium text-gray-700">Last Name *</label>
+                      <label className="text-sm font-medium text-gray-700">Last Name</label>
                       <div className="relative">
                         <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                         <input
                           type="text"
-                          required
-                          className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:border-orange-500 focus:ring-orange-500"
+                          placeholder="Enter your last name"
                           value={formData.lastName}
                           onChange={(e) => handleInputChange('lastName', e.target.value)}
+                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          required
                         />
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">Email Address *</label>
+                    <label className="text-sm font-medium text-gray-700">Email Address</label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <input
                         type="email"
-                        required
-                        className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:border-orange-500 focus:ring-orange-500"
+                        placeholder="Enter your email address"
                         value={formData.email}
                         onChange={(e) => handleInputChange('email', e.target.value)}
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        required
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">Phone Number</label>
+                    <label className="text-sm font-medium text-gray-700">Phone Number (Optional)</label>
                     <div className="relative">
                       <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <input
                         type="tel"
-                        className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:border-orange-500 focus:ring-orange-500"
+                        placeholder="Enter your phone number"
                         value={formData.phone}
                         onChange={(e) => handleInputChange('phone', e.target.value)}
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">Dedication (Optional)</label>
-                    <textarea
-                      rows={3}
-                      placeholder="Dedicate this donation to someone special..."
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-orange-500 focus:ring-orange-500"
-                      value={formData.dedication}
-                      onChange={(e) => handleInputChange('dedication', e.target.value)}
-                    />
+                  <div className="space-y-4">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="anonymous"
+                        checked={formData.isAnonymous}
+                        onChange={(e) => handleInputChange('isAnonymous', e.target.checked)}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                      <label htmlFor="anonymous" className="ml-2 text-sm text-gray-700">
+                        Make this donation anonymous
+                      </label>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700">Dedication (Optional)</label>
+                      <textarea
+                        placeholder="Dedicate this donation to a special dog or person..."
+                        value={formData.dedication}
+                        onChange={(e) => handleInputChange('dedication', e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        rows={3}
+                      />
+                    </div>
                   </div>
 
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id="anonymous"
-                      checked={formData.isAnonymous}
-                      onChange={(e) => handleInputChange('isAnonymous', e.target.checked)}
-                      className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
-                    />
-                    <label htmlFor="anonymous" className="text-sm text-gray-700">
-                      Make this donation anonymous
-                    </label>
-                  </div>
-
-                  <div className="flex justify-between">
+                  <div className="flex gap-4">
                     <Button
                       type="button"
-                      onClick={() => setCurrentStep('amount')}
                       variant="outline"
-                      className="px-6 py-3"
+                      onClick={prevStep}
+                      className="flex-1"
                     >
                       Back
                     </Button>
                     <Button
                       type="button"
-                      onClick={() => setCurrentStep('payment')}
-                      className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg shadow-orange-500/50 hover:shadow-xl hover:shadow-orange-500/75"
+                      onClick={nextStep}
+                      className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white"
                     >
                       Continue to Payment
                     </Button>
@@ -330,73 +371,85 @@ export function DonationForm() {
                   <CardTitle className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                     Complete Your Donation
                   </CardTitle>
-                  <p className="text-gray-600">Secure payment powered by Stripe</p>
+                  <p className="text-gray-600">Review your donation and complete the payment</p>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Donation Summary */}
-                  <div className="bg-white rounded-xl p-6 border border-gray-200">
+                  <div className="bg-white rounded-lg p-6 border border-gray-200">
                     <h3 className="text-lg font-semibold mb-4">Donation Summary</h3>
-                    <div className="space-y-2 text-sm">
+                    <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span>Amount:</span>
+                        <span className="text-gray-600">Amount:</span>
                         <span className="font-semibold">${formData.amount}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Frequency:</span>
-                        <span className="font-semibold capitalize">{formData.frequency.replace('-', ' ')}</span>
+                        <span className="text-gray-600">Frequency:</span>
+                        <span className="font-semibold capitalize">{formData.frequency}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Name:</span>
-                        <span className="font-semibold">{formData.isAnonymous ? 'Anonymous' : `${formData.firstName} ${formData.lastName}`}</span>
+                        <span className="text-gray-600">Donor:</span>
+                        <span className="font-semibold">
+                          {formData.isAnonymous ? 'Anonymous' : `${formData.firstName} ${formData.lastName}`}
+                        </span>
                       </div>
-                      <hr className="my-2" />
-                      <div className="flex justify-between text-lg font-bold">
-                        <span>Total:</span>
-                        <span>${formData.amount}</span>
-                      </div>
+                      {formData.dedication && (
+                        <div className="pt-2 border-t border-gray-200">
+                          <span className="text-gray-600">Dedication:</span>
+                          <p className="text-sm text-gray-700 mt-1">{formData.dedication}</p>
+                        </div>
+                      )}
                     </div>
                   </div>
 
                   {/* Payment Method */}
                   <div className="space-y-4">
-                    <label className="block text-sm font-medium text-gray-700">Payment Method</label>
-                    <div className="grid grid-cols-2 gap-4">
-                      <button
-                        type="button"
-                        className="p-4 rounded-xl border-2 border-gray-200 bg-white hover:border-orange-300 transition-all duration-300 flex items-center justify-center gap-2"
-                      >
-                        <CreditCard className="h-6 w-6 text-gray-600" />
-                        <span className="font-medium">Credit Card</span>
-                      </button>
-                      <button
-                        type="button"
-                        className="p-4 rounded-xl border-2 border-gray-200 bg-white hover:border-orange-300 transition-all duration-300 flex items-center justify-center gap-2"
-                      >
-                        <Heart className="h-6 w-6 text-gray-600" />
-                        <span className="font-medium">PayPal</span>
-                      </button>
+                    <h3 className="text-lg font-semibold">Payment Method</h3>
+                    <div className="bg-white rounded-lg p-6 border border-gray-200">
+                      <div className="flex items-center gap-3 mb-4">
+                        <CreditCard className="h-6 w-6 text-gray-500" />
+                        <span className="font-medium">Credit/Debit Card</span>
+                      </div>
+                      <div className="space-y-4">
+                        <input
+                          type="text"
+                          placeholder="Card Number"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                        />
+                        <div className="grid grid-cols-2 gap-4">
+                          <input
+                            type="text"
+                            placeholder="MM/YY"
+                            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                          />
+                          <input
+                            type="text"
+                            placeholder="CVC"
+                            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="flex justify-between">
+                  <div className="flex gap-4">
                     <Button
                       type="button"
-                      onClick={() => setCurrentStep('details')}
                       variant="outline"
-                      className="px-6 py-3"
+                      onClick={prevStep}
+                      className="flex-1"
                     >
                       Back
                     </Button>
                     <Button
                       type="submit"
                       disabled={isProcessing}
-                      className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg shadow-orange-500/50 hover:shadow-xl hover:shadow-orange-500/75 disabled:opacity-50"
+                      className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white"
                     >
                       {isProcessing ? (
-                        <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <>
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
                           Processing...
-                        </div>
+                        </>
                       ) : (
                         <>
                           <Heart className="h-4 w-4 mr-2" />

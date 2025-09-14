@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Heart, PawPrint, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Youtube } from 'lucide-react'
@@ -216,7 +217,7 @@ export function Footer() {
                       whileHover={{ scale: 1.1, rotate: 5 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      <social.icon className="h-5 w-5" />
+                      {React.createElement(social.icon, { className: "h-5 w-5" })}
                     </motion.a>
                   ))}
                 </div>
