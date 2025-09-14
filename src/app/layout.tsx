@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 
 export const metadata: Metadata = {
   title: "Doggzy - Global Dog Rescue Charity | Donate & Shop to Save Lives",
@@ -66,11 +67,13 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
-        <Navigation />
-        <main className="pt-16 lg:pt-20">
-          {children}
-        </main>
-        <Footer />
+        <LanguageProvider>
+          <Navigation />
+          <main className="pt-16 lg:pt-20">
+            {children}
+          </main>
+          <Footer />
+        </LanguageProvider>
       </body>
     </html>
   );

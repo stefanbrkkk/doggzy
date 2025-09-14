@@ -5,22 +5,24 @@ import Link from 'next/link'
 import { Heart, Play, ArrowRight, Star, Users, Globe } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 export function HeroSection() {
   const [currentStat, setCurrentStat] = useState(0)
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
+  const { t } = useLanguage()
 
   const stats = [
-    { number: "2,847", label: "Dogs Saved This Month", icon: Heart },
-    { number: "156", label: "Partner Shelters", icon: Users },
-    { number: "47", label: "Countries Worldwide", icon: Globe },
+    { number: "2,847", label: t.home.impact.stats.dogsSaved, icon: Heart },
+    { number: "156", label: t.home.impact.stats.partnerShelters, icon: Users },
+    { number: "47", label: t.home.impact.stats.countries, icon: Globe },
   ]
 
   const impactNumbers = [
-    { value: 2847, suffix: "+", label: "Lives Saved" },
-    { value: 156, suffix: "", label: "Partner Shelters" },
-    { value: 47, suffix: "", label: "Countries" },
-    { value: 98, suffix: "%", label: "Success Rate" },
+    { value: 2847, suffix: "+", label: t.home.impact.stats.dogsSaved },
+    { value: 156, suffix: "", label: t.home.impact.stats.partnerShelters },
+    { value: 47, suffix: "", label: t.home.impact.stats.countries },
+    { value: 98, suffix: "%", label: t.home.impact.stats.successRate },
   ]
 
   useEffect(() => {
@@ -46,24 +48,23 @@ export function HeroSection() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-100 to-red-100 text-orange-800 px-4 py-2 rounded-full text-sm font-medium mb-6">
               <Star className="h-4 w-4 fill-orange-500 text-orange-500" />
-              Trusted by 50,000+ Donors Worldwide
+              {t.home.hero.badge}
             </div>
 
             {/* Main Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold leading-tight mb-6">
               <span className="bg-gradient-to-r from-gray-900 via-orange-600 to-red-600 bg-clip-text text-transparent">
-                Every Dog Deserves
+                {t.home.hero.title}
               </span>
               <br />
               <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
-                A Happy Ending
+                {t.home.hero.titleHighlight}
               </span>
             </h1>
 
             {/* Subtitle */}
             <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-2xl mx-auto lg:mx-0">
-              Join our global movement to rescue, rehabilitate, and rehome dogs in need. 
-              Every donation and purchase directly saves lives and creates miracles.
+              {t.home.hero.subtitle}
             </p>
 
             {/* CTA Buttons */}
@@ -71,7 +72,7 @@ export function HeroSection() {
               <Link href="/donate">
                 <Button size="xl" variant="glow" className="group hover:scale-105 transition-transform duration-200">
                   <Heart className="h-5 w-5 mr-2 group-hover:animate-pulse" />
-                  Donate Now
+                  {t.home.hero.donateButton}
                   <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
                 </Button>
               </Link>
@@ -79,7 +80,7 @@ export function HeroSection() {
               <Link href="/about">
                 <Button size="xl" variant="outline" className="group hover:scale-105 transition-transform duration-200">
                   <Play className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
-                  Learn More
+                  {t.home.hero.learnMoreButton}
                 </Button>
               </Link>
             </div>
@@ -87,16 +88,16 @@ export function HeroSection() {
             {/* Trust Indicators */}
             <div className="flex items-center justify-center lg:justify-start gap-8 mt-12">
               <div className="text-center">
-                <div className="text-2xl font-bold text-orange-600">4.9★</div>
-                <div className="text-sm text-gray-500">Trustpilot</div>
+                <div className="text-2xl font-bold text-orange-600">{t.home.hero.trustIndicators.rating}</div>
+                <div className="text-sm text-gray-500">{t.home.hero.trustIndicators.ratingLabel}</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">501(c)(3)</div>
-                <div className="text-sm text-gray-500">Tax Deductible</div>
+                <div className="text-2xl font-bold text-green-600">{t.home.hero.trustIndicators.taxDeductible}</div>
+                <div className="text-sm text-gray-500">{t.home.hero.trustIndicators.taxLabel}</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">98%</div>
-                <div className="text-sm text-gray-500">Success Rate</div>
+                <div className="text-2xl font-bold text-blue-600">{t.home.hero.trustIndicators.successRate}</div>
+                <div className="text-sm text-gray-500">{t.home.hero.trustIndicators.successLabel}</div>
               </div>
             </div>
           </div>

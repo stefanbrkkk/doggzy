@@ -5,10 +5,13 @@ import Link from 'next/link'
 import { Heart, ShoppingBag, Menu, X, PawPrint } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useLanguage } from '@/contexts/LanguageContext'
+import { LanguageSwitcher } from '@/components/language-switcher'
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const { t } = useLanguage()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,13 +22,13 @@ export function Navigation() {
   }, [])
 
   const navItems = [
-    { label: 'Home', href: '/' },
-    { label: 'Donate', href: '/donate' },
-    { label: 'Shop', href: '/shop' },
-    { label: 'Sponsor a Pet', href: '/sponsor' },
-    { label: 'Our Impact', href: '/impact' },
-    { label: 'Partners', href: '/partners' },
-    { label: 'About', href: '/about' },
+    { label: t.nav.home, href: '/' },
+    { label: t.nav.donate, href: '/donate' },
+    { label: t.nav.shop, href: '/shop' },
+    { label: t.nav.sponsor, href: '/sponsor' },
+    { label: t.nav.impact, href: '/impact' },
+    { label: t.nav.partners, href: '/partners' },
+    { label: t.nav.about, href: '/about' },
   ]
 
   return (
@@ -65,6 +68,8 @@ export function Navigation() {
 
           {/* Action Buttons */}
           <div className="flex items-center space-x-4">
+            <LanguageSwitcher />
+            
             <Link href="/favorites">
               <Button variant="ghost" size="icon" className="relative hover:scale-110 transition-transform duration-200">
                 <Heart className="h-5 w-5" />
@@ -86,7 +91,7 @@ export function Navigation() {
             <Link href="/donate">
               <Button variant="glow" size="sm" className="hidden sm:flex hover:scale-105 transition-transform duration-200">
                 <Heart className="h-4 w-4 mr-2" />
-                Donate Now
+                {t.nav.donateNow}
               </Button>
             </Link>
 
@@ -127,7 +132,7 @@ export function Navigation() {
             <Link href="/donate">
               <Button variant="glow" className="w-full hover:scale-105 transition-transform duration-200">
                 <Heart className="h-4 w-4 mr-2" />
-                Donate Now
+                {t.nav.donateNow}
               </Button>
             </Link>
           </div>
