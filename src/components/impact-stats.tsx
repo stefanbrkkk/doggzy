@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { Heart, Users, Globe, Award, Clock, TrendingUp } from 'lucide-react'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface StatItem {
   icon: React.ComponentType<{ className?: string }>
@@ -13,56 +14,6 @@ interface StatItem {
   description: string
 }
 
-const stats: StatItem[] = [
-  {
-    icon: Heart,
-    value: 2847,
-    suffix: "+",
-    label: "Dogs Saved",
-    color: "from-red-500 to-pink-500",
-    description: "This month alone"
-  },
-  {
-    icon: Users,
-    value: 156,
-    suffix: "",
-    label: "Partner Shelters",
-    color: "from-blue-500 to-cyan-500",
-    description: "Across the globe"
-  },
-  {
-    icon: Globe,
-    value: 47,
-    suffix: "",
-    label: "Countries",
-    color: "from-green-500 to-emerald-500",
-    description: "Worldwide reach"
-  },
-  {
-    icon: Award,
-    value: 98,
-    suffix: "%",
-    label: "Success Rate",
-    color: "from-yellow-500 to-orange-500",
-    description: "Adoption rate"
-  },
-  {
-    icon: Clock,
-    value: 24,
-    suffix: "h",
-    label: "Response Time",
-    color: "from-purple-500 to-indigo-500",
-    description: "Emergency rescues"
-  },
-  {
-    icon: TrendingUp,
-    value: 45,
-    suffix: "%",
-    label: "Growth Rate",
-    color: "from-teal-500 to-green-500",
-    description: "Year over year"
-  }
-]
 
 function AnimatedCounter({ 
   end, 
@@ -112,8 +63,60 @@ function AnimatedCounter({
 }
 
 function ImpactStats() {
+  const { t } = useLanguage()
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "-100px" })
+
+  const stats: StatItem[] = [
+    {
+      icon: Heart,
+      value: 2847,
+      suffix: "+",
+      label: t.home.impact.stats.dogsSaved,
+      color: "from-red-500 to-pink-500",
+      description: "This month alone"
+    },
+    {
+      icon: Users,
+      value: 156,
+      suffix: "",
+      label: t.home.impact.stats.partnerShelters,
+      color: "from-blue-500 to-cyan-500",
+      description: "Across the globe"
+    },
+    {
+      icon: Globe,
+      value: 47,
+      suffix: "",
+      label: t.home.impact.stats.countries,
+      color: "from-green-500 to-emerald-500",
+      description: "Worldwide reach"
+    },
+    {
+      icon: Award,
+      value: 98,
+      suffix: "%",
+      label: t.home.impact.stats.successRate,
+      color: "from-yellow-500 to-orange-500",
+      description: "Adoption rate"
+    },
+    {
+      icon: Clock,
+      value: 24,
+      suffix: "h",
+      label: t.home.impact.stats.responseTime,
+      color: "from-purple-500 to-indigo-500",
+      description: "Emergency rescues"
+    },
+    {
+      icon: TrendingUp,
+      value: 45,
+      suffix: "%",
+      label: t.home.impact.stats.growthRate,
+      color: "from-teal-500 to-green-500",
+      description: "Year over year"
+    }
+  ]
 
   return (
     <section ref={ref} className="py-20 bg-gradient-to-br from-gray-50 via-white to-orange-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 relative overflow-hidden">
@@ -163,18 +166,17 @@ function ImpactStats() {
             className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-100 to-red-100 text-orange-800 px-4 py-2 rounded-full text-sm font-medium mb-6"
           >
             <Heart className="h-4 w-4 fill-orange-500 text-orange-500" />
-            Our Impact in Numbers
+            {t.home.impact.title}
           </motion.div>
           
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mb-6">
             <span className="bg-gradient-to-r from-gray-900 to-orange-600 bg-clip-text text-transparent">
-              Making a Real Difference
+              {t.home.impact.title}
             </span>
           </h2>
           
           <p className="text-lg text-gray-600 dark:text-gray-200 max-w-3xl mx-auto">
-            Every number represents a life changed, a family reunited, and hope restored. 
-            Join thousands of compassionate donors making miracles happen every day.
+            {t.home.impact.subtitle}
           </p>
         </motion.div>
 

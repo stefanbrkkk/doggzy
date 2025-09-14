@@ -5,8 +5,11 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Heart, Star, ArrowRight, Quote } from 'lucide-react'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 export function SuccessStories() {
+  const { t } = useLanguage()
+  
   const stories = [
     {
       id: 1,
@@ -83,10 +86,10 @@ export function SuccessStories() {
   ]
 
   const stats = [
-    { number: "15,000+", label: "Happy Endings Created" },
-    { number: "98%", label: "Success Rate" },
-    { number: "500+", label: "Partner Shelters" },
-    { number: "24/7", label: "Support Available" }
+    { number: "15,000+", label: t.home.successStories.stats.happyEndings },
+    { number: "98%", label: t.home.successStories.stats.successRate },
+    { number: "500+", label: t.home.successStories.stats.partnerShelters },
+    { number: "24/7", label: t.home.successStories.stats.supportAvailable }
   ]
 
   return (
@@ -103,22 +106,21 @@ export function SuccessStories() {
         <div className="text-center mb-16">
           <Badge className="mb-4 bg-gradient-to-r from-orange-100 to-red-100 text-orange-800 border-orange-200 hover:scale-105 transition-transform duration-200">
             <Heart className="h-4 w-4 mr-2" />
-            Success Stories
+            {t.home.successStories.title}
           </Badge>
           
           <h2 className="text-4xl sm:text-5xl font-display font-bold mb-6">
             <span className="bg-gradient-to-r from-gray-900 via-orange-600 to-red-600 bg-clip-text text-transparent">
-              Real Stories,
+              {t.home.successStories.title}
             </span>
             <br />
             <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
-              Real Impact
+              {t.home.successStories.titleHighlight}
             </span>
           </h2>
           
           <p className="text-xl text-gray-600 dark:text-gray-200 max-w-3xl mx-auto mb-8">
-            Every donation and purchase creates a ripple effect of love and hope. 
-            See how your support transforms lives and creates beautiful new beginnings.
+            {t.home.successStories.subtitle}
           </p>
 
           {/* Impact Stats */}
@@ -196,23 +198,22 @@ export function SuccessStories() {
             <div className="absolute inset-0 bg-gradient-to-r from-orange-600/20 to-red-600/20" />
             <div className="relative z-10">
               <h3 className="text-3xl md:text-4xl font-bold mb-4">
-                Help Create More Happy Endings
+                {t.home.successStories.cta.title}
               </h3>
               <p className="text-xl text-orange-100 mb-8 max-w-2xl mx-auto">
-                Every donation and purchase directly supports rescue operations, medical care, 
-                and finding loving homes for dogs in need. Be part of the next success story.
+                {t.home.successStories.cta.description}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/donate">
                   <Button size="lg" variant="secondary" className="hover:scale-105 transition-transform duration-200">
                     <Heart className="h-5 w-5 mr-2" />
-                    Donate Now
+                    {t.home.successStories.cta.donateButton}
                   </Button>
                 </Link>
                 <Link href="/shop">
                   <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-orange-600 hover:scale-105 transition-all duration-200">
                     <ArrowRight className="h-5 w-5 mr-2" />
-                    Shop for a Cause
+                    {t.home.successStories.cta.shopButton}
                   </Button>
                 </Link>
               </div>

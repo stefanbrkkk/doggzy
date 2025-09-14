@@ -7,6 +7,7 @@ import { PetCard } from '@/components/sponsor/pet-card'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 // Mock pet data
 const pets = [
@@ -174,19 +175,20 @@ const pets = [
   }
 ]
 
-const statusOptions = ['All', 'Urgent', 'Recovering', 'Ready', 'Adopted']
-const sortOptions = [
-  { value: 'urgent', label: 'Most Urgent First' },
-  { value: 'progress', label: 'Lowest Progress' },
-  { value: 'newest', label: 'Recently Rescued' },
-  { value: 'sponsors', label: 'Most Sponsored' },
-  { value: 'amount', label: 'Highest Goal' }
-]
-
 export default function SponsorPage() {
+  const { t } = useLanguage()
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('All')
   const [sortBy, setSortBy] = useState('urgent')
+
+  const statusOptions = ['All', 'Urgent', 'Recovering', 'Ready', 'Adopted']
+  const sortOptions = [
+    { value: 'urgent', label: t.sponsor.filters.mostUrgentFirst },
+    { value: 'progress', label: t.sponsor.filters.lowestProgress },
+    { value: 'newest', label: t.sponsor.filters.recentlyRescued },
+    { value: 'sponsors', label: t.sponsor.filters.mostSponsored },
+    { value: 'amount', label: t.sponsor.filters.highestGoal }
+  ]
 
   const filteredAndSortedPets = useMemo(() => {
     let filtered = pets
@@ -268,22 +270,21 @@ export default function SponsorPage() {
               className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-100 to-red-100 text-orange-800 px-4 py-2 rounded-full text-sm font-medium mb-6"
             >
               <Heart className="h-4 w-4 fill-orange-500 text-orange-500" />
-              Sponsor a Rescue Dog
+              {t.sponsor.hero.badge}
             </motion.div>
             
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold leading-tight mb-6">
               <span className="bg-gradient-to-r from-gray-900 via-orange-600 to-red-600 bg-clip-text text-transparent">
-                Change a Life
+                {t.sponsor.hero.title}
               </span>
               <br />
               <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
-                Sponsor a Dog
+                {t.sponsor.hero.titleHighlight}
               </span>
             </h1>
             
             <p className="text-lg sm:text-xl text-gray-600 dark:text-white max-w-3xl mx-auto">
-              Every dog deserves a second chance. Sponsor a rescue dog and follow their journey 
-              from rescue to recovery to their forever home.
+              {t.sponsor.hero.subtitle}
             </p>
           </motion.div>
 
@@ -293,25 +294,25 @@ export default function SponsorPage() {
               {
                 icon: DollarSign,
                 value: `$${totalRaised.toLocaleString()}`,
-                label: 'Total Raised',
+                label: t.sponsor.stats.totalRaised,
                 color: 'from-green-500 to-emerald-500'
               },
               {
                 icon: Heart,
                 value: totalSponsors.toString(),
-                label: 'Active Sponsors',
+                label: t.sponsor.stats.activeSponsors,
                 color: 'from-red-500 to-pink-500'
               },
               {
                 icon: Users,
                 value: pets.length.toString(),
-                label: 'Dogs in Care',
+                label: t.sponsor.stats.dogsInCare,
                 color: 'from-blue-500 to-cyan-500'
               },
               {
                 icon: Calendar,
                 value: urgentPets.toString(),
-                label: 'Urgent Cases',
+                label: t.sponsor.stats.urgentCases,
                 color: 'from-orange-500 to-red-500'
               }
             ].map((stat, index) => (
@@ -353,7 +354,7 @@ export default function SponsorPage() {
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <Input
-                placeholder="Search dogs..."
+                placeholder={t.sponsor.filters.searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 pr-4 py-3 rounded-xl border-gray-200 focus:border-orange-500 focus:ring-orange-500"
@@ -397,10 +398,10 @@ export default function SponsorPage() {
           {/* Results Count */}
           <div className="flex items-center justify-between mb-8">
             <p className="text-gray-600 dark:text-gray-300">
-              Showing {filteredAndSortedPets.length} of {pets.length} dogs
+              {t.sponsor.results.showingDogs.replace('{count}', filteredAndSortedPets.length.toString()).replace('{total}', pets.length.toString())}
             </p>
             <div className="text-sm text-gray-600 dark:text-gray-300">
-              Total goal: <span className="font-semibold text-orange-600 dark:text-orange-400">
+              {t.sponsor.results.totalGoal} <span className="font-semibold text-orange-600 dark:text-orange-400">
                 ${totalGoal.toLocaleString()}
               </span>
             </div>
@@ -431,9 +432,9 @@ export default function SponsorPage() {
               className="text-center py-16"
             >
               <div className="text-6xl mb-4">🔍</div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">No dogs found</h3>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{t.sponsor.results.noDogsFound}</h3>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
-                Try adjusting your search or filter criteria
+                {t.sponsor.results.tryAdjustingSearch}
               </p>
               <Button
                 onClick={() => {
@@ -443,7 +444,7 @@ export default function SponsorPage() {
                 }}
                 className="bg-orange-500 hover:bg-orange-600"
               >
-                Clear Filters
+                {t.sponsor.results.clearFilters}
               </Button>
             </motion.div>
           )}
@@ -460,11 +461,10 @@ export default function SponsorPage() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl sm:text-4xl font-display font-bold mb-6">
-              Can't Choose? Sponsor Multiple Dogs!
+              {t.sponsor.cta.cantChoose}
             </h2>
             <p className="text-xl mb-8 max-w-3xl mx-auto opacity-90">
-              Many of our rescue dogs need ongoing support. You can sponsor multiple dogs 
-              or set up recurring donations to help even more lives.
+              {t.sponsor.cta.manyDogsNeed}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -478,7 +478,7 @@ export default function SponsorPage() {
                   className="bg-white text-orange-500 px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition-colors duration-300 shadow-lg"
                 >
                   <Heart className="h-5 w-5 mr-2" />
-                  Sponsor Multiple Dogs
+                  {t.sponsor.cta.sponsorMultiple}
                 </Button>
               </motion.div>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -488,7 +488,7 @@ export default function SponsorPage() {
                   className="border-white text-white hover:bg-white hover:text-orange-500 px-8 py-4 rounded-full text-lg font-semibold transition-colors duration-300"
                 >
                   <Users className="h-5 w-5 mr-2" />
-                  Learn About Sponsorship
+                  {t.sponsor.cta.learnAboutSponsorship}
                 </Button>
               </motion.div>
             </div>

@@ -53,6 +53,12 @@ export const translations = {
           successRate: "Success Rate",
           partnerShelters: "Partner Shelters",
           supportAvailable: "Support Available"
+        },
+        cta: {
+          title: "Help Create More Happy Endings",
+          description: "Every donation and purchase directly supports rescue operations, medical care, and finding loving homes for dogs in need. Be part of the next success story.",
+          donateButton: "Donate Now",
+          shopButton: "Shop for a Cause"
         }
       }
     },
@@ -85,6 +91,14 @@ export const translations = {
         paymentInfo: "Payment Information",
         donateButton: "Donate",
         processing: "Processing...",
+        amountDescriptions: {
+          feedWeek: "Feed a dog for a week",
+          medicalCheckup: "Medical checkup",
+          emergencyTreatment: "Emergency treatment",
+          completeRehabilitation: "Complete rehabilitation",
+          saveLife: "Save a life",
+          transformLife: "Transform a life"
+        },
         success: {
           title: "Thank You for Your Donation!",
           message: "Your donation of ${amount} has been processed successfully. You'll receive a confirmation email shortly.",
@@ -110,10 +124,10 @@ export const translations = {
     // Shop Page
     shop: {
       hero: {
-        badge: "Shop for a Cause",
-        title: "Every Purchase",
-        titleHighlight: "Saves a Life",
-        subtitle: "Discover our curated collection of eco-friendly pet products. Every purchase directly supports our rescue operations and helps save more dogs in need.",
+        badge: "100% Profits Go to Rescue Dogs",
+        title: "Shop to",
+        titleHighlight: "Save Lives",
+        subtitle: "Every purchase directly supports our rescue operations. From custom portraits to eco-friendly accessories, find everything your dog needs while helping us save more lives.",
         searchPlaceholder: "Search products...",
         filterAll: "All Products",
         sortPopular: "Most Popular"
@@ -126,6 +140,19 @@ export const translations = {
         ecoFriendly: "Eco-Friendly",
         ecoFriendlyDesc: "Sustainable products"
       },
+      filters: {
+        searchPlaceholder: "Search products...",
+        filterAll: "All Products",
+        sortPopular: "Most Popular",
+        sortPriceLow: "Price: Low to High",
+        sortPriceHigh: "Price: High to Low",
+        sortRating: "Highest Rated",
+        sortNewest: "Newest First",
+        showingResults: "Showing {count} of {total} products",
+        noProductsFound: "No products found",
+        tryAdjustingSearch: "Try adjusting your search or filter criteria",
+        clearFilters: "Clear Filters"
+      },
       cart: {
         title: "Your Cart",
         total: "Total:",
@@ -136,6 +163,166 @@ export const translations = {
         goToShop: "Go to Shop"
       }
     },
+    // Sponsor Page
+    sponsor: {
+      hero: {
+        badge: "Sponsor a Rescue Dog",
+        title: "Change a Life",
+        titleHighlight: "Sponsor a Dog",
+        subtitle: "Every dog deserves a second chance. Sponsor a rescue dog and follow their journey from rescue to recovery to their forever home."
+      },
+      stats: {
+        totalRaised: "Total Raised",
+        activeSponsors: "Active Sponsors",
+        dogsInCare: "Dogs in Care",
+        urgentCases: "Urgent Cases"
+      },
+      filters: {
+        searchPlaceholder: "Search dogs...",
+        all: "All",
+        urgent: "Urgent",
+        recovering: "Recovering",
+        ready: "Ready",
+        adopted: "Adopted",
+        sortBy: "Sort by:",
+        mostUrgentFirst: "Most Urgent First",
+        lowestProgress: "Lowest Progress",
+        recentlyRescued: "Recently Rescued",
+        mostSponsored: "Most Sponsored",
+        highestGoal: "Highest Goal"
+      },
+      results: {
+        showingDogs: "Showing {count} of {total} dogs",
+        totalGoal: "Total goal:",
+        noDogsFound: "No dogs found",
+        tryAdjustingSearch: "Try adjusting your search or filter criteria",
+        clearFilters: "Clear Filters"
+      },
+      cta: {
+        cantChoose: "Can't Choose? Sponsor Multiple Dogs!",
+        manyDogsNeed: "Many of our rescue dogs need ongoing support. You can sponsor multiple dogs or set up recurring donations to help even more lives.",
+        sponsorMultiple: "Sponsor Multiple Dogs",
+        learnAboutSponsorship: "Learn About Sponsorship"
+      }
+    },
+    // Impact Page
+    impact: {
+      hero: {
+        badge: "Our Impact",
+        title: "Making a Real",
+        titleHighlight: "Difference",
+        subtitle: "Every donation, every purchase, every action creates a ripple effect of positive change. See how our community is transforming lives and creating happy endings worldwide."
+      },
+      globalStats: {
+        livesSaved: "Lives Saved",
+        partnerShelters: "Partner Shelters",
+        countries: "Countries",
+        successRate: "Success Rate"
+      },
+      globalImpact: {
+        title: "Global Impact",
+        subtitle: "Numbers that tell the story of lives saved, communities transformed, and hope restored."
+      },
+      monthlyProgress: {
+        title: "Monthly Progress",
+        subtitle: "Track our growing impact month by month as we rescue more dogs and create more happy endings."
+      },
+      regionalImpact: {
+        title: "Regional Impact",
+        subtitle: "Success Stories"
+      },
+      successStories: {
+        title: "Success Stories",
+        subtitle: "Real stories of transformation and the lasting impact of our rescue efforts."
+      },
+      goals: {
+        title: "Our Goals",
+        subtitle: "Ambitious targets that drive our mission forward and measure our collective impact."
+      },
+      cta: {
+        title: "Be Part of Our Impact",
+        subtitle: "Every donation and purchase directly contributes to these numbers. Help us reach our goals and create even more happy endings.",
+        donateNow: "Donate Now",
+        shopForCause: "Shop for a Cause"
+      }
+    },
+    // About Page
+    about: {
+      hero: {
+        badge: "About Doggzy",
+        title: "Our Mission:",
+        titleHighlight: "Every Dog Deserves Love",
+        subtitle: "We're a global network of passionate dog lovers, rescue organizations, and volunteers working together to save lives, provide medical care, and create happy endings for dogs in need."
+      },
+      stats: {
+        livesSaved: "Lives Saved",
+        partnerShelters: "Partner Shelters",
+        countries: "Countries",
+        successRate: "Success Rate"
+      },
+      story: {
+        title: "Our Story",
+        description1: "Doggzy was born from a simple belief: every dog deserves a chance at a happy life. What started as a small rescue operation in San Francisco has grown into a global movement that has saved over 15,000 lives.",
+        description2: "Our founder, Sarah Johnson, was working as a veterinary technician when she realized that many rescue organizations were working in isolation. She envisioned a platform that could connect shelters, volunteers, and donors worldwide to maximize impact.",
+        joinMission: "Join Our Mission",
+        learnMore: "Learn More"
+      },
+      values: {
+        title: "Our Values",
+        subtitle: "These core values guide everything we do and shape our approach to rescue, rehabilitation, and rehoming.",
+        compassionFirst: {
+          title: "Compassion First",
+          description: "Every decision we make is guided by our deep love and respect for dogs and their wellbeing."
+        },
+        transparency: {
+          title: "Transparency",
+          description: "We believe in complete transparency about how donations are used and the impact they create."
+        },
+        community: {
+          title: "Community",
+          description: "We're building a global community of dog lovers working together to create positive change."
+        },
+        excellence: {
+          title: "Excellence",
+          description: "We strive for the highest standards in rescue operations, medical care, and adoption processes."
+        }
+      },
+      team: {
+        title: "Meet Our Team",
+        subtitle: "Passionate individuals dedicated to making a difference in the lives of dogs worldwide."
+      },
+      journey: {
+        title: "Our Journey",
+        subtitle: "Key milestones in our mission to save and improve the lives of dogs worldwide."
+      },
+      cta: {
+        title: "Ready to Make a Difference?",
+        subtitle: "Join our community of dog lovers and help us create more happy endings. Every action, no matter how small, makes a difference.",
+        donateNow: "Donate Now",
+        volunteer: "Volunteer"
+      }
+    },
+    // Partners Page
+    partners: {
+      globalNetwork: "Global Network",
+      trustedPartners: "Trusted Partners",
+      worldwide: "Worldwide",
+      joinNetwork: "Join our network of verified rescue organizations and shelters working together to save dogs and create happy endings across the globe.",
+      livesSavedThisMonth: "Lives Saved This Month",
+      partnerShelters: "Partner Shelters",
+      countriesWorldwide: "Countries Worldwide",
+      verified: "Verified",
+      joinGlobalNetwork: "Join Our Global Network",
+      becomePartner: "Become a verified partner and help us save more lives together. Join thousands of organizations making a difference worldwide.",
+      viewAllPartners: "View All Partners",
+      becomeAPartner: "Become a Partner",
+      verifiedPartners: "Verified Partners",
+      verifiedPartnersDesc: "All partners are thoroughly vetted and certified",
+      provenImpact: "Proven Impact",
+      provenImpactDesc: "Track record of successful rescues and adoptions",
+      communityTrust: "Community Trust",
+      communityTrustDesc: "Highly rated by local communities and adopters"
+    },
     // Common
     common: {
       loading: "Loading...",
@@ -144,8 +331,6 @@ export const translations = {
       learnMore: "Learn More",
       readMore: "Read More",
       close: "Close",
-      next: "Next",
-      previous: "Previous",
       submit: "Submit",
       cancel: "Cancel",
       save: "Save",
@@ -179,11 +364,7 @@ export const translations = {
       reset: "Reset",
       clear: "Clear",
       confirm: "Confirm",
-      yes: "Yes",
-      no: "No",
       ok: "OK",
-      cancel: "Cancel",
-      close: "Close",
       open: "Open",
       show: "Show",
       hide: "Hide",
@@ -418,6 +599,12 @@ export const translations = {
           successRate: "Tasa de Éxito",
           partnerShelters: "Refugios Socios",
           supportAvailable: "Soporte Disponible"
+        },
+        cta: {
+          title: "Ayuda a Crear Más Finales Felices",
+          description: "Cada donación y compra apoya directamente las operaciones de rescate, atención médica y encontrar hogares amorosos para perros necesitados. Sé parte de la próxima historia de éxito.",
+          donateButton: "Donar Ahora",
+          shopButton: "Comprar por una Causa"
         }
       }
     },
@@ -450,6 +637,14 @@ export const translations = {
         paymentInfo: "Información de Pago",
         donateButton: "Donar",
         processing: "Procesando...",
+        amountDescriptions: {
+          feedWeek: "Alimentar un perro por una semana",
+          medicalCheckup: "Chequeo médico",
+          emergencyTreatment: "Tratamiento de emergencia",
+          completeRehabilitation: "Rehabilitación completa",
+          saveLife: "Salvar una vida",
+          transformLife: "Transformar una vida"
+        },
         success: {
           title: "¡Gracias por tu Donación!",
           message: "Tu donación de ${amount} ha sido procesada exitosamente. Recibirás un email de confirmación pronto.",
@@ -475,10 +670,10 @@ export const translations = {
     // Shop Page
     shop: {
       hero: {
-        badge: "Compra por una Causa",
-        title: "Cada Compra",
-        titleHighlight: "Salva una Vida",
-        subtitle: "Descubre nuestra colección curada de productos ecológicos para mascotas. Cada compra apoya directamente nuestras operaciones de rescate y ayuda a salvar más perros necesitados.",
+        badge: "100% de las Ganancias Van a Rescatar Perros",
+        title: "Compra para",
+        titleHighlight: "Salvar Vidas",
+        subtitle: "Cada compra apoya directamente nuestras operaciones de rescate. Desde retratos personalizados hasta accesorios ecológicos, encuentra todo lo que tu perro necesita mientras nos ayudas a salvar más vidas.",
         searchPlaceholder: "Buscar productos...",
         filterAll: "Todos los Productos",
         sortPopular: "Más Populares"
@@ -491,6 +686,19 @@ export const translations = {
         ecoFriendly: "Ecológico",
         ecoFriendlyDesc: "Productos sostenibles"
       },
+      filters: {
+        searchPlaceholder: "Buscar productos...",
+        filterAll: "Todos los Productos",
+        sortPopular: "Más Populares",
+        sortPriceLow: "Precio: Bajo a Alto",
+        sortPriceHigh: "Precio: Alto a Bajo",
+        sortRating: "Mejor Calificado",
+        sortNewest: "Más Recientes",
+        showingResults: "Mostrando {count} de {total} productos",
+        noProductsFound: "No se encontraron productos",
+        tryAdjustingSearch: "Intenta ajustar tu búsqueda o criterios de filtro",
+        clearFilters: "Limpiar Filtros"
+      },
       cart: {
         title: "Tu Carrito",
         total: "Total:",
@@ -501,6 +709,166 @@ export const translations = {
         goToShop: "Ir a la Tienda"
       }
     },
+    // Sponsor Page
+    sponsor: {
+      hero: {
+        badge: "Patrocinar un Perro Rescatado",
+        title: "Cambia una Vida",
+        titleHighlight: "Patrocina un Perro",
+        subtitle: "Cada perro merece una segunda oportunidad. Patrocina un perro rescatado y sigue su viaje desde el rescate hasta la recuperación y su hogar para siempre."
+      },
+      stats: {
+        totalRaised: "Total Recaudado",
+        activeSponsors: "Patrocinadores Activos",
+        dogsInCare: "Perros en Cuidado",
+        urgentCases: "Casos Urgentes"
+      },
+      filters: {
+        searchPlaceholder: "Buscar perros...",
+        all: "Todos",
+        urgent: "Urgente",
+        recovering: "Recuperándose",
+        ready: "Listo",
+        adopted: "Adoptado",
+        sortBy: "Ordenar por:",
+        mostUrgentFirst: "Más Urgentes Primero",
+        lowestProgress: "Menor Progreso",
+        recentlyRescued: "Recientemente Rescatados",
+        mostSponsored: "Más Patrocinados",
+        highestGoal: "Meta Más Alta"
+      },
+      results: {
+        showingDogs: "Mostrando {count} de {total} perros",
+        totalGoal: "Meta total:",
+        noDogsFound: "No se encontraron perros",
+        tryAdjustingSearch: "Intenta ajustar tu búsqueda o criterios de filtro",
+        clearFilters: "Limpiar Filtros"
+      },
+      cta: {
+        cantChoose: "¿No Puedes Elegir? ¡Patrocina Múltiples Perros!",
+        manyDogsNeed: "Muchos de nuestros perros rescatados necesitan apoyo continuo. Puedes patrocinar múltiples perros o configurar donaciones recurrentes para ayudar aún más vidas.",
+        sponsorMultiple: "Patrocinar Múltiples Perros",
+        learnAboutSponsorship: "Aprende Sobre el Patrocinio"
+      }
+    },
+    // Impact Page
+    impact: {
+      hero: {
+        badge: "Nuestro Impacto",
+        title: "Haciendo una Diferencia",
+        titleHighlight: "Real",
+        subtitle: "Cada donación, cada compra, cada acción crea un efecto dominó de cambio positivo. Ve cómo nuestra comunidad está transformando vidas y creando finales felices en todo el mundo."
+      },
+      globalStats: {
+        livesSaved: "Vidas Salvadas",
+        partnerShelters: "Refugios Socios",
+        countries: "Países",
+        successRate: "Tasa de Éxito"
+      },
+      globalImpact: {
+        title: "Impacto Global",
+        subtitle: "Números que cuentan la historia de vidas salvadas, comunidades transformadas y esperanza restaurada."
+      },
+      monthlyProgress: {
+        title: "Progreso Mensual",
+        subtitle: "Rastrea nuestro impacto creciente mes a mes mientras rescatamos más perros y creamos más finales felices."
+      },
+      regionalImpact: {
+        title: "Impacto Regional",
+        subtitle: "Historias de Éxito"
+      },
+      successStories: {
+        title: "Historias de Éxito",
+        subtitle: "Historias reales de transformación y el impacto duradero de nuestros esfuerzos de rescate."
+      },
+      goals: {
+        title: "Nuestras Metas",
+        subtitle: "Objetivos ambiciosos que impulsan nuestra misión hacia adelante y miden nuestro impacto colectivo."
+      },
+      cta: {
+        title: "Sé Parte de Nuestro Impacto",
+        subtitle: "Cada donación y compra contribuye directamente a estos números. Ayúdanos a alcanzar nuestras metas y crear aún más finales felices.",
+        donateNow: "Donar Ahora",
+        shopForCause: "Comprar por una Causa"
+      }
+    },
+    // About Page
+    about: {
+      hero: {
+        badge: "Acerca de Doggzy",
+        title: "Nuestra Misión:",
+        titleHighlight: "Cada Perro Merece Amor",
+        subtitle: "Somos una red global de apasionados amantes de los perros, organizaciones de rescate y voluntarios trabajando juntos para salvar vidas, brindar atención médica y crear finales felices para perros necesitados."
+      },
+      stats: {
+        livesSaved: "Vidas Salvadas",
+        partnerShelters: "Refugios Socios",
+        countries: "Países",
+        successRate: "Tasa de Éxito"
+      },
+      story: {
+        title: "Nuestra Historia",
+        description1: "Doggzy nació de una creencia simple: cada perro merece una oportunidad de tener una vida feliz. Lo que comenzó como una pequeña operación de rescate en San Francisco se ha convertido en un movimiento global que ha salvado más de 15,000 vidas.",
+        description2: "Nuestra fundadora, Sarah Johnson, trabajaba como técnica veterinaria cuando se dio cuenta de que muchas organizaciones de rescate trabajaban aisladas. Ella imaginó una plataforma que pudiera conectar refugios, voluntarios y donantes en todo el mundo para maximizar el impacto.",
+        joinMission: "Únete a Nuestra Misión",
+        learnMore: "Saber Más"
+      },
+      values: {
+        title: "Nuestros Valores",
+        subtitle: "Estos valores fundamentales guían todo lo que hacemos y dan forma a nuestro enfoque de rescate, rehabilitación y reubicación.",
+        compassionFirst: {
+          title: "Compasión Primero",
+          description: "Cada decisión que tomamos está guiada por nuestro profundo amor y respeto por los perros y su bienestar."
+        },
+        transparency: {
+          title: "Transparencia",
+          description: "Creemos en la transparencia completa sobre cómo se usan las donaciones y el impacto que crean."
+        },
+        community: {
+          title: "Comunidad",
+          description: "Estamos construyendo una comunidad global de amantes de los perros trabajando juntos para crear cambio positivo."
+        },
+        excellence: {
+          title: "Excelencia",
+          description: "Nos esforzamos por los más altos estándares en operaciones de rescate, atención médica y procesos de adopción."
+        }
+      },
+      team: {
+        title: "Conoce Nuestro Equipo",
+        subtitle: "Individuos apasionados dedicados a marcar la diferencia en las vidas de los perros en todo el mundo."
+      },
+      journey: {
+        title: "Nuestro Viaje",
+        subtitle: "Hitos clave en nuestra misión de salvar y mejorar las vidas de los perros en todo el mundo."
+      },
+      cta: {
+        title: "¿Listo para Marcar la Diferencia?",
+        subtitle: "Únete a nuestra comunidad de amantes de los perros y ayúdanos a crear más finales felices. Cada acción, sin importar cuán pequeña, marca la diferencia.",
+        donateNow: "Donar Ahora",
+        volunteer: "Ser Voluntario"
+      }
+    },
+    // Partners Page
+    partners: {
+      globalNetwork: "Red Global",
+      trustedPartners: "Socios de Confianza",
+      worldwide: "En Todo el Mundo",
+      joinNetwork: "Únete a nuestra red de organizaciones de rescate y refugios verificados que trabajan juntos para salvar perros y crear finales felices en todo el mundo.",
+      livesSavedThisMonth: "Vidas Salvadas Este Mes",
+      partnerShelters: "Refugios Socios",
+      countriesWorldwide: "Países en Todo el Mundo",
+      verified: "Verificado",
+      joinGlobalNetwork: "Únete a Nuestra Red Global",
+      becomePartner: "Conviértete en un socio verificado y ayúdanos a salvar más vidas juntos. Únete a miles de organizaciones que marcan la diferencia en todo el mundo.",
+      viewAllPartners: "Ver Todos los Socios",
+      becomeAPartner: "Conviértete en Socio",
+      verifiedPartners: "Socios Verificados",
+      verifiedPartnersDesc: "Todos los socios son cuidadosamente evaluados y certificados",
+      provenImpact: "Impacto Comprobado",
+      provenImpactDesc: "Historial de rescates y adopciones exitosas",
+      communityTrust: "Confianza de la Comunidad",
+      communityTrustDesc: "Altamente calificado por las comunidades locales y adoptantes"
+    },
     // Common
     common: {
       loading: "Cargando...",
@@ -508,9 +876,6 @@ export const translations = {
       tryAgain: "Intentar de Nuevo",
       learnMore: "Saber Más",
       readMore: "Leer Más",
-      close: "Cerrar",
-      next: "Siguiente",
-      previous: "Anterior",
       submit: "Enviar",
       cancel: "Cancelar",
       save: "Guardar",
@@ -544,10 +909,7 @@ export const translations = {
       reset: "Restablecer",
       clear: "Limpiar",
       confirm: "Confirmar",
-      yes: "Sí",
-      no: "No",
       ok: "OK",
-      cancel: "Cancelar",
       close: "Cerrar",
       open: "Abrir",
       show: "Mostrar",
@@ -783,6 +1145,12 @@ export const translations = {
           successRate: "Taux de Réussite",
           partnerShelters: "Refuges Partenaires",
           supportAvailable: "Support Disponible"
+        },
+        cta: {
+          title: "Aidez à Créer Plus de Fins Heureuses",
+          description: "Chaque don et achat soutient directement les opérations de sauvetage, les soins médicaux et la recherche de foyers aimants pour les chiens dans le besoin. Faites partie de la prochaine histoire de succès.",
+          donateButton: "Faire un Don",
+          shopButton: "Acheter pour une Cause"
         }
       }
     },
@@ -815,6 +1183,14 @@ export const translations = {
         paymentInfo: "Informations de Paiement",
         donateButton: "Faire un Don",
         processing: "Traitement...",
+        amountDescriptions: {
+          feedWeek: "Nourrir un chien pendant une semaine",
+          medicalCheckup: "Examen médical",
+          emergencyTreatment: "Traitement d'urgence",
+          completeRehabilitation: "Réhabilitation complète",
+          saveLife: "Sauver une vie",
+          transformLife: "Transformer une vie"
+        },
         success: {
           title: "Merci pour Votre Don !",
           message: "Votre don de ${amount} a été traité avec succès. Vous recevrez un email de confirmation sous peu.",
@@ -840,10 +1216,10 @@ export const translations = {
     // Shop Page
     shop: {
       hero: {
-        badge: "Achetez pour une Cause",
-        title: "Chaque Achat",
-        titleHighlight: "Sauve une Vie",
-        subtitle: "Découvrez notre collection soigneusement sélectionnée de produits écologiques pour animaux de compagnie. Chaque achat soutient directement nos opérations de sauvetage et aide à sauver plus de chiens dans le besoin.",
+        badge: "100% des Bénéfices Vont aux Chiens Secourus",
+        title: "Achetez pour",
+        titleHighlight: "Sauver des Vies",
+        subtitle: "Chaque achat soutient directement nos opérations de sauvetage. Des portraits personnalisés aux accessoires écologiques, trouvez tout ce dont votre chien a besoin tout en nous aidant à sauver plus de vies.",
         searchPlaceholder: "Rechercher des produits...",
         filterAll: "Tous les Produits",
         sortPopular: "Les Plus Populaires"
@@ -856,6 +1232,19 @@ export const translations = {
         ecoFriendly: "Écologique",
         ecoFriendlyDesc: "Produits durables"
       },
+      filters: {
+        searchPlaceholder: "Rechercher des produits...",
+        filterAll: "Tous les Produits",
+        sortPopular: "Les Plus Populaires",
+        sortPriceLow: "Prix: Bas à Élevé",
+        sortPriceHigh: "Prix: Élevé à Bas",
+        sortRating: "Mieux Noté",
+        sortNewest: "Plus Récent",
+        showingResults: "Affichage de {count} sur {total} produits",
+        noProductsFound: "Aucun produit trouvé",
+        tryAdjustingSearch: "Essayez d'ajuster votre recherche ou vos critères de filtre",
+        clearFilters: "Effacer les Filtres"
+      },
       cart: {
         title: "Votre Panier",
         total: "Total :",
@@ -866,6 +1255,166 @@ export const translations = {
         goToShop: "Aller à la Boutique"
       }
     },
+    // Sponsor Page
+    sponsor: {
+      hero: {
+        badge: "Parrainer un Chien Secouru",
+        title: "Changez une Vie",
+        titleHighlight: "Parrainez un Chien",
+        subtitle: "Chaque chien mérite une seconde chance. Parrainez un chien secouru et suivez son parcours du sauvetage à la guérison jusqu'à sa maison pour toujours."
+      },
+      stats: {
+        totalRaised: "Total Collecté",
+        activeSponsors: "Parrains Actifs",
+        dogsInCare: "Chiens en Soins",
+        urgentCases: "Cas Urgents"
+      },
+      filters: {
+        searchPlaceholder: "Rechercher des chiens...",
+        all: "Tous",
+        urgent: "Urgent",
+        recovering: "En Rétablissement",
+        ready: "Prêt",
+        adopted: "Adopté",
+        sortBy: "Trier par:",
+        mostUrgentFirst: "Plus Urgents en Premier",
+        lowestProgress: "Progrès le Plus Faible",
+        recentlyRescued: "Récemment Secourus",
+        mostSponsored: "Plus Parrainés",
+        highestGoal: "Objectif le Plus Élevé"
+      },
+      results: {
+        showingDogs: "Affichage de {count} sur {total} chiens",
+        totalGoal: "Objectif total:",
+        noDogsFound: "Aucun chien trouvé",
+        tryAdjustingSearch: "Essayez d'ajuster votre recherche ou vos critères de filtre",
+        clearFilters: "Effacer les Filtres"
+      },
+      cta: {
+        cantChoose: "Vous ne pouvez pas choisir ? Parrainez Plusieurs Chiens !",
+        manyDogsNeed: "Beaucoup de nos chiens secourus ont besoin d'un soutien continu. Vous pouvez parrainer plusieurs chiens ou configurer des dons récurrents pour aider encore plus de vies.",
+        sponsorMultiple: "Parrainer Plusieurs Chiens",
+        learnAboutSponsorship: "En Savoir Plus sur le Parrainage"
+      }
+    },
+    // Impact Page
+    impact: {
+      hero: {
+        badge: "Notre Impact",
+        title: "Faire une Vraie",
+        titleHighlight: "Différence",
+        subtitle: "Chaque don, chaque achat, chaque action crée un effet d'entraînement de changement positif. Voyez comment notre communauté transforme des vies et crée des fins heureuses dans le monde entier."
+      },
+      globalStats: {
+        livesSaved: "Vies Sauvées",
+        partnerShelters: "Refuges Partenaires",
+        countries: "Pays",
+        successRate: "Taux de Réussite"
+      },
+      globalImpact: {
+        title: "Impact Mondial",
+        subtitle: "Des chiffres qui racontent l'histoire de vies sauvées, de communautés transformées et d'espoir restauré."
+      },
+      monthlyProgress: {
+        title: "Progrès Mensuel",
+        subtitle: "Suivez notre impact croissant mois par mois alors que nous sauvons plus de chiens et créons plus de fins heureuses."
+      },
+      regionalImpact: {
+        title: "Impact Régional",
+        subtitle: "Histoires de Succès"
+      },
+      successStories: {
+        title: "Histoires de Succès",
+        subtitle: "De vraies histoires de transformation et l'impact durable de nos efforts de sauvetage."
+      },
+      goals: {
+        title: "Nos Objectifs",
+        subtitle: "Des objectifs ambitieux qui font avancer notre mission et mesurent notre impact collectif."
+      },
+      cta: {
+        title: "Faites Partie de Notre Impact",
+        subtitle: "Chaque don et achat contribue directement à ces chiffres. Aidez-nous à atteindre nos objectifs et à créer encore plus de fins heureuses.",
+        donateNow: "Faire un Don",
+        shopForCause: "Acheter pour une Cause"
+      }
+    },
+    // About Page
+    about: {
+      hero: {
+        badge: "À Propos de Doggzy",
+        title: "Notre Mission:",
+        titleHighlight: "Chaque Chien Mérite l'Amour",
+        subtitle: "Nous sommes un réseau mondial d'amoureux passionnés des chiens, d'organisations de sauvetage et de bénévoles travaillant ensemble pour sauver des vies, fournir des soins médicaux et créer des fins heureuses pour les chiens dans le besoin."
+      },
+      stats: {
+        livesSaved: "Vies Sauvées",
+        partnerShelters: "Refuges Partenaires",
+        countries: "Pays",
+        successRate: "Taux de Réussite"
+      },
+      story: {
+        title: "Notre Histoire",
+        description1: "Doggzy est né d'une croyance simple : chaque chien mérite une chance d'avoir une vie heureuse. Ce qui a commencé comme une petite opération de sauvetage à San Francisco est devenu un mouvement mondial qui a sauvé plus de 15 000 vies.",
+        description2: "Notre fondatrice, Sarah Johnson, travaillait comme technicienne vétérinaire quand elle s'est rendu compte que de nombreuses organisations de sauvetage travaillaient en isolation. Elle a imaginé une plateforme qui pourrait connecter les refuges, les bénévoles et les donateurs du monde entier pour maximiser l'impact.",
+        joinMission: "Rejoignez Notre Mission",
+        learnMore: "En Savoir Plus"
+      },
+      values: {
+        title: "Nos Valeurs",
+        subtitle: "Ces valeurs fondamentales guident tout ce que nous faisons et façonnent notre approche du sauvetage, de la réhabilitation et de la réinstallation.",
+        compassionFirst: {
+          title: "Compassion d'Abord",
+          description: "Chaque décision que nous prenons est guidée par notre profond amour et respect pour les chiens et leur bien-être."
+        },
+        transparency: {
+          title: "Transparence",
+          description: "Nous croyons en une transparence complète sur la façon dont les dons sont utilisés et l'impact qu'ils créent."
+        },
+        community: {
+          title: "Communauté",
+          description: "Nous construisons une communauté mondiale d'amoureux des chiens travaillant ensemble pour créer un changement positif."
+        },
+        excellence: {
+          title: "Excellence",
+          description: "Nous nous efforçons d'atteindre les plus hauts standards dans les opérations de sauvetage, les soins médicaux et les processus d'adoption."
+        }
+      },
+      team: {
+        title: "Rencontrez Notre Équipe",
+        subtitle: "Des individus passionnés dédiés à faire une différence dans la vie des chiens dans le monde entier."
+      },
+      journey: {
+        title: "Notre Parcours",
+        subtitle: "Jalons clés dans notre mission de sauver et d'améliorer la vie des chiens dans le monde entier."
+      },
+      cta: {
+        title: "Prêt à Faire la Différence ?",
+        subtitle: "Rejoignez notre communauté d'amoureux des chiens et aidez-nous à créer plus de fins heureuses. Chaque action, aussi petite soit-elle, fait une différence.",
+        donateNow: "Faire un Don",
+        volunteer: "Bénévole"
+      }
+    },
+    // Partners Page
+    partners: {
+      globalNetwork: "Réseau Mondial",
+      trustedPartners: "Partenaires de Confiance",
+      worldwide: "Dans le Monde Entier",
+      joinNetwork: "Rejoignez notre réseau d'organisations de sauvetage et de refuges vérifiés qui travaillent ensemble pour sauver des chiens et créer des fins heureuses dans le monde entier.",
+      livesSavedThisMonth: "Vies Sauvées Ce Mois",
+      partnerShelters: "Refuges Partenaires",
+      countriesWorldwide: "Pays dans le Monde Entier",
+      verified: "Vérifié",
+      joinGlobalNetwork: "Rejoignez Notre Réseau Mondial",
+      becomePartner: "Devenez un partenaire vérifié et aidez-nous à sauver plus de vies ensemble. Rejoignez des milliers d'organisations qui font la différence dans le monde entier.",
+      viewAllPartners: "Voir Tous les Partenaires",
+      becomeAPartner: "Devenir Partenaire",
+      verifiedPartners: "Partenaires Vérifiés",
+      verifiedPartnersDesc: "Tous les partenaires sont soigneusement évalués et certifiés",
+      provenImpact: "Impact Prouvé",
+      provenImpactDesc: "Historique de sauvetages et d'adoptions réussis",
+      communityTrust: "Confiance de la Communauté",
+      communityTrustDesc: "Hautement noté par les communautés locales et les adoptants"
+    },
     // Common
     common: {
       loading: "Chargement...",
@@ -873,9 +1422,6 @@ export const translations = {
       tryAgain: "Réessayer",
       learnMore: "En Savoir Plus",
       readMore: "Lire Plus",
-      close: "Fermer",
-      next: "Suivant",
-      previous: "Précédent",
       submit: "Soumettre",
       cancel: "Annuler",
       save: "Sauvegarder",
@@ -909,10 +1455,7 @@ export const translations = {
       reset: "Réinitialiser",
       clear: "Effacer",
       confirm: "Confirmer",
-      yes: "Oui",
-      no: "Non",
       ok: "OK",
-      cancel: "Annuler",
       close: "Fermer",
       open: "Ouvrir",
       show: "Afficher",
