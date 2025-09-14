@@ -34,10 +34,10 @@ export function Footer() {
   }
 
   const socialLinks = [
-    { icon: Facebook, href: '#', label: 'Facebook' },
-    { icon: Twitter, href: '#', label: 'Twitter' },
-    { icon: Instagram, href: '#', label: 'Instagram' },
-    { icon: Youtube, href: '#', label: 'YouTube' },
+    { icon: Facebook, href: 'https://facebook.com/doggzy', label: 'Facebook' },
+    { icon: Twitter, href: 'https://twitter.com/doggzy', label: 'Twitter' },
+    { icon: Instagram, href: 'https://instagram.com/doggzy', label: 'Instagram' },
+    { icon: Youtube, href: 'https://youtube.com/doggzy', label: 'YouTube' },
   ]
 
   const quickLinks = [

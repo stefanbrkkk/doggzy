@@ -17,35 +17,38 @@ import {
   HandHeart
 } from 'lucide-react'
 import React from 'react'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 export default function AboutPage() {
+  const { t } = useLanguage()
+  
   const stats = [
-    { icon: Heart, value: "15,000+", label: "Lives Saved" },
-    { icon: Users, value: "500+", label: "Partner Shelters" },
-    { icon: Globe, value: "47", label: "Countries" },
-    { icon: Award, value: "98%", label: "Success Rate" },
+    { icon: Heart, value: "15,000+", label: t.about.stats.livesSaved },
+    { icon: Users, value: "500+", label: t.about.stats.partnerShelters },
+    { icon: Globe, value: "47", label: t.about.stats.countries },
+    { icon: Award, value: "98%", label: t.about.stats.successRate },
   ]
 
   const values = [
     {
       icon: Heart,
-      title: "Compassion First",
-      description: "Every decision we make is guided by our deep love and respect for dogs and their wellbeing."
+      title: t.about.values.compassionFirst.title,
+      description: t.about.values.compassionFirst.description
     },
     {
       icon: Shield,
-      title: "Transparency",
-      description: "We believe in complete transparency about how donations are used and the impact they create."
+      title: t.about.values.transparency.title,
+      description: t.about.values.transparency.description
     },
     {
       icon: Users,
-      title: "Community",
-      description: "We're building a global community of dog lovers working together to create positive change."
+      title: t.about.values.community.title,
+      description: t.about.values.community.description
     },
     {
       icon: Award,
-      title: "Excellence",
-      description: "We strive for the highest standards in rescue operations, medical care, and adoption processes."
+      title: t.about.values.excellence.title,
+      description: t.about.values.excellence.description
     }
   ]
 
@@ -117,22 +120,21 @@ export default function AboutPage() {
           <div className="text-center max-w-4xl mx-auto">
             <Badge className="mb-6 bg-gradient-to-r from-orange-100 to-red-100 text-orange-800 border-orange-200 hover:scale-105 transition-transform duration-200">
               <Heart className="h-4 w-4 mr-2" />
-              About Doggzy
+              {t.about.hero.badge}
             </Badge>
             
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold mb-6">
               <span className="bg-gradient-to-r from-gray-900 via-orange-600 to-red-600 bg-clip-text text-transparent">
-                Our Mission:
+                {t.about.hero.title}
               </span>
               <br />
               <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
-                Every Dog Deserves Love
+                {t.about.hero.titleHighlight}
               </span>
             </h1>
             
             <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-              We're a global network of passionate dog lovers, rescue organizations, and volunteers 
-              working together to save lives, provide medical care, and create happy endings for dogs in need.
+              {t.about.hero.subtitle}
             </p>
 
             {/* Stats */}
@@ -162,27 +164,23 @@ export default function AboutPage() {
             <div>
               <h2 className="text-3xl sm:text-4xl font-bold mb-6">
                 <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
-                  Our Story
+                  {t.about.story.title}
                 </span>
               </h2>
               <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                Doggzy was born from a simple belief: every dog deserves a chance at a happy life. 
-                What started as a small rescue operation in San Francisco has grown into a global 
-                movement that has saved over 15,000 lives.
+                {t.about.story.description1}
               </p>
               <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                Our founder, Sarah Johnson, was working as a veterinary technician when she realized 
-                that many rescue organizations were working in isolation. She envisioned a platform 
-                that could connect shelters, volunteers, and donors worldwide to maximize impact.
+                {t.about.story.description2}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button size="lg" variant="glow" className="hover:scale-105 transition-transform duration-200">
                   <Heart className="h-5 w-5 mr-2" />
-                  Join Our Mission
+                  {t.about.story.joinMission}
                 </Button>
                 <Button size="lg" variant="outline" className="hover:scale-105 transition-transform duration-200">
                   <ArrowRight className="h-5 w-5 mr-2" />
-                  Learn More
+                  {t.about.story.learnMore}
                 </Button>
               </div>
             </div>
@@ -204,12 +202,11 @@ export default function AboutPage() {
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-6">
               <span className="bg-gradient-to-r from-gray-900 via-orange-600 to-red-600 bg-clip-text text-transparent">
-                Our Values
+                {t.about.values.title}
               </span>
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              These core values guide everything we do and shape our approach to rescue, 
-              rehabilitation, and rehoming.
+              {t.about.values.subtitle}
             </p>
           </div>
 
@@ -239,11 +236,11 @@ export default function AboutPage() {
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-6">
               <span className="bg-gradient-to-r from-gray-900 via-orange-600 to-red-600 bg-clip-text text-transparent">
-                Meet Our Team
+                {t.about.team.title}
               </span>
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Passionate individuals dedicated to making a difference in the lives of dogs worldwide.
+              {t.about.team.subtitle}
             </p>
           </div>
 
@@ -274,11 +271,11 @@ export default function AboutPage() {
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-6">
               <span className="bg-gradient-to-r from-gray-900 via-orange-600 to-red-600 bg-clip-text text-transparent">
-                Our Journey
+                {t.about.journey.title}
               </span>
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Key milestones in our mission to save and improve the lives of dogs worldwide.
+              {t.about.journey.subtitle}
             </p>
           </div>
 
@@ -311,20 +308,19 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
             <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-              Ready to Make a Difference?
+              {t.about.cta.title}
             </h2>
             <p className="text-xl text-orange-100 mb-8">
-              Join our community of dog lovers and help us create more happy endings. 
-              Every action, no matter how small, makes a difference.
+              {t.about.cta.subtitle}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" variant="secondary" className="hover:scale-105 transition-transform duration-200">
                 <Heart className="h-5 w-5 mr-2" />
-                Donate Now
+                {t.about.cta.donateNow}
               </Button>
               <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-orange-600 hover:scale-105 transition-all duration-200">
                 <Users className="h-5 w-5 mr-2" />
-                Volunteer
+                {t.about.cta.volunteer}
               </Button>
             </div>
           </div>

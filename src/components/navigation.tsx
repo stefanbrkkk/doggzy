@@ -5,10 +5,13 @@ import Link from 'next/link'
 import { Heart, ShoppingBag, Menu, X, PawPrint } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useLanguage } from '@/contexts/LanguageContext'
+import { LanguageSwitcher } from '@/components/language-switcher'
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const { t } = useLanguage()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,13 +22,13 @@ export function Navigation() {
   }, [])
 
   const navItems = [
-    { label: 'Home', href: '/' },
-    { label: 'Donate', href: '/donate' },
-    { label: 'Shop', href: '/shop' },
-    { label: 'Sponsor a Pet', href: '/sponsor' },
-    { label: 'Our Impact', href: '/impact' },
-    { label: 'Partners', href: '/partners' },
-    { label: 'About', href: '/about' },
+    { label: t.nav.home, href: '/' },
+    { label: t.nav.donate, href: '/donate' },
+    { label: t.nav.shop, href: '/shop' },
+    { label: t.nav.sponsor, href: '/sponsor' },
+    { label: t.nav.impact, href: '/impact' },
+    { label: t.nav.partners, href: '/partners' },
+    { label: t.nav.about, href: '/about' },
   ]
 
   return (
@@ -50,12 +53,12 @@ export function Navigation() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-8">
+          <div className="hidden lg:flex items-center space-x-2 xl:space-x-4 2xl:space-x-6">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="relative group font-medium text-foreground/80 hover:text-orange-500 transition-colors duration-200"
+                className="relative group font-medium text-foreground/80 hover:text-orange-500 transition-colors duration-200 text-xs xl:text-sm 2xl:text-base whitespace-nowrap px-1"
               >
                 {item.label}
                 <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 group-hover:w-full transition-all duration-200" />
@@ -64,11 +67,13 @@ export function Navigation() {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 xl:space-x-4">
+            <LanguageSwitcher />
+            
             <Link href="/favorites">
               <Button variant="ghost" size="icon" className="relative hover:scale-110 transition-transform duration-200">
-                <Heart className="h-5 w-5" />
-                <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
+                <Heart className="h-4 w-4 xl:h-5 xl:w-5" />
+                <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 xl:h-5 xl:w-5 flex items-center justify-center animate-pulse">
                   3
                 </div>
               </Button>
@@ -76,17 +81,17 @@ export function Navigation() {
 
             <Link href="/basket">
               <Button variant="ghost" size="icon" className="relative hover:scale-110 transition-transform duration-200">
-                <ShoppingBag className="h-5 w-5" />
-                <div className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center animate-pulse" style={{ animationDelay: '0.5s' }}>
+                <ShoppingBag className="h-4 w-4 xl:h-5 xl:w-5" />
+                <div className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full h-4 w-4 xl:h-5 xl:w-5 flex items-center justify-center animate-pulse" style={{ animationDelay: '0.5s' }}>
                   2
                 </div>
               </Button>
             </Link>
 
             <Link href="/donate">
-              <Button variant="glow" size="sm" className="hidden sm:flex hover:scale-105 transition-transform duration-200">
-                <Heart className="h-4 w-4 mr-2" />
-                Donate Now
+              <Button variant="glow" size="sm" className="hidden sm:flex hover:scale-105 transition-transform duration-200 text-xs xl:text-sm">
+                <Heart className="h-3 w-3 xl:h-4 xl:w-4 mr-1 xl:mr-2" />
+                {t.nav.donateNow}
               </Button>
             </Link>
 
@@ -112,12 +117,12 @@ export function Navigation() {
         "lg:hidden bg-background/95 backdrop-blur-md border-t border-border transition-all duration-200 overflow-hidden",
         isMobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
       )}>
-        <div className="container mx-auto px-4 py-4 space-y-4">
+        <div className="container mx-auto px-4 py-4 space-y-3">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="block py-2 text-lg font-medium text-foreground/80 hover:text-orange-500 transition-colors duration-200"
+              className="block py-2 text-base sm:text-lg font-medium text-foreground/80 hover:text-orange-500 transition-colors duration-200 whitespace-nowrap"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {item.label}
@@ -125,9 +130,9 @@ export function Navigation() {
           ))}
           <div className="pt-4 border-t border-border">
             <Link href="/donate">
-              <Button variant="glow" className="w-full hover:scale-105 transition-transform duration-200">
+              <Button variant="glow" className="w-full hover:scale-105 transition-transform duration-200 text-sm sm:text-base">
                 <Heart className="h-4 w-4 mr-2" />
-                Donate Now
+                {t.nav.donateNow}
               </Button>
             </Link>
           </div>

@@ -7,6 +7,7 @@ import { ProductCard } from '@/components/shop/product-card'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 // Mock product data
 const products = [
@@ -95,20 +96,22 @@ const products = [
 ]
 
 const categories = ['All', 'Apparel', 'Technology', 'Furniture', 'Accessories', 'Food']
-const sortOptions = [
-  { value: 'popular', label: 'Most Popular' },
-  { value: 'price-low', label: 'Price: Low to High' },
-  { value: 'price-high', label: 'Price: High to Low' },
-  { value: 'rating', label: 'Highest Rated' },
-  { value: 'newest', label: 'Newest First' }
-]
 
 export default function ShopPage() {
+  const { t } = useLanguage()
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [sortBy, setSortBy] = useState('popular')
   const [cartItems, setCartItems] = useState<string[]>([])
   const [wishlistItems, setWishlistItems] = useState<string[]>([])
+
+  const sortOptions = [
+    { value: 'popular', label: t.shop.filters.sortPopular },
+    { value: 'price-low', label: t.shop.filters.sortPriceLow },
+    { value: 'price-high', label: t.shop.filters.sortPriceHigh },
+    { value: 'rating', label: t.shop.filters.sortRating },
+    { value: 'newest', label: t.shop.filters.sortNewest }
+  ]
 
   const filteredAndSortedProducts = useMemo(() => {
     let filtered = products
@@ -163,7 +166,7 @@ export default function ShopPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       {/* Header */}
       <section className="relative py-20 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -180,22 +183,21 @@ export default function ShopPage() {
               className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-100 to-red-100 text-orange-800 px-4 py-2 rounded-full text-sm font-medium mb-6"
             >
               <ShoppingCart className="h-4 w-4 fill-orange-500 text-orange-500" />
-              100% Profits Go to Rescue Dogs
+              {t.shop.hero.badge}
             </motion.div>
             
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold leading-tight mb-6">
               <span className="bg-gradient-to-r from-gray-900 via-orange-600 to-red-600 bg-clip-text text-transparent">
-                Shop to
+                {t.shop.hero.title}
               </span>
               <br />
               <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
-                Save Lives
+                {t.shop.hero.titleHighlight}
               </span>
             </h1>
             
-            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
-              Every purchase directly supports our rescue operations. From custom portraits to eco-friendly accessories, 
-              shop with purpose and help save dogs worldwide.
+            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-200 max-w-3xl mx-auto">
+              {t.shop.hero.subtitle}
             </p>
           </motion.div>
 
@@ -204,8 +206,8 @@ export default function ShopPage() {
             {[
               {
                 icon: Leaf,
-                title: "Eco-Friendly Products",
-                description: "Sustainable materials and ethical production"
+                title: t.shop.features.ecoFriendly,
+                description: t.shop.features.ecoFriendlyDesc
               },
               {
                 icon: Shield,
@@ -214,8 +216,8 @@ export default function ShopPage() {
               },
               {
                 icon: Truck,
-                title: "Free Shipping",
-                description: "Free shipping on orders over $50"
+                title: t.shop.features.freeShipping,
+                description: t.shop.features.freeShippingDesc
               }
             ].map((feature, index) => (
               <div
@@ -227,10 +229,10 @@ export default function ShopPage() {
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white mb-4 hover:scale-110 transition-transform duration-200">
                       {React.createElement(feature.icon, { className: "h-8 w-8" })}
                     </div>
-                    <h3 className="text-xl font-bold mb-2 text-gray-900">
+                    <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
                       {feature.title}
                     </h3>
-                    <p className="text-gray-600">
+                    <p className="text-gray-600 dark:text-gray-300">
                       {feature.description}
                     </p>
                   </CardContent>
@@ -249,7 +251,7 @@ export default function ShopPage() {
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <Input
-                placeholder="Search products..."
+                placeholder={t.shop.filters.searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 pr-4 py-3 rounded-xl border-gray-200 focus:border-orange-500 focus:ring-orange-500"
@@ -292,11 +294,11 @@ export default function ShopPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Results Count */}
           <div className="flex items-center justify-between mb-8">
-            <p className="text-gray-600">
-              Showing {filteredAndSortedProducts.length} of {products.length} products
+            <p className="text-gray-600 dark:text-gray-300">
+              {t.shop.filters.showingResults.replace('{count}', filteredAndSortedProducts.length.toString()).replace('{total}', products.length.toString())}
             </p>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">Cart:</span>
+              <span className="text-sm text-gray-600 dark:text-gray-300">Cart:</span>
               <div className="flex items-center gap-1 bg-orange-500 text-white px-3 py-1 rounded-full text-sm">
                 <ShoppingCart className="h-4 w-4" />
                 {cartItems.length}
@@ -333,9 +335,9 @@ export default function ShopPage() {
               className="text-center py-16"
             >
               <div className="text-6xl mb-4">🔍</div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">No products found</h3>
-              <p className="text-gray-600 mb-6">
-                Try adjusting your search or filter criteria
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{t.shop.filters.noProductsFound}</h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
+                {t.shop.filters.tryAdjustingSearch}
               </p>
               <Button
                 onClick={() => {
@@ -345,7 +347,7 @@ export default function ShopPage() {
                 }}
                 className="bg-orange-500 hover:bg-orange-600"
               >
-                Clear Filters
+                {t.shop.filters.clearFilters}
               </Button>
             </motion.div>
           )}
@@ -370,13 +372,25 @@ export default function ShopPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button className="bg-white text-orange-500 px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition-colors duration-300 shadow-lg">
+                <Button 
+                  onClick={() => {
+                    const productsSection = document.querySelector('section:nth-of-type(3)')
+                    if (productsSection) {
+                      productsSection.scrollIntoView({ behavior: 'smooth' })
+                    }
+                  }}
+                  className="bg-white text-orange-500 px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition-colors duration-300 shadow-lg"
+                >
                   <ShoppingCart className="h-5 w-5 mr-2" />
                   Start Shopping
                 </Button>
               </motion.div>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button variant="outline" className="border-white text-white hover:bg-white hover:text-orange-500 px-8 py-4 rounded-full text-lg font-semibold transition-colors duration-300">
+                <Button 
+                  variant="outline" 
+                  onClick={() => window.location.href = '/about'}
+                  className="border-white text-white hover:bg-white hover:text-orange-500 px-8 py-4 rounded-full text-lg font-semibold transition-colors duration-300"
+                >
                   <Heart className="h-5 w-5 mr-2" />
                   Learn About Our Mission
                 </Button>

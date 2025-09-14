@@ -19,13 +19,16 @@ import {
   MapPin
 } from 'lucide-react'
 import React from 'react'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 export default function ImpactPage() {
+  const { t } = useLanguage()
+  
   const globalStats = [
-    { icon: Heart, value: "15,000+", label: "Lives Saved", change: "+2,500 this year" },
-    { icon: Users, value: "500+", label: "Partner Shelters", change: "+50 new partners" },
-    { icon: Globe, value: "47", label: "Countries", change: "+12 new countries" },
-    { icon: Award, value: "98%", label: "Success Rate", change: "Maintained 98%" },
+    { icon: Heart, value: "15,000+", label: t.impact.globalStats.livesSaved, change: "+2,500 this year" },
+    { icon: Users, value: "500+", label: t.impact.globalStats.partnerShelters, change: "+50 new partners" },
+    { icon: Globe, value: "47", label: t.impact.globalStats.countries, change: "+12 new countries" },
+    { icon: Award, value: "98%", label: t.impact.globalStats.successRate, change: "Maintained 98%" },
   ]
 
   const monthlyImpact = [
@@ -103,22 +106,21 @@ export default function ImpactPage() {
           <div className="text-center max-w-4xl mx-auto">
             <Badge className="mb-6 bg-gradient-to-r from-orange-100 to-red-100 text-orange-800 border-orange-200 hover:scale-105 transition-transform duration-200">
               <TrendingUp className="h-4 w-4 mr-2" />
-              Our Impact
+              {t.impact.hero.badge}
             </Badge>
             
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold mb-6">
               <span className="bg-gradient-to-r from-gray-900 via-orange-600 to-red-600 bg-clip-text text-transparent">
-                Making a Real
+                {t.impact.hero.title}
               </span>
               <br />
               <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
-                Difference
+                {t.impact.hero.titleHighlight}
               </span>
             </h1>
             
             <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-              Every donation, every purchase, every action creates a ripple effect of positive change. 
-              See how our community is transforming lives and creating happy endings worldwide.
+              {t.impact.hero.subtitle}
             </p>
           </div>
         </div>
@@ -130,11 +132,11 @@ export default function ImpactPage() {
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-6">
               <span className="bg-gradient-to-r from-gray-900 via-orange-600 to-red-600 bg-clip-text text-transparent">
-                Global Impact
+                {t.impact.globalImpact.title}
               </span>
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Numbers that tell the story of lives saved, communities transformed, and hope restored.
+              {t.impact.globalImpact.subtitle}
             </p>
           </div>
 
@@ -167,11 +169,11 @@ export default function ImpactPage() {
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-6">
               <span className="bg-gradient-to-r from-gray-900 via-orange-600 to-red-600 bg-clip-text text-transparent">
-                Monthly Progress
+                {t.impact.monthlyProgress.title}
               </span>
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Track our growing impact month by month as we rescue more dogs and create more happy endings.
+              {t.impact.monthlyProgress.subtitle}
             </p>
           </div>
 
@@ -210,7 +212,7 @@ export default function ImpactPage() {
 
             {/* Regional Breakdown */}
             <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-8">Regional Impact</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-8">{t.impact.regionalImpact.title}</h3>
               <div className="space-y-6">
                 {topRegions.map((region, index) => (
                   <Card key={region.region} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm hover:scale-105">
@@ -241,11 +243,11 @@ export default function ImpactPage() {
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-6">
               <span className="bg-gradient-to-r from-gray-900 via-orange-600 to-red-600 bg-clip-text text-transparent">
-                Success Stories
+                {t.impact.successStories.title}
               </span>
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Real stories of transformation and the lasting impact of our rescue efforts.
+              {t.impact.successStories.subtitle}
             </p>
           </div>
 
@@ -279,11 +281,11 @@ export default function ImpactPage() {
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-6">
               <span className="bg-gradient-to-r from-gray-900 via-orange-600 to-red-600 bg-clip-text text-transparent">
-                Our Goals
+                {t.impact.goals.title}
               </span>
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Ambitious targets that drive our mission forward and measure our collective impact.
+              {t.impact.goals.subtitle}
             </p>
           </div>
 
@@ -316,20 +318,19 @@ export default function ImpactPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
             <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-              Be Part of Our Impact
+              {t.impact.cta.title}
             </h2>
             <p className="text-xl text-orange-100 mb-8">
-              Every donation and purchase directly contributes to these numbers. 
-              Help us reach our goals and create even more happy endings.
+              {t.impact.cta.subtitle}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" variant="secondary" className="hover:scale-105 transition-transform duration-200">
                 <Heart className="h-5 w-5 mr-2" />
-                Donate Now
+                {t.impact.cta.donateNow}
               </Button>
               <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-orange-600 hover:scale-105 transition-all duration-200">
                 <ArrowRight className="h-5 w-5 mr-2" />
-                Shop for a Cause
+                {t.impact.cta.shopForCause}
               </Button>
             </div>
           </div>

@@ -6,12 +6,15 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Heart, Users, Globe, Shield, Award, Star } from 'lucide-react'
 import React from 'react'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 export function GlobalPartners() {
+  const { t } = useLanguage()
+  
   const stats = [
-    { icon: Heart, value: "2,847", label: "Lives Saved This Month" },
-    { icon: Users, value: "156", label: "Partner Shelters" },
-    { icon: Globe, value: "47", label: "Countries Worldwide" },
+    { icon: Heart, value: "2,847", label: t.partners.livesSavedThisMonth },
+    { icon: Users, value: "156", label: t.partners.partnerShelters },
+    { icon: Globe, value: "47", label: t.partners.countriesWorldwide },
   ]
 
   const partners = [
@@ -68,18 +71,18 @@ export function GlobalPartners() {
   const features = [
     {
       icon: Shield,
-      title: "Verified Partners",
-      description: "All partners are thoroughly vetted and certified"
+      title: t.partners.verifiedPartners,
+      description: t.partners.verifiedPartnersDesc
     },
     {
       icon: Award,
-      title: "Proven Impact",
-      description: "Track record of successful rescues and adoptions"
+      title: t.partners.provenImpact,
+      description: t.partners.provenImpactDesc
     },
     {
       icon: Star,
-      title: "Community Trust",
-      description: "Highly rated by local communities and adopters"
+      title: t.partners.communityTrust,
+      description: t.partners.communityTrustDesc
     }
   ]
 
@@ -97,22 +100,21 @@ export function GlobalPartners() {
         <div className="text-center mb-16">
           <Badge className="mb-4 bg-gradient-to-r from-orange-100 to-red-100 text-orange-800 border-orange-200 hover:scale-105 transition-transform duration-200">
             <Globe className="h-4 w-4 mr-2" />
-            Global Network
+            {t.partners.globalNetwork}
           </Badge>
           
           <h2 className="text-4xl sm:text-5xl font-display font-bold mb-6">
             <span className="bg-gradient-to-r from-gray-900 via-orange-600 to-red-600 bg-clip-text text-transparent">
-              Trusted Partners
+              {t.partners.trustedPartners}
             </span>
             <br />
             <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
-              Worldwide
+              {t.partners.worldwide}
             </span>
           </h2>
           
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            Join our network of verified rescue organizations and shelters working together 
-            to save dogs and create happy endings across the globe.
+            {t.partners.joinNetwork}
           </p>
 
           {/* Impact Stats */}
@@ -165,7 +167,7 @@ export function GlobalPartners() {
                     {partner.impact}
                   </span>
                   <Badge variant="secondary" className="bg-orange-100 text-orange-800 hover:scale-105 transition-transform duration-200">
-                    Verified
+                    {t.partners.verified}
                   </Badge>
                 </div>
               </CardContent>
@@ -196,23 +198,22 @@ export function GlobalPartners() {
             <div className="absolute inset-0 bg-gradient-to-r from-orange-600/20 to-red-600/20" />
             <div className="relative z-10">
               <h3 className="text-3xl md:text-4xl font-bold mb-4">
-                Join Our Global Network
+                {t.partners.joinGlobalNetwork}
               </h3>
               <p className="text-xl text-orange-100 mb-8 max-w-2xl mx-auto">
-                Become a verified partner and help us save more lives together. 
-                Join thousands of organizations making a difference worldwide.
+                {t.partners.becomePartner}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/partners">
                   <Button size="lg" variant="secondary" className="hover:scale-105 transition-transform duration-200">
                     <Globe className="h-5 w-5 mr-2" />
-                    View All Partners
+                    {t.partners.viewAllPartners}
                   </Button>
                 </Link>
                 <Link href="/partners">
                   <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-orange-600 hover:scale-105 transition-all duration-200">
                     <Heart className="h-5 w-5 mr-2" />
-                    Become a Partner
+                    {t.partners.becomeAPartner}
                   </Button>
                 </Link>
               </div>
