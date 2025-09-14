@@ -1,258 +1,311 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { Heart, Users, Globe, Award, TrendingUp, Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
+import { 
+  Heart, 
+  Users, 
+  Globe, 
+  Award, 
+  Shield, 
+  Star,
+  ArrowRight,
+  PawPrint,
+  Target,
+  TrendingUp,
+  Calendar,
+  MapPin
+} from 'lucide-react'
+import React from 'react'
 
 export default function ImpactPage() {
-  const impactStats = [
-    { 
-      number: "50,000+", 
-      label: "Dogs Rescued", 
-      icon: Heart,
-      description: "Lives saved and transformed through our rescue efforts",
-      color: "from-red-500 to-pink-500"
+  const globalStats = [
+    { icon: Heart, value: "15,000+", label: "Lives Saved", change: "+2,500 this year" },
+    { icon: Users, value: "500+", label: "Partner Shelters", change: "+50 new partners" },
+    { icon: Globe, value: "47", label: "Countries", change: "+12 new countries" },
+    { icon: Award, value: "98%", label: "Success Rate", change: "Maintained 98%" },
+  ]
+
+  const monthlyImpact = [
+    { month: "January", rescues: 1200, adoptions: 1100, medical: 800 },
+    { month: "February", rescues: 1350, adoptions: 1250, medical: 950 },
+    { month: "March", rescues: 1500, adoptions: 1400, medical: 1100 },
+    { month: "April", rescues: 1650, adoptions: 1550, medical: 1200 },
+    { month: "May", rescues: 1800, adoptions: 1700, medical: 1350 },
+    { month: "June", rescues: 2000, adoptions: 1900, medical: 1500 },
+  ]
+
+  const topRegions = [
+    { region: "North America", rescues: 8500, percentage: 57 },
+    { region: "Europe", rescues: 3200, percentage: 21 },
+    { region: "Asia", rescues: 1800, percentage: 12 },
+    { region: "South America", rescues: 1000, percentage: 7 },
+    { region: "Africa", rescues: 500, percentage: 3 },
+  ]
+
+  const successStories = [
+    {
+      name: "Bella",
+      location: "Los Angeles, CA",
+      story: "Rescued from a hoarding situation with 20 other dogs. After 6 months of rehabilitation, she was adopted by a loving family and now works as a therapy dog.",
+      impact: "Now helps 50+ children weekly",
+      image: "🐕"
     },
-    { 
-      number: "156", 
-      label: "Partner Shelters", 
-      icon: Users,
-      description: "Trusted organizations working with us globally",
-      color: "from-blue-500 to-cyan-500"
+    {
+      name: "Max",
+      location: "Austin, TX",
+      story: "Found abandoned with severe injuries. Our medical team performed life-saving surgery, and he was adopted by a search and rescue team.",
+      impact: "Has helped find 12 missing persons",
+      image: "🐕‍🦺"
     },
-    { 
-      number: "47", 
-      label: "Countries", 
-      icon: Globe,
-      description: "Nations where we have active rescue operations",
-      color: "from-green-500 to-emerald-500"
-    },
-    { 
-      number: "98%", 
-      label: "Success Rate", 
-      icon: Award,
-      description: "Dogs successfully rehabilitated and rehomed",
-      color: "from-yellow-500 to-orange-500"
+    {
+      name: "Luna",
+      location: "Seattle, WA",
+      story: "Senior dog surrendered due to owner's health issues. We found her a perfect retirement home with a senior couple.",
+      impact: "Bringing joy to elderly community",
+      image: "🐕"
     }
   ]
 
-  const monthlyGoals = [
-    { title: "Emergency Rescues", current: 247, target: 300, color: "bg-red-500" },
-    { title: "Medical Treatments", current: 189, target: 250, color: "bg-blue-500" },
-    { title: "Successful Adoptions", current: 156, target: 200, color: "bg-green-500" },
-    { title: "New Partnerships", current: 8, target: 12, color: "bg-purple-500" }
-  ]
-
-  const recentAchievements = [
+  const goals = [
     {
-      title: "Hurricane Relief Operation",
-      description: "Rescued 47 dogs during Hurricane Ian in Florida",
-      date: "September 2024",
-      impact: "47 dogs saved"
+      title: "Rescue 20,000 Dogs",
+      current: 15000,
+      target: 20000,
+      description: "Our goal to rescue 20,000 dogs by end of 2024"
     },
     {
-      title: "Puppy Mill Raid",
-      description: "Collaborated with authorities to shut down illegal breeding operation",
-      date: "August 2024",
-      impact: "23 dogs rescued"
+      title: "Expand to 60 Countries",
+      current: 47,
+      target: 60,
+      description: "Growing our global network to reach more dogs in need"
     },
     {
-      title: "International Rescue",
-      description: "Coordinated rescue of 15 dogs from high-kill shelter in Mexico",
-      date: "July 2024",
-      impact: "15 dogs saved"
-    },
-    {
-      title: "Medical Fund Campaign",
-      description: "Raised $50,000 for emergency medical treatments",
-      date: "June 2024",
-      impact: "127 dogs treated"
+      title: "500 Partner Shelters",
+      current: 500,
+      target: 500,
+      description: "Maintaining our network of verified partner organizations"
     }
   ]
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
       {/* Hero Section */}
-      <section className="relative py-20 overflow-hidden">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-100 to-red-100 text-orange-800 px-4 py-2 rounded-full text-sm font-medium mb-6"
-            >
-              <TrendingUp className="h-4 w-4 fill-orange-500 text-orange-500" />
-              Real Impact, Real Results
-            </motion.div>
+      <section className="py-20 relative overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-20 right-10 w-32 h-32 bg-orange-200/20 rounded-full blur-2xl animate-pulse" />
+          <div className="absolute bottom-20 left-10 w-40 h-40 bg-red-200/20 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }} />
+        </div>
+
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center max-w-4xl mx-auto">
+            <Badge className="mb-6 bg-gradient-to-r from-orange-100 to-red-100 text-orange-800 border-orange-200 hover:scale-105 transition-transform duration-200">
+              <TrendingUp className="h-4 w-4 mr-2" />
+              Our Impact
+            </Badge>
             
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold leading-tight mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold mb-6">
               <span className="bg-gradient-to-r from-gray-900 via-orange-600 to-red-600 bg-clip-text text-transparent">
-                Our
+                Making a Real
               </span>
               <br />
               <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
-                Impact
+                Difference
               </span>
             </h1>
             
-            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
-              See the real difference we're making in the lives of dogs worldwide. 
-              Every number represents a life saved, a family made whole, and hope restored.
+            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+              Every donation, every purchase, every action creates a ripple effect of positive change. 
+              See how our community is transforming lives and creating happy endings worldwide.
             </p>
-          </motion.div>
+          </div>
+        </div>
+      </section>
 
-          {/* Impact Stats */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-            {impactStats.map((stat, index) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                whileHover={{ y: -5 }}
-              >
-                <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
-                  <CardContent className="p-6 text-center">
-                    <motion.div
-                      className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${stat.color} text-white mb-4`}
-                      whileHover={{ rotate: 360, scale: 1.1 }}
-                      transition={{ duration: 0.6 }}
-                    >
-                      <stat.icon className="h-8 w-8" />
-                    </motion.div>
-                    <div className="text-3xl font-bold text-gray-900 mb-2">
-                      {stat.number}
-                    </div>
-                    <div className="text-lg font-semibold text-gray-700 mb-2">
-                      {stat.label}
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      {stat.description}
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
+      {/* Global Stats */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-gray-900 via-orange-600 to-red-600 bg-clip-text text-transparent">
+                Global Impact
+              </span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Numbers that tell the story of lives saved, communities transformed, and hope restored.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {globalStats.map((stat, index) => (
+              <Card key={stat.label} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm hover:scale-105 group">
+                <CardContent className="p-6 text-center">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white mb-4 hover:scale-110 transition-transform duration-200">
+                    {React.createElement(stat.icon, { className: "h-8 w-8" })}
+                  </div>
+                  <div className="text-3xl font-bold text-orange-600 mb-2">
+                    {stat.value}
+                  </div>
+                  <div className="text-gray-600 font-medium mb-2">
+                    {stat.label}
+                  </div>
+                  <div className="text-sm text-green-600 font-medium">
+                    {stat.change}
+                  </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Monthly Goals */}
-      <section className="py-20 bg-white/50">
+      {/* Monthly Progress */}
+      <section className="py-20 bg-gradient-to-br from-orange-50 to-red-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl font-display font-bold mb-6">
-              <span className="bg-gradient-to-r from-gray-900 to-orange-600 bg-clip-text text-transparent">
-                This Month's Goals
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-gray-900 via-orange-600 to-red-600 bg-clip-text text-transparent">
+                Monthly Progress
               </span>
             </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              We set ambitious monthly targets to ensure we're always pushing forward in our mission.
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Track our growing impact month by month as we rescue more dogs and create more happy endings.
             </p>
-          </motion.div>
+          </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            {monthlyGoals.map((goal, index) => (
-              <motion.div
-                key={goal.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                viewport={{ once: true }}
-                whileHover={{ y: -5 }}
-              >
-                <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/90 backdrop-blur-sm">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* Chart Area */}
+            <div className="space-y-6">
+              {monthlyImpact.map((month, index) => (
+                <Card key={month.month} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm hover:scale-105">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-xl font-bold text-gray-900">
-                        {goal.title}
-                      </h3>
-                      <span className="text-2xl font-bold text-gray-700">
-                        {goal.current}/{goal.target}
-                      </span>
+                      <h3 className="text-lg font-bold text-gray-900">{month.month}</h3>
+                      <Badge variant="secondary" className="bg-orange-100 text-orange-800">
+                        {month.rescues} total rescues
+                      </Badge>
                     </div>
-                    <Progress 
-                      value={(goal.current / goal.target) * 100} 
-                      className="h-3 mb-2"
-                    />
-                    <div className="flex justify-between text-sm text-gray-600">
-                      <span>{Math.round((goal.current / goal.target) * 100)}% Complete</span>
-                      <span>{goal.target - goal.current} remaining</span>
+                    <div className="space-y-3">
+                      <div>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span>Adoptions</span>
+                          <span>{month.adoptions}</span>
+                        </div>
+                        <Progress value={(month.adoptions / month.rescues) * 100} className="h-2" />
+                      </div>
+                      <div>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span>Medical Care</span>
+                          <span>{month.medical}</span>
+                        </div>
+                        <Progress value={(month.medical / month.rescues) * 100} className="h-2" />
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
-              </motion.div>
+              ))}
+            </div>
+
+            {/* Regional Breakdown */}
+            <div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-8">Regional Impact</h3>
+              <div className="space-y-6">
+                {topRegions.map((region, index) => (
+                  <Card key={region.region} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm hover:scale-105">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center space-x-3">
+                          <MapPin className="h-5 w-5 text-orange-500" />
+                          <span className="font-medium text-gray-900">{region.region}</span>
+                        </div>
+                        <span className="text-2xl font-bold text-orange-600">{region.rescues.toLocaleString()}</span>
+                      </div>
+                      <Progress value={region.percentage} className="h-3" />
+                      <div className="text-sm text-gray-600 mt-2">
+                        {region.percentage}% of total rescues
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Success Stories */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-gray-900 via-orange-600 to-red-600 bg-clip-text text-transparent">
+                Success Stories
+              </span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Real stories of transformation and the lasting impact of our rescue efforts.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {successStories.map((story, index) => (
+              <Card key={story.name} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm hover:scale-105 group">
+                <CardContent className="p-6 text-center">
+                  <div className="text-6xl mb-4">{story.image}</div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors duration-200">
+                    {story.name}
+                  </h3>
+                  <p className="text-sm text-gray-500 mb-4">
+                    {story.location}
+                  </p>
+                  <p className="text-gray-600 mb-4 text-sm">
+                    {story.story}
+                  </p>
+                  <Badge variant="secondary" className="bg-green-100 text-green-800 hover:scale-105 transition-transform duration-200">
+                    {story.impact}
+                  </Badge>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Recent Achievements */}
-      <section className="py-20">
+      {/* Goals & Progress */}
+      <section className="py-20 bg-gradient-to-br from-orange-50 to-red-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl font-display font-bold mb-6">
-              <span className="bg-gradient-to-r from-gray-900 to-orange-600 bg-clip-text text-transparent">
-                Recent Achievements
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-gray-900 via-orange-600 to-red-600 bg-clip-text text-transparent">
+                Our Goals
               </span>
             </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Here are some of our recent successes that showcase the impact of your support.
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Ambitious targets that drive our mission forward and measure our collective impact.
             </p>
-          </motion.div>
+          </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            {recentAchievements.map((achievement, index) => (
-              <motion.div
-                key={achievement.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                viewport={{ once: true }}
-                whileHover={{ y: -5 }}
-              >
-                <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/90 backdrop-blur-sm">
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">
-                          {achievement.title}
-                        </h3>
-                        <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
-                          <Calendar className="h-4 w-4" />
-                          <span>{achievement.date}</span>
-                        </div>
-                      </div>
-                      <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                        {achievement.impact}
-                      </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {goals.map((goal, index) => (
+              <Card key={goal.title} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm hover:scale-105">
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">
+                    {goal.title}
+                  </h3>
+                  <div className="mb-4">
+                    <div className="flex justify-between text-sm mb-2">
+                      <span>Progress</span>
+                      <span>{goal.current.toLocaleString()} / {goal.target.toLocaleString()}</span>
                     </div>
-                    <p className="text-gray-600">
-                      {achievement.description}
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                    <Progress value={(goal.current / goal.target) * 100} className="h-3" />
+                  </div>
+                  <p className="text-gray-600 text-sm">
+                    {goal.description}
+                  </p>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>
@@ -260,34 +313,26 @@ export default function ImpactPage() {
 
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-orange-500 to-red-500 text-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl sm:text-4xl font-display font-bold mb-6">
-              Help Us Make Even Greater Impact
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-4xl mx-auto">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+              Be Part of Our Impact
             </h2>
-            <p className="text-xl mb-8 max-w-3xl mx-auto opacity-90">
-              Your support directly enables these life-saving operations. 
-              Every donation helps us reach more dogs and create more happy endings.
+            <p className="text-xl text-orange-100 mb-8">
+              Every donation and purchase directly contributes to these numbers. 
+              Help us reach our goals and create even more happy endings.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button className="bg-white text-orange-500 px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition-colors duration-300 shadow-lg">
-                  <Heart className="h-5 w-5 mr-2" />
-                  Donate Now
-                </Button>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button variant="outline" className="border-white text-white hover:bg-white hover:text-orange-500 px-8 py-4 rounded-full text-lg font-semibold transition-colors duration-300">
-                  View Success Stories
-                </Button>
-              </motion.div>
+              <Button size="lg" variant="secondary" className="hover:scale-105 transition-transform duration-200">
+                <Heart className="h-5 w-5 mr-2" />
+                Donate Now
+              </Button>
+              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-orange-600 hover:scale-105 transition-all duration-200">
+                <ArrowRight className="h-5 w-5 mr-2" />
+                Shop for a Cause
+              </Button>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
     </div>

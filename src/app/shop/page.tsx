@@ -218,22 +218,15 @@ export default function ShopPage() {
                 description: "Free shipping on orders over $50"
               }
             ].map((feature, index) => (
-              <motion.div
+              <div
                 key={feature.title}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 + index * 0.1, duration: 0.6 }}
-                whileHover={{ y: -5 }}
+                className="hover:transform hover:-translate-y-1 transition-transform duration-200"
               >
                 <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
                   <CardContent className="p-6 text-center">
-                    <motion.div
-                      className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white mb-4"
-                      whileHover={{ rotate: 360, scale: 1.1 }}
-                      transition={{ duration: 0.6 }}
-                    >
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white mb-4 hover:scale-110 transition-transform duration-200">
                       {React.createElement(feature.icon, { className: "h-8 w-8" })}
-                    </motion.div>
+                    </div>
                     <h3 className="text-xl font-bold mb-2 text-gray-900">
                       {feature.title}
                     </h3>
@@ -242,7 +235,7 @@ export default function ShopPage() {
                     </p>
                   </CardContent>
                 </Card>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>

@@ -1,17 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, useAnimation } from 'framer-motion'
 import Link from 'next/link'
 import { Heart, Play, ArrowRight, Star, Users, Globe } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { cn } from '@/lib/utils'
 
 export function HeroSection() {
   const [currentStat, setCurrentStat] = useState(0)
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
-  const controls = useAnimation()
 
   const stats = [
     { number: "2,847", label: "Dogs Saved This Month", icon: Heart },
@@ -33,88 +30,27 @@ export function HeroSection() {
     return () => clearInterval(interval)
   }, [stats.length])
 
-  useEffect(() => {
-    controls.start({
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: "easeOut" }
-    })
-  }, [controls])
-
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-orange-50 via-white to-red-50">
-      {/* Animated Background Elements */}
+      {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute top-20 left-10 w-20 h-20 bg-orange-200/30 rounded-full blur-xl"
-          animate={{
-            x: [0, 100, 0],
-            y: [0, -50, 0],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-        <motion.div
-          className="absolute top-40 right-20 w-32 h-32 bg-red-200/20 rounded-full blur-xl"
-          animate={{
-            x: [0, -80, 0],
-            y: [0, 60, 0],
-            scale: [1, 0.8, 1],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 2,
-          }}
-        />
-        <motion.div
-          className="absolute bottom-20 left-1/4 w-16 h-16 bg-yellow-200/40 rounded-full blur-xl"
-          animate={{
-            x: [0, 60, 0],
-            y: [0, -80, 0],
-            scale: [1, 1.3, 1],
-          }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 4,
-          }}
-        />
+        <div className="absolute top-20 left-10 w-20 h-20 bg-orange-200/30 rounded-full blur-xl animate-pulse" />
+        <div className="absolute top-40 right-20 w-32 h-32 bg-red-200/20 rounded-full blur-xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute bottom-20 left-1/4 w-16 h-16 bg-yellow-200/40 rounded-full blur-xl animate-pulse" style={{ animationDelay: '2s' }} />
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
-          <motion.div
-            initial={{ opacity: 0, x: -100 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="text-center lg:text-left"
-          >
+          <div className="text-center lg:text-left">
             {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-100 to-red-100 text-orange-800 px-4 py-2 rounded-full text-sm font-medium mb-6"
-            >
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-100 to-red-100 text-orange-800 px-4 py-2 rounded-full text-sm font-medium mb-6">
               <Star className="h-4 w-4 fill-orange-500 text-orange-500" />
               Trusted by 50,000+ Donors Worldwide
-            </motion.div>
+            </div>
 
             {/* Main Headline */}
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.8 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold leading-tight mb-6"
-            >
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold leading-tight mb-6">
               <span className="bg-gradient-to-r from-gray-900 via-orange-600 to-red-600 bg-clip-text text-transparent">
                 Every Dog Deserves
               </span>
@@ -122,53 +58,34 @@ export function HeroSection() {
               <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
                 A Happy Ending
               </span>
-            </motion.h1>
+            </h1>
 
             {/* Subtitle */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-              className="text-lg sm:text-xl text-gray-600 mb-8 max-w-2xl mx-auto lg:mx-0"
-            >
+            <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-2xl mx-auto lg:mx-0">
               Join our global movement to rescue, rehabilitate, and rehome dogs in need. 
               Every donation and purchase directly saves lives and creates miracles.
-            </motion.p>
+            </p>
 
             {/* CTA Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.6 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
-            >
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Link href="/donate">
-                  <Button size="xl" variant="glow" className="group">
-                    <Heart className="h-5 w-5 mr-2 group-hover:animate-pulse" />
-                    Donate Now
-                    <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-              </motion.div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <Link href="/donate">
+                <Button size="xl" variant="glow" className="group hover:scale-105 transition-transform duration-200">
+                  <Heart className="h-5 w-5 mr-2 group-hover:animate-pulse" />
+                  Donate Now
+                  <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
+                </Button>
+              </Link>
               
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Link href="/about">
-                  <Button size="xl" variant="outline" className="group">
-                    <Play className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
-                    Learn More
-                  </Button>
-                </Link>
-              </motion.div>
-            </motion.div>
+              <Link href="/about">
+                <Button size="xl" variant="outline" className="group hover:scale-105 transition-transform duration-200">
+                  <Play className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
+                  Learn More
+                </Button>
+              </Link>
+            </div>
 
             {/* Trust Indicators */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.6 }}
-              className="flex items-center justify-center lg:justify-start gap-8 mt-12"
-            >
+            <div className="flex items-center justify-center lg:justify-start gap-8 mt-12">
               <div className="text-center">
                 <div className="text-2xl font-bold text-orange-600">4.9★</div>
                 <div className="text-sm text-gray-500">Trustpilot</div>
@@ -181,33 +98,23 @@ export function HeroSection() {
                 <div className="text-2xl font-bold text-blue-600">98%</div>
                 <div className="text-sm text-gray-500">Success Rate</div>
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
           {/* Right Content - Hero Video/Image */}
-          <motion.div
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-            className="relative"
-          >
+          <div className="relative">
             {/* Main Hero Card */}
-            <Card className="relative overflow-hidden border-0 shadow-2xl bg-gradient-to-br from-orange-50 to-red-50">
+            <Card className="relative overflow-hidden border-0 shadow-2xl bg-gradient-to-br from-orange-50 to-red-50 hover:scale-105 transition-transform duration-300">
               <div className="aspect-video bg-gradient-to-br from-orange-100 to-red-100 flex items-center justify-center relative">
                 {!isVideoPlaying ? (
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    className="absolute inset-0 flex items-center justify-center cursor-pointer"
+                  <div
+                    className="absolute inset-0 flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-200"
                     onClick={() => setIsVideoPlaying(true)}
                   >
-                    <motion.div
-                      className="w-20 h-20 bg-white/90 rounded-full flex items-center justify-center shadow-lg"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
+                    <div className="w-20 h-20 bg-white/90 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-200">
                       <Play className="h-8 w-8 text-orange-500 ml-1" />
-                    </motion.div>
-                  </motion.div>
+                    </div>
+                  </div>
                 ) : (
                   <div className="w-full h-full bg-black flex items-center justify-center">
                     <div className="text-white text-center">
@@ -215,7 +122,7 @@ export function HeroSection() {
                       <Button
                         variant="outline"
                         onClick={() => setIsVideoPlaying(false)}
-                        className="text-white border-white hover:bg-white hover:text-black"
+                        className="text-white border-white hover:bg-white hover:text-black transition-colors duration-200"
                       >
                         Close Video
                       </Button>
@@ -224,12 +131,7 @@ export function HeroSection() {
                 )}
                 
                 {/* Floating Stats */}
-                <motion.div
-                  className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.8, duration: 0.5 }}
-                >
+                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg">
                   <div className="text-center">
                     <div className="text-2xl font-bold text-orange-600">
                       {stats[currentStat].number}
@@ -238,30 +140,23 @@ export function HeroSection() {
                       {stats[currentStat].label}
                     </div>
                   </div>
-                </motion.div>
+                </div>
               </div>
             </Card>
 
             {/* Floating Impact Cards */}
             {impactNumbers.map((stat, index) => (
-              <motion.div
+              <div
                 key={stat.label}
-                initial={{ opacity: 0, y: 50, x: index % 2 === 0 ? -50 : 50 }}
-                animate={{ opacity: 1, y: 0, x: 0 }}
-                transition={{ 
-                  delay: 1 + index * 0.2, 
-                  duration: 0.6,
-                  type: "spring",
-                  stiffness: 100
-                }}
-                className={cn(
-                  "absolute bg-white/95 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-orange-100",
-                  index === 0 && "top-4 left-4",
-                  index === 1 && "top-1/2 -left-4",
-                  index === 2 && "bottom-4 right-4",
+                className={`absolute bg-white/95 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-orange-100 hover:scale-110 transition-transform duration-200 ${
+                  index === 0 && "top-4 left-4"
+                } ${
+                  index === 1 && "top-1/2 -left-4"
+                } ${
+                  index === 2 && "bottom-4 right-4"
+                } ${
                   index === 3 && "bottom-1/2 -right-4"
-                )}
-                whileHover={{ scale: 1.05, y: -5 }}
+                }`}
               >
                 <div className="text-center">
                   <div className="text-lg font-bold text-orange-600">
@@ -271,34 +166,21 @@ export function HeroSection() {
                     {stat.label}
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </div>
 
       {/* Scroll Indicator */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.5, duration: 0.6 }}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-      >
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="flex flex-col items-center text-gray-400"
-        >
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+        <div className="flex flex-col items-center text-gray-400 animate-bounce">
           <div className="text-sm mb-2">Scroll to see more</div>
           <div className="w-6 h-10 border-2 border-gray-300 rounded-full flex justify-center">
-            <motion.div
-              animate={{ y: [0, 12, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="w-1 h-3 bg-gray-400 rounded-full mt-2"
-            />
+            <div className="w-1 h-3 bg-gray-400 rounded-full mt-2 animate-bounce" />
           </div>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </section>
   )
 }

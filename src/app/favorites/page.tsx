@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
 import { Heart, ShoppingCart, Star, Eye, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
@@ -95,21 +94,11 @@ export default function FavoritesPage() {
       {/* Header */}
       <section className="relative py-20 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-red-100 to-pink-100 text-red-800 px-4 py-2 rounded-full text-sm font-medium mb-6"
-            >
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-100 to-pink-100 text-red-800 px-4 py-2 rounded-full text-sm font-medium mb-6 hover:scale-105 transition-transform duration-200">
               <Heart className="h-4 w-4 fill-red-500 text-red-500" />
               Your Favorite Items
-            </motion.div>
+            </div>
             
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold leading-tight mb-6">
               <span className="bg-gradient-to-r from-gray-900 via-red-600 to-pink-600 bg-clip-text text-transparent">
@@ -125,13 +114,13 @@ export default function FavoritesPage() {
               Your saved items that support our rescue mission. 
               Every purchase helps save more dogs in need.
             </p>
-          </motion.div>
+          </div>
 
           {/* Back to Shop */}
           <div className="flex justify-center mb-8">
             <Link href="/shop">
-              <Button variant="outline" className="group">
-                <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+              <Button variant="outline" className="group hover:scale-105 transition-transform duration-200">
+                <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform duration-200" />
                 Back to Shop
               </Button>
             </Link>
@@ -161,12 +150,9 @@ export default function FavoritesPage() {
               {/* Products */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 {favorites.map((product, index) => (
-                  <motion.div
+                  <div
                     key={product.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1, duration: 0.5 }}
-                    className="group"
+                    className="group hover:scale-105 transition-transform duration-200"
                   >
                     <Card className="border-0 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden bg-white/90 backdrop-blur-sm">
                       {/* Product Image */}
@@ -197,15 +183,7 @@ export default function FavoritesPage() {
                         </div>
 
                         {/* Quick Actions */}
-                        <motion.div
-                          className="absolute top-3 right-3 flex flex-col gap-2"
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={{ 
-                            opacity: 1, 
-                            x: 0 
-                          }}
-                          transition={{ duration: 0.3 }}
-                        >
+                        <div className="absolute top-3 right-3 flex flex-col gap-2">
                           <Button
                             size="icon"
                             variant="secondary"
@@ -221,7 +199,7 @@ export default function FavoritesPage() {
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
-                        </motion.div>
+                        </div>
 
                         {/* Category Tag */}
                         <div className="absolute bottom-3 left-3">
@@ -323,16 +301,12 @@ export default function FavoritesPage() {
                         </div>
                       </CardFooter>
                     </Card>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             </>
           ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-16"
-            >
+            <div className="text-center py-16">
               <div className="text-6xl mb-4">💔</div>
               <h3 className="text-2xl font-bold text-gray-900 mb-2">No favorites yet</h3>
               <p className="text-gray-600 mb-6">
@@ -344,7 +318,7 @@ export default function FavoritesPage() {
                   Start Shopping
                 </Button>
               </Link>
-            </motion.div>
+            </div>
           )}
         </div>
       </section>
