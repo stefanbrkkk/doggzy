@@ -116,7 +116,7 @@ export function SuccessStories() {
             </span>
           </h2>
           
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+          <p className="text-xl text-gray-600 dark:text-gray-200 max-w-3xl mx-auto mb-8">
             Every donation and purchase creates a ripple effect of love and hope. 
             See how your support transforms lives and creates beautiful new beginnings.
           </p>
@@ -128,7 +128,7 @@ export function SuccessStories() {
                 <div className="text-3xl md:text-4xl font-bold text-orange-600 mb-2">
                   {stat.number}
                 </div>
-                <div className="text-gray-600 font-medium">
+                <div className="text-gray-600 dark:text-gray-300 font-medium">
                   {stat.label}
                 </div>
               </div>
@@ -139,7 +139,7 @@ export function SuccessStories() {
         {/* Success Stories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {stories.map((story, index) => (
-            <Card key={story.id} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm hover:scale-105 group">
+            <Card key={story.id} className="border-0 shadow-lg hover:shadow-xl dark:hover:shadow-white/10 transition-all duration-300 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:scale-105 group">
               <CardContent className="p-6">
                 {/* Story Header */}
                 <div className="flex items-start justify-between mb-4">
@@ -153,10 +153,10 @@ export function SuccessStories() {
 
                 {/* Dog Info */}
                 <div className="mb-4">
-                  <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-orange-600 transition-colors duration-200">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1 group-hover:text-orange-600 transition-colors duration-200">
                     {story.name}
                   </h3>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
                     {story.breed} • {story.age}
                   </p>
                 </div>
@@ -164,7 +164,7 @@ export function SuccessStories() {
                 {/* Quote */}
                 <div className="relative mb-4">
                   <Quote className="h-6 w-6 text-orange-200 absolute -top-2 -left-2" />
-                  <p className="text-gray-600 text-sm italic pl-4">
+                  <p className="text-gray-600 dark:text-gray-300 text-sm italic pl-4">
                     "{story.story}"
                   </p>
                 </div>
@@ -173,10 +173,10 @@ export function SuccessStories() {
                 <div className="border-t border-gray-100 pt-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium text-gray-900">
+                      <p className="font-medium text-gray-900 dark:text-white">
                         {story.adopter}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
                         {story.location}
                       </p>
                     </div>

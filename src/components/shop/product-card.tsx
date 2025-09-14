@@ -49,10 +49,10 @@ export function ProductCard({ product, onAddToCart, onAddToWishlist }: ProductCa
       onHoverEnd={() => setIsHovered(false)}
       className="group"
     >
-      <Card className="border-0 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden bg-white/90 backdrop-blur-sm">
+      <Card className="border-0 shadow-lg hover:shadow-2xl dark:hover:shadow-white/10 transition-all duration-300 overflow-hidden bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm group">
         {/* Product Image */}
         <div className="relative overflow-hidden">
-          <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+          <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center">
             {!imageLoaded && (
               <div className="w-16 h-16 bg-gradient-to-br from-orange-200 to-red-200 rounded-full animate-pulse" />
             )}
@@ -144,18 +144,18 @@ export function ProductCard({ product, onAddToCart, onAddToWishlist }: ProductCa
                 />
               ))}
             </div>
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-gray-600 dark:text-gray-300">
               ({product.reviewCount})
             </span>
           </div>
 
           {/* Product Name */}
-          <h3 className="font-semibold text-lg mb-2 line-clamp-2 group-hover:text-orange-600 transition-colors">
+          <h3 className="font-semibold text-lg mb-2 line-clamp-2 group-hover:text-orange-600 dark:text-white transition-colors">
             {product.name}
           </h3>
 
           {/* Description */}
-          <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
             {product.description}
           </p>
 
@@ -165,7 +165,7 @@ export function ProductCard({ product, onAddToCart, onAddToWishlist }: ProductCa
               <Badge
                 key={tag}
                 variant="outline"
-                className="text-xs border-gray-200 text-gray-600"
+                className="text-xs border-gray-200 dark:border-slate-600 text-gray-600 dark:text-gray-300"
               >
                 {tag}
               </Badge>
@@ -174,11 +174,11 @@ export function ProductCard({ product, onAddToCart, onAddToWishlist }: ProductCa
 
           {/* Price */}
           <div className="flex items-center gap-2 mb-4">
-            <span className="text-2xl font-bold text-orange-600">
+            <span className="text-2xl font-bold text-orange-600 dark:text-orange-400">
               ${product.price}
             </span>
             {product.originalPrice && (
-              <span className="text-lg text-gray-500 line-through">
+              <span className="text-lg text-gray-500 dark:text-gray-400 line-through">
                 ${product.originalPrice}
               </span>
             )}
@@ -228,12 +228,12 @@ export function ProductCard({ product, onAddToCart, onAddToWishlist }: ProductCa
           }}
           transition={{ duration: 0.3 }}
         >
-          <div className="bg-white/95 backdrop-blur-sm rounded-lg p-3 shadow-lg">
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm rounded-lg p-3 shadow-lg">
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
               <Truck className="h-4 w-4 text-green-500" />
               <span>Free shipping on orders over $50</span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300 mt-1">
               <Shield className="h-4 w-4 text-blue-500" />
               <span>30-day money-back guarantee</span>
             </div>

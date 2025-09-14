@@ -74,12 +74,12 @@ export function PetCard({ pet, onSponsor, onViewDetails }: PetCardProps) {
       onHoverEnd={() => setIsHovered(false)}
       className="group"
     >
-      <Card className="border-0 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden bg-white/90 backdrop-blur-sm">
+      <Card className="border-0 shadow-lg hover:shadow-2xl dark:hover:shadow-white/10 transition-all duration-300 overflow-hidden bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm group">
         {/* Pet Image */}
         <div className="relative overflow-hidden">
-          <div className="aspect-square bg-gradient-to-br from-orange-100 to-red-100 flex items-center justify-center">
+          <div className="aspect-square bg-gradient-to-br from-orange-100 to-red-100 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center">
             <motion.div
-              className="w-full h-full bg-gradient-to-br from-orange-200 to-red-200 flex items-center justify-center text-8xl"
+              className="w-full h-full bg-gradient-to-br from-orange-200 to-red-200 dark:from-slate-600 dark:to-slate-500 flex items-center justify-center text-8xl"
               animate={{ scale: isHovered ? 1.1 : 1 }}
               transition={{ duration: 0.3 }}
             >
@@ -96,7 +96,7 @@ export function PetCard({ pet, onSponsor, onViewDetails }: PetCardProps) {
 
           {/* Days in Care */}
           <div className="absolute top-4 right-4">
-            <Badge variant="secondary" className="bg-white/90 text-gray-700">
+            <Badge variant="secondary" className="bg-white/90 dark:bg-slate-700/90 text-gray-700 dark:text-gray-200">
               {pet.daysInCare} days
             </Badge>
           </div>
@@ -147,10 +147,10 @@ export function PetCard({ pet, onSponsor, onViewDetails }: PetCardProps) {
           {/* Pet Info */}
           <div className="flex items-start justify-between mb-4">
             <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-1 group-hover:text-orange-600 transition-colors">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1 group-hover:text-orange-600 transition-colors">
                 {pet.name}
               </h3>
-              <div className="flex items-center gap-4 text-sm text-gray-600">
+              <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-300">
                 <span>{pet.age} old</span>
                 <span>•</span>
                 <span>{pet.breed}</span>
@@ -159,20 +159,20 @@ export function PetCard({ pet, onSponsor, onViewDetails }: PetCardProps) {
           </div>
 
           {/* Location */}
-          <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
+          <div className="flex items-center gap-2 mb-4 text-sm text-gray-600 dark:text-gray-300">
             <MapPin className="h-4 w-4" />
             <span>{pet.location}</span>
           </div>
 
           {/* Description */}
-          <p className="text-gray-700 mb-4 line-clamp-3">
+          <p className="text-gray-700 dark:text-gray-300 mb-4 line-clamp-3">
             {pet.description}
           </p>
 
           {/* Medical Needs */}
           {pet.medicalNeeds.length > 0 && (
             <div className="mb-4">
-              <div className="text-sm font-medium text-gray-700 mb-2">Medical Needs:</div>
+              <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Medical Needs:</div>
               <div className="flex flex-wrap gap-1">
                 {pet.medicalNeeds.slice(0, 3).map((need) => (
                   <Badge key={need} variant="outline" className="text-xs border-red-200 text-red-600">
@@ -190,7 +190,7 @@ export function PetCard({ pet, onSponsor, onViewDetails }: PetCardProps) {
 
           {/* Personality */}
           <div className="mb-4">
-            <div className="text-sm font-medium text-gray-700 mb-2">Personality:</div>
+            <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Personality:</div>
             <div className="flex flex-wrap gap-1">
               {pet.personality.slice(0, 3).map((trait) => (
                 <Badge key={trait} variant="outline" className="text-xs border-blue-200 text-blue-600">
@@ -203,8 +203,8 @@ export function PetCard({ pet, onSponsor, onViewDetails }: PetCardProps) {
           {/* Progress */}
           <div className="mb-4">
             <div className="flex items-center justify-between text-sm mb-2">
-              <span className="text-gray-700">Fundraising Progress</span>
-              <span className="font-semibold text-orange-600">
+              <span className="text-gray-700 dark:text-gray-300">Fundraising Progress</span>
+              <span className="font-semibold text-orange-600 dark:text-orange-400">
                 {pet.progress}%
               </span>
             </div>
@@ -216,7 +216,7 @@ export function PetCard({ pet, onSponsor, onViewDetails }: PetCardProps) {
                 background: `linear-gradient(to right, ${getProgressColor(pet.progress)} ${pet.progress}%, #e5e7eb ${pet.progress}%)`
               }}
             />
-            <div className="flex items-center justify-between text-sm mt-2 text-gray-600">
+            <div className="flex items-center justify-between text-sm mt-2 text-gray-600 dark:text-gray-300">
               <span>${pet.raisedAmount.toLocaleString()} raised</span>
               <span>${pet.targetAmount.toLocaleString()} goal</span>
             </div>
@@ -224,15 +224,15 @@ export function PetCard({ pet, onSponsor, onViewDetails }: PetCardProps) {
 
           {/* Stats */}
           <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="text-center p-3 bg-gray-50 rounded-lg">
+            <div className="text-center p-3 bg-gray-50 dark:bg-slate-700 rounded-lg">
               <Users className="h-5 w-5 text-orange-500 mx-auto mb-1" />
-              <div className="text-lg font-semibold text-gray-900">{pet.sponsorCount}</div>
-              <div className="text-xs text-gray-600">Sponsors</div>
+              <div className="text-lg font-semibold text-gray-900 dark:text-white">{pet.sponsorCount}</div>
+              <div className="text-xs text-gray-600 dark:text-gray-300">Sponsors</div>
             </div>
-            <div className="text-center p-3 bg-gray-50 rounded-lg">
+            <div className="text-center p-3 bg-gray-50 dark:bg-slate-700 rounded-lg">
               <Calendar className="h-5 w-5 text-green-500 mx-auto mb-1" />
-              <div className="text-lg font-semibold text-gray-900">{pet.daysInCare}</div>
-              <div className="text-xs text-gray-600">Days in Care</div>
+              <div className="text-lg font-semibold text-gray-900 dark:text-white">{pet.daysInCare}</div>
+              <div className="text-xs text-gray-600 dark:text-gray-300">Days in Care</div>
             </div>
           </div>
 

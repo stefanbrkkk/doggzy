@@ -116,7 +116,7 @@ function ImpactStats() {
   const isInView = useInView(ref, { once: true, margin: "-100px" })
 
   return (
-    <section ref={ref} className="py-20 bg-gradient-to-br from-gray-50 via-white to-orange-50 relative overflow-hidden">
+    <section ref={ref} className="py-20 bg-gradient-to-br from-gray-50 via-white to-orange-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
@@ -172,7 +172,7 @@ function ImpactStats() {
             </span>
           </h2>
           
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          <p className="text-lg text-gray-600 dark:text-gray-200 max-w-3xl mx-auto">
             Every number represents a life changed, a family reunited, and hope restored. 
             Join thousands of compassionate donors making miracles happen every day.
           </p>
@@ -199,7 +199,7 @@ function ImpactStats() {
               className="group relative"
             >
               {/* Card */}
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-white/20 hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
+              <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-white/20 dark:border-slate-700/50 hover:shadow-2xl dark:hover:shadow-white/10 transition-all duration-300 relative overflow-hidden group">
                 {/* Background Gradient */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-5 group-hover:opacity-10 transition-opacity duration-300`} />
                 
@@ -225,12 +225,12 @@ function ImpactStats() {
                 </motion.div>
 
                 {/* Label */}
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 relative z-10">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 relative z-10">
                   {stat.label}
                 </h3>
 
                 {/* Description */}
-                <p className="text-sm text-gray-600 relative z-10">
+                <p className="text-sm text-gray-600 dark:text-gray-300 relative z-10">
                   {stat.description}
                 </p>
 
@@ -241,19 +241,6 @@ function ImpactStats() {
                 />
               </div>
 
-              {/* Floating Particles */}
-              <motion.div
-                className="absolute top-4 right-4 w-2 h-2 bg-orange-400 rounded-full opacity-60"
-                animate={{
-                  y: [0, -10, 0],
-                  opacity: [0.6, 1, 0.6],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  delay: index * 0.3,
-                }}
-              />
             </motion.div>
           ))}
         </div>

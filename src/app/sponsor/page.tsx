@@ -235,13 +235,14 @@ export default function SponsorPage() {
   }, [searchQuery, selectedStatus, sortBy])
 
   const handleSponsor = (pet: typeof pets[0]) => {
-    console.log(`Sponsoring ${pet.name}`)
     // Redirect to donation form with pet pre-selected
+    const params = new URLSearchParams({ pet: pet.id, name: pet.name })
+    window.location.href = `/donate?${params.toString()}`
   }
 
   const handleViewDetails = (pet: typeof pets[0]) => {
-    console.log(`Viewing details for ${pet.name}`)
     // Open pet detail modal or navigate to pet page
+    alert(`Viewing details for ${pet.name}:\n\n${pet.description}\n\nMedical Needs: ${pet.medicalNeeds.join(', ')}\nPersonality: ${pet.personality.join(', ')}\n\nProgress: ${pet.progress}% funded\nDays in Care: ${pet.daysInCare}`)
   }
 
   const totalRaised = pets.reduce((sum, pet) => sum + pet.raisedAmount, 0)
@@ -250,7 +251,7 @@ export default function SponsorPage() {
   const urgentPets = pets.filter(pet => pet.status === 'urgent').length
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       {/* Header */}
       <section className="relative py-20 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -280,7 +281,7 @@ export default function SponsorPage() {
               </span>
             </h1>
             
-            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-gray-600 dark:text-white max-w-3xl mx-auto">
               Every dog deserves a second chance. Sponsor a rescue dog and follow their journey 
               from rescue to recovery to their forever home.
             </p>
@@ -395,11 +396,11 @@ export default function SponsorPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Results Count */}
           <div className="flex items-center justify-between mb-8">
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-300">
               Showing {filteredAndSortedPets.length} of {pets.length} dogs
             </p>
-            <div className="text-sm text-gray-600">
-              Total goal: <span className="font-semibold text-orange-600">
+            <div className="text-sm text-gray-600 dark:text-gray-300">
+              Total goal: <span className="font-semibold text-orange-600 dark:text-orange-400">
                 ${totalGoal.toLocaleString()}
               </span>
             </div>
@@ -430,8 +431,8 @@ export default function SponsorPage() {
               className="text-center py-16"
             >
               <div className="text-6xl mb-4">🔍</div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">No dogs found</h3>
-              <p className="text-gray-600 mb-6">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">No dogs found</h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
                 Try adjusting your search or filter criteria
               </p>
               <Button
@@ -467,13 +468,25 @@ export default function SponsorPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button className="bg-white text-orange-500 px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition-colors duration-300 shadow-lg">
+                <Button 
+                  onClick={() => {
+                    const dogsSection = document.querySelector('section:nth-of-type(3)')
+                    if (dogsSection) {
+                      dogsSection.scrollIntoView({ behavior: 'smooth' })
+                    }
+                  }}
+                  className="bg-white text-orange-500 px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition-colors duration-300 shadow-lg"
+                >
                   <Heart className="h-5 w-5 mr-2" />
                   Sponsor Multiple Dogs
                 </Button>
               </motion.div>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button variant="outline" className="border-white text-white hover:bg-white hover:text-orange-500 px-8 py-4 rounded-full text-lg font-semibold transition-colors duration-300">
+                <Button 
+                  variant="outline" 
+                  onClick={() => window.location.href = '/about'}
+                  className="border-white text-white hover:bg-white hover:text-orange-500 px-8 py-4 rounded-full text-lg font-semibold transition-colors duration-300"
+                >
                   <Users className="h-5 w-5 mr-2" />
                   Learn About Sponsorship
                 </Button>

@@ -163,7 +163,7 @@ export default function ShopPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       {/* Header */}
       <section className="relative py-20 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -193,7 +193,7 @@ export default function ShopPage() {
               </span>
             </h1>
             
-            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-200 max-w-3xl mx-auto">
               Every purchase directly supports our rescue operations. From custom portraits to eco-friendly accessories, 
               shop with purpose and help save dogs worldwide.
             </p>
@@ -227,10 +227,10 @@ export default function ShopPage() {
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white mb-4 hover:scale-110 transition-transform duration-200">
                       {React.createElement(feature.icon, { className: "h-8 w-8" })}
                     </div>
-                    <h3 className="text-xl font-bold mb-2 text-gray-900">
+                    <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
                       {feature.title}
                     </h3>
-                    <p className="text-gray-600">
+                    <p className="text-gray-600 dark:text-gray-300">
                       {feature.description}
                     </p>
                   </CardContent>
@@ -292,11 +292,11 @@ export default function ShopPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Results Count */}
           <div className="flex items-center justify-between mb-8">
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-300">
               Showing {filteredAndSortedProducts.length} of {products.length} products
             </p>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">Cart:</span>
+              <span className="text-sm text-gray-600 dark:text-gray-300">Cart:</span>
               <div className="flex items-center gap-1 bg-orange-500 text-white px-3 py-1 rounded-full text-sm">
                 <ShoppingCart className="h-4 w-4" />
                 {cartItems.length}
@@ -333,8 +333,8 @@ export default function ShopPage() {
               className="text-center py-16"
             >
               <div className="text-6xl mb-4">🔍</div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">No products found</h3>
-              <p className="text-gray-600 mb-6">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">No products found</h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
                 Try adjusting your search or filter criteria
               </p>
               <Button
@@ -370,13 +370,25 @@ export default function ShopPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button className="bg-white text-orange-500 px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition-colors duration-300 shadow-lg">
+                <Button 
+                  onClick={() => {
+                    const productsSection = document.querySelector('section:nth-of-type(3)')
+                    if (productsSection) {
+                      productsSection.scrollIntoView({ behavior: 'smooth' })
+                    }
+                  }}
+                  className="bg-white text-orange-500 px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition-colors duration-300 shadow-lg"
+                >
                   <ShoppingCart className="h-5 w-5 mr-2" />
                   Start Shopping
                 </Button>
               </motion.div>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button variant="outline" className="border-white text-white hover:bg-white hover:text-orange-500 px-8 py-4 rounded-full text-lg font-semibold transition-colors duration-300">
+                <Button 
+                  variant="outline" 
+                  onClick={() => window.location.href = '/about'}
+                  className="border-white text-white hover:bg-white hover:text-orange-500 px-8 py-4 rounded-full text-lg font-semibold transition-colors duration-300"
+                >
                   <Heart className="h-5 w-5 mr-2" />
                   Learn About Our Mission
                 </Button>

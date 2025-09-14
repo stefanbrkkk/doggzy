@@ -22,7 +22,7 @@ export default function DonatePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -42,7 +42,7 @@ export default function DonatePage() {
               </span>
             </h1>
             
-            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-200 max-w-3xl mx-auto">
               Every dollar you donate goes directly to rescuing, rehabilitating, and rehoming dogs in need. 
               Join thousands of compassionate donors making miracles happen every day.
             </p>
@@ -76,10 +76,10 @@ export default function DonatePage() {
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white mb-4">
                       <feature.icon className="h-8 w-8" />
                     </div>
-                    <h3 className="text-xl font-bold mb-2 text-gray-900">
+                    <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
                       {feature.title}
                     </h3>
-                    <p className="text-gray-600">
+                    <p className="text-gray-600 dark:text-gray-300">
                       {feature.description}
                     </p>
                   </CardContent>
@@ -174,7 +174,7 @@ export default function DonatePage() {
                 Our Impact
               </span>
             </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg text-gray-600 dark:text-gray-200 max-w-3xl mx-auto">
               See the real difference we're making in the lives of dogs worldwide.
             </p>
           </div>
@@ -195,10 +195,10 @@ export default function DonatePage() {
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white mb-4">
                       <stat.icon className="h-8 w-8" />
                     </div>
-                    <div className="text-3xl font-bold text-gray-900 mb-2">
+                    <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
                       {stat.number}
                     </div>
-                    <div className="text-gray-600">
+                    <div className="text-gray-600 dark:text-gray-300">
                       {stat.label}
                     </div>
                   </CardContent>
