@@ -15,9 +15,9 @@ export default function CareersPage() {
   const { t } = useLanguage()
 
   const sampleOpenings = [
-    { title: 'Frontend Engineer', location: 'Remote', type: 'Full-time' },
-    { title: 'Partnerships Manager', location: 'Remote', type: 'Full-time' },
-    { title: 'Volunteer Coordinator', location: 'Remote', type: 'Part-time' }
+    { title: 'Frontend Engineer', location: 'Remote', type: 'Full-time', dept: 'Engineering', salary: '$90k–$130k', emoji: '💻', bullets: ['Build delightful UIs', 'Collaborate with designers', 'Optimize performance'] },
+    { title: 'Partnerships Manager', location: 'Remote', type: 'Full-time', dept: 'Growth', salary: '$80k–$120k', emoji: '🤝', bullets: ['Grow partner network', 'Manage pipelines', 'Negotiate agreements'] },
+    { title: 'Volunteer Coordinator', location: 'Remote', type: 'Part-time', dept: 'Operations', salary: 'Hourly', emoji: '📅', bullets: ['Schedule volunteers', 'Coordinate events', 'Support onboarding'] }
   ]
 
   const faqs = [
@@ -59,18 +59,39 @@ export default function CareersPage() {
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold mb-6">{t.careers.sections.openings}</h2>
-          <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          <motion.div className="grid grid-cols-1 gap-8"
             initial="hidden" animate="visible"
             variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.1 } } }}>
             {sampleOpenings.map((job) => (
               <motion.div key={job.title} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-                <Card className="border-0 shadow-md bg-white/90">
-                  <CardContent className="p-6">
-                    <div className="text-lg font-semibold text-gray-900 mb-2">{job.title}</div>
-                    <div className="text-sm text-gray-600 mb-4">{job.location} • {job.type}</div>
-                    <Link href="/careers/apply">
-                      <Button variant="glow" size="sm">{t.common.apply ?? 'Apply'}</Button>
-                    </Link>
+                <Card className="border-0 shadow-lg bg-white/95 overflow-hidden">
+                  <CardContent className="p-0">
+                    <div className="grid grid-cols-1 md:grid-cols-3">
+                      {/* Left summary */}
+                      <div className="p-6 md:p-8 bg-gradient-to-br from-orange-50 to-red-50 border-r border-border/50">
+                        <div className="text-4xl mb-3">{job.emoji}</div>
+                        <div className="text-2xl font-bold text-gray-900 mb-1">{job.title}</div>
+                        <div className="text-sm text-gray-600 mb-2">{job.dept} • {job.location} • {job.type}</div>
+                        <div className="text-sm font-medium text-orange-700">{job.salary}</div>
+                      </div>
+                      {/* Right details */}
+                      <div className="p-6 md:p-8 md:col-span-2 flex flex-col justify-between">
+                        <div className="space-y-2">
+                          <div className="font-semibold text-gray-900 mb-2">Day in the life</div>
+                          <ul className="list-disc pl-5 text-sm text-gray-700 space-y-1">
+                            {job.bullets.map((b) => <li key={b}>{b}</li>)}
+                          </ul>
+                        </div>
+                        <div className="mt-6 flex flex-wrap gap-3">
+                          <Link href={`/careers/apply?role=${encodeURIComponent(job.title)}`}>
+                            <Button variant="glow" size="sm">{t.common.apply ?? 'Apply'}</Button>
+                          </Link>
+                          <Link href="/contact">
+                            <Button variant="outline" size="sm">Ask Recruiting</Button>
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>

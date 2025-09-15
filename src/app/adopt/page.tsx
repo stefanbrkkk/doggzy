@@ -10,6 +10,9 @@ import Link from 'next/link'
 import { AnimatedPage } from '@/components/animated-page'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
+import { LargeStoryCard } from '@/components/shared/large-story-card'
+import { MediaLightbox } from '@/components/shared/media-lightbox'
+import { StickyCTA } from '@/components/shared/sticky-cta'
 
 export default function AdoptPage() {
   const { t } = useLanguage()
@@ -31,6 +34,9 @@ export default function AdoptPage() {
     { name: 'Sam & Rocky', text: 'Rocky gave me a reason to get outside and meet my neighbors. Best decision ever.', emoji: '🚶‍♂️🐕', img: '/api/placeholder/600/400' },
     { name: 'Ava & Luna', text: 'Luna helped me through a tough year. Adopting her changed both of our lives.', emoji: '💛🐶', img: '/api/placeholder/600/400' },
   ]
+
+  const [lightboxOpen, setLightboxOpen] = React.useState(false)
+  const [lightboxMedia, setLightboxMedia] = React.useState<{type:'image'|'video'; src:string; poster?:string; caption?:string} | undefined>()
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
@@ -74,24 +80,21 @@ export default function AdoptPage() {
               <Button variant="glow" size="lg">{t.adopt.sections.apply}</Button>
             </Link>
           </div>
-          <div className="mt-16">
-            <h3 className="text-2xl font-bold mb-6">Adoption Stories</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {stories.map((s) => (
-                <Card key={s.name} className="border-0 shadow-md bg-white/90 overflow-hidden">
-                  <CardContent className="p-0">
-                    <div className="relative h-40 w-full bg-gray-100">
-                      <Image alt={s.name} src={s.img} fill className="object-cover" />
-                    </div>
-                    <div className="p-6">
-                      <div className="font-semibold text-gray-900 mb-1">{s.name}</div>
-                      <div className="text-sm text-gray-700 mb-2">{s.text}</div>
-                      <div className="text-2xl">{s.emoji}</div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+          <div className="mt-16 space-y-8">
+            <h3 className="text-2xl font-bold">Adoption Stories</h3>
+            {stories.map((s, idx) => (
+              <LargeStoryCard
+                key={s.name}
+                title={s.name}
+                subtitle={s.emoji}
+                quote={s.text}
+                badges={[idx === 0 ? 'Family' : 'Community']}
+                media={{ type: 'image', src: s.img, caption: s.name }}
+                primaryCta={{ label: 'Read full story', onClick: () => { window.location.href = '/sponsor' } }}
+                secondaryCta={{ label: 'Meet similar dogs', onClick: () => { window.location.href = '/sponsor' } }}
+                onOpenLightbox={(m) => { setLightboxMedia(m); setLightboxOpen(true) }}
+              />
+            ))}
           </div>
           <div className="mt-16">
             <h3 className="text-2xl font-bold mb-6">{t.adopt.sections.benefitsTitle}</h3>
@@ -131,6 +134,11 @@ export default function AdoptPage() {
           </Button>
         </div>
       </section>
+      <StickyCTA actions={[
+        { label: t.adopt.sections.apply, onClick: () => { window.location.href = '/adopt/apply' } },
+        { label: 'Book a call', onClick: () => { window.location.href = '/contact' }, variant: 'secondary' },
+      ]} />
+      <MediaLightbox open={lightboxOpen} media={lightboxMedia} onClose={() => setLightboxOpen(false)} />
       </AnimatedPage>
     </div>
   )
