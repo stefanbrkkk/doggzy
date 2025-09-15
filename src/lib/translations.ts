@@ -11,7 +11,11 @@ export const translations = {
       about: "About",
       favorites: "Favorites",
       basket: "Basket",
-      donateNow: "Donate Now"
+      donateNow: "Donate Now",
+      careers: "Jobs",
+      adopt: "Adoption",
+      foster: "Foster a Dog",
+      report: "Report Abuse"
     },
     // Home Page
     home: {
@@ -60,6 +64,28 @@ export const translations = {
           donateButton: "Donate Now",
           shopButton: "Shop for a Cause"
         }
+      }
+    },
+    // Report Abuse Page
+    report: {
+      hero: {
+        badge: "Report Abuse",
+        title: "See Something?",
+        titleHighlight: "Say Something",
+        subtitle: "Report animal abuse, neglect, or unsafe conditions. We'll guide you on next steps and alert appropriate organizations."
+      },
+      sections: {
+        emergencies: "Emergencies",
+        emergenciesDesc: "If a dog is in immediate danger, call your local authorities or emergency services first.",
+        whatToReport: "What to Report",
+        whatToReportItems: [
+          "Physical abuse or violence",
+          "Neglect: lack of food, water, shelter",
+          "Abandonment or hoarding situations",
+          "Puppy mills or illegal breeding"
+        ],
+        submitReport: "Submit a Report",
+        weFollowUp: "We may contact you for more details if needed."
       }
     },
     // Donate Page
@@ -300,6 +326,75 @@ export const translations = {
         subtitle: "Join our community of dog lovers and help us create more happy endings. Every action, no matter how small, makes a difference.",
         donateNow: "Donate Now",
         volunteer: "Volunteer"
+      }
+    },
+    // Careers Page
+    careers: {
+      hero: {
+        badge: "Join Our Team",
+        title: "Work with Us",
+        titleHighlight: "Save Dogs Globally",
+        subtitle: "We're looking for passionate people to help us rescue, rehabilitate, and rehome dogs worldwide."
+      },
+      sections: {
+        openings: "Open Positions",
+        culture: "Our Culture",
+        cultureDesc: "We are mission-first, remote-friendly, and dog-obsessed.",
+        benefits: "Benefits",
+        benefitsList: {
+          impact: "High-impact, mission-driven work",
+          flexibility: "Remote-first flexibility",
+          growth: "Learning budget and growth opportunities"
+        },
+        apply: "How to Apply"
+      }
+    },
+    // Adoption Page
+    adopt: {
+      hero: {
+        badge: "Find Your Best Friend",
+        title: "Adopt",
+        titleHighlight: "Give a Dog a Home",
+        subtitle: "Adoption changes two lives: yours and theirs. Learn about our adoption process and available dogs."
+      },
+      sections: {
+        process: "Adoption Process",
+        processDesc: "Submit an application, meet our team, and schedule a meet-and-greet.",
+        requirements: "Requirements",
+        requirementsDesc: "Provide ID, home info, landlord approval if renting, and vet references.",
+        availableDogs: "Available Dogs",
+        availableDogsDesc: "Browse dogs ready for homes and find your perfect match.",
+        benefitsTitle: "Benefits of Adopting a Dog",
+        benefits: {
+          saveLife: "You directly save a life",
+          companionship: "Unmatched companionship and routine",
+          community: "Join a caring community of adopters"
+        },
+        apply: "Apply to Adopt"
+      }
+    },
+    // Foster Page
+    foster: {
+      hero: {
+        badge: "Be a Lifesaver",
+        title: "Foster",
+        titleHighlight: "Provide Temporary Love",
+        subtitle: "Fostering creates space for more rescues. Learn how you can help by opening your home temporarily."
+      },
+      sections: {
+        whyFoster: "Why Foster?",
+        whyFosterDesc: "Create space for more rescues and help dogs decompress.",
+        responsibilities: "Responsibilities",
+        responsibilitiesDesc: "Provide daily care, safe space, transport to vet visits, and updates.",
+        support: "Support We Provide",
+        supportDesc: "We cover medical costs and provide supplies when available.",
+        benefitsTitle: "Benefits of Fostering",
+        benefits: {
+          lifesaving: "Immediate lifesaving impact",
+          flexible: "Flexible commitment lengths",
+          rewarding: "Deeply rewarding experience"
+        },
+        apply: "Apply to Foster"
       }
     },
     // Partners Page
@@ -557,7 +652,11 @@ export const translations = {
       about: "Acerca de",
       favorites: "Favoritos",
       basket: "Carrito",
-      donateNow: "Donar Ahora"
+      donateNow: "Donar Ahora",
+      careers: "Empleos",
+      adopt: "Adopción",
+      foster: "Hogar Temporal",
+      report: "Reportar Abuso"
     },
     // Home Page
     home: {
@@ -606,6 +705,28 @@ export const translations = {
           donateButton: "Donar Ahora",
           shopButton: "Comprar por una Causa"
         }
+      }
+    },
+    // Report Abuse Page
+    report: {
+      hero: {
+        badge: "Reportar Abuso",
+        title: "¿Ves Algo?",
+        titleHighlight: "Di Algo",
+        subtitle: "Reporta abuso, negligencia o condiciones inseguras. Te guiaremos en los próximos pasos y avisaremos a las organizaciones apropiadas."
+      },
+      sections: {
+        emergencies: "Emergencias",
+        emergenciesDesc: "Si un perro está en peligro inmediato, llama primero a las autoridades locales o servicios de emergencia.",
+        whatToReport: "Qué Reportar",
+        whatToReportItems: [
+          "Abuso físico o violencia",
+          "Negligencia: falta de comida, agua, refugio",
+          "Abandono o situaciones de acaparamiento",
+          "Criaderos ilegales o fábricas de cachorros"
+        ],
+        submitReport: "Enviar Reporte",
+        weFollowUp: "Podríamos contactarte para más detalles si es necesario."
       }
     },
     // Donate Page
@@ -846,6 +967,51 @@ export const translations = {
         subtitle: "Únete a nuestra comunidad de amantes de los perros y ayúdanos a crear más finales felices. Cada acción, sin importar cuán pequeña, marca la diferencia.",
         donateNow: "Donar Ahora",
         volunteer: "Ser Voluntario"
+      }
+    },
+    // Careers Page
+    careers: {
+      hero: {
+        badge: "Únete a Nuestro Equipo",
+        title: "Trabaja con Nosotros",
+        titleHighlight: "Salva Perros Globalmente",
+        subtitle: "Buscamos personas apasionadas para ayudar a rescatar, rehabilitar y reubicar perros en todo el mundo."
+      },
+      sections: {
+        openings: "Posiciones Abiertas",
+        culture: "Nuestra Cultura",
+        benefits: "Beneficios",
+        apply: "Cómo Postular"
+      }
+    },
+    // Adoption Page
+    adopt: {
+      hero: {
+        badge: "Encuentra a Tu Mejor Amigo",
+        title: "Adoptar",
+        titleHighlight: "Da un Hogar a un Perro",
+        subtitle: "La adopción cambia dos vidas: la tuya y la de ellos. Conoce nuestro proceso de adopción y los perros disponibles."
+      },
+      sections: {
+        process: "Proceso de Adopción",
+        requirements: "Requisitos",
+        availableDogs: "Perros Disponibles",
+        apply: "Postular para Adoptar"
+      }
+    },
+    // Foster Page
+    foster: {
+      hero: {
+        badge: "Sé un Salvador",
+        title: "Hogar Temporal",
+        titleHighlight: "Brinda Amor Temporal",
+        subtitle: "Ser hogar temporal crea espacio para más rescates. Aprende cómo puedes ayudar abriendo tu hogar temporalmente."
+      },
+      sections: {
+        whyFoster: "¿Por Qué Ser Hogar Temporal?",
+        responsibilities: "Responsabilidades",
+        support: "Apoyo que Brindamos",
+        apply: "Postular para Ser Hogar Temporal"
       }
     },
     // Partners Page
@@ -1103,7 +1269,11 @@ export const translations = {
       about: "À Propos",
       favorites: "Favoris",
       basket: "Panier",
-      donateNow: "Faire un Don"
+      donateNow: "Faire un Don",
+      careers: "Emplois",
+      adopt: "Adoption",
+      foster: "Famille d'Accueil",
+      report: "Signaler des Abus"
     },
     // Home Page
     home: {
@@ -1152,6 +1322,28 @@ export const translations = {
           donateButton: "Faire un Don",
           shopButton: "Acheter pour une Cause"
         }
+      }
+    },
+    // Report Abuse Page
+    report: {
+      hero: {
+        badge: "Signaler des Abus",
+        title: "Vous Voyez Quelque Chose ?",
+        titleHighlight: "Dites-le",
+        subtitle: "Signalez les mauvais traitements, la négligence ou des conditions dangereuses. Nous vous guiderons pour la suite et alerterons les organisations appropriées."
+      },
+      sections: {
+        emergencies: "Urgences",
+        emergenciesDesc: "Si un chien est en danger immédiat, appelez d'abord les autorités locales ou les services d'urgence.",
+        whatToReport: "Que Signaler",
+        whatToReportItems: [
+          "Abus physiques ou violence",
+          "Négligence: manque de nourriture, d'eau, d'abri",
+          "Abandon ou accumulation d'animaux",
+          "Élevages illégaux ou usines à chiots"
+        ],
+        submitReport: "Soumettre un Signalement",
+        weFollowUp: "Nous pourrions vous contacter pour plus de détails si nécessaire."
       }
     },
     // Donate Page
@@ -1392,6 +1584,51 @@ export const translations = {
         subtitle: "Rejoignez notre communauté d'amoureux des chiens et aidez-nous à créer plus de fins heureuses. Chaque action, aussi petite soit-elle, fait une différence.",
         donateNow: "Faire un Don",
         volunteer: "Bénévole"
+      }
+    },
+    // Careers Page
+    careers: {
+      hero: {
+        badge: "Rejoignez Notre Équipe",
+        title: "Travaillez avec Nous",
+        titleHighlight: "Sauver des Chiens dans le Monde",
+        subtitle: "Nous recherchons des personnes passionnées pour nous aider à sauver, réhabiliter et replacer des chiens dans le monde entier."
+      },
+      sections: {
+        openings: "Postes Ouverts",
+        culture: "Notre Culture",
+        benefits: "Avantages",
+        apply: "Comment Postuler"
+      }
+    },
+    // Adoption Page
+    adopt: {
+      hero: {
+        badge: "Trouvez Votre Meilleur Ami",
+        title: "Adopter",
+        titleHighlight: "Offrez un Foyer à un Chien",
+        subtitle: "L'adoption change deux vies : la vôtre et la leur. Découvrez notre processus d'adoption et les chiens disponibles."
+      },
+      sections: {
+        process: "Processus d'Adoption",
+        requirements: "Exigences",
+        availableDogs: "Chiens Disponibles",
+        apply: "Postuler pour Adopter"
+      }
+    },
+    // Foster Page
+    foster: {
+      hero: {
+        badge: "Soyez un Sauveur",
+        title: "Famille d'Accueil",
+        titleHighlight: "Offrez un Amour Temporaire",
+        subtitle: "L'accueil temporaire crée de la place pour plus de sauvetages. Découvrez comment vous pouvez aider en ouvrant temporairement votre foyer."
+      },
+      sections: {
+        whyFoster: "Pourquoi Accueillir ?",
+        responsibilities: "Responsabilités",
+        support: "Soutien que Nous Fournissons",
+        apply: "Postuler pour Accueillir"
       }
     },
     // Partners Page
