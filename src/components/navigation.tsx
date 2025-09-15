@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { Heart, ShoppingBag, Menu, X, PawPrint } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -13,6 +13,7 @@ export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isMoreOpen, setIsMoreOpen] = useState(false)
+  const moreRef = useRef<HTMLDivElement | null>(null)
   const { t } = useLanguage()
 
   useEffect(() => {
@@ -22,6 +23,19 @@ export function Navigation() {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  // Close More dropdown on outside click
+  useEffect(() => {
+    function onClickOutside(e: MouseEvent) {
+      if (!isMoreOpen) return
+      const target = e.target as Node
+      if (moreRef.current && !moreRef.current.contains(target)) {
+        setIsMoreOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', onClickOutside)
+    return () => document.removeEventListener('mousedown', onClickOutside)
+  }, [isMoreOpen])
 
   const navItems = [
     { label: t.nav.home, href: '/' },
@@ -80,7 +94,7 @@ export function Navigation() {
             <LanguageSwitcher />
 
             {/* Subtle hamburger dropdown moved to actions area */}
-            <div className="relative hidden lg:block">
+            <div className="relative hidden lg:block" ref={moreRef}>
               <button
                 className="flex items-center justify-center h-8 w-8 rounded-md hover:bg-accent/60 text-foreground/70 hover:text-foreground transition-colors"
                 aria-label="More"
@@ -108,6 +122,7 @@ export function Navigation() {
                         <Link
                           href={item.href}
                           className="block px-3 py-2 rounded-md text-sm hover:bg-accent hover:text-accent-foreground"
+                          onClick={() => setIsMoreOpen(false)}
                         >
                           {item.label}
                         </Link>

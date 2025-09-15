@@ -32,6 +32,12 @@ export default function FosterPage() {
     { name: 'Rita & Max', text: 'We were nervous at first, but the support was amazing.', emoji: '🤝🐶', img: '/api/placeholder/600/400' },
   ]
 
+  const benefits = [
+    t.foster.sections.benefits?.lifesaving,
+    t.foster.sections.benefits?.flexible,
+    t.foster.sections.benefits?.rewarding
+  ].filter(Boolean) as string[]
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
       <AnimatedPage>
@@ -96,8 +102,8 @@ export default function FosterPage() {
           <div className="mt-16">
             <h3 className="text-2xl font-bold mb-6">{t.foster.sections.benefitsTitle}</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[t.foster.sections.benefits.lifesaving, t.foster.sections.benefits.flexible, t.foster.sections.benefits.rewarding].map((b) => (
-                <Card key={b} className="border-0 shadow-md bg-white/90">
+              {benefits.map((b, idx) => (
+                <Card key={`benefit-${idx}`} className="border-0 shadow-md bg-white/90">
                   <CardContent className="p-6">
                     <div className="text-gray-900 font-semibold">{b}</div>
                   </CardContent>

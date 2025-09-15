@@ -32,6 +32,12 @@ export default function CareersPage() {
     { title: 'Content Creator', desc: 'Create social posts and stories.', emoji: '📝' },
   ]
 
+  const benefits = [
+    t.careers.sections.benefitsList?.impact,
+    t.careers.sections.benefitsList?.flexibility,
+    t.careers.sections.benefitsList?.growth
+  ].filter(Boolean) as string[]
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
       <AnimatedPage>
@@ -105,8 +111,8 @@ export default function CareersPage() {
           <h2 className="text-2xl font-bold mb-4">{t.careers.sections.culture}</h2>
           <p className="text-gray-700 max-w-3xl">{t.careers.sections.cultureDesc}</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-            {[t.careers.sections.benefitsList.impact, t.careers.sections.benefitsList.flexibility, t.careers.sections.benefitsList.growth].map((b) => (
-              <Card key={b} className="border-0 shadow-md bg-white/90">
+            {benefits.map((b, idx) => (
+              <Card key={`benefit-${idx}`} className="border-0 shadow-md bg-white/90">
                 <CardContent className="p-6">
                   <div className="text-gray-900 font-semibold">{b}</div>
                 </CardContent>
