@@ -1,3 +1,4 @@
+'use client'
 import { motion } from 'framer-motion'
 import { Shield, Lock, Eye, Globe, Mail, Phone, FileText } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'

@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import React from 'react'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { AnimatedPage } from '@/components/animated-page'
 
 export default function ImpactPage() {
   const { t } = useLanguage()
@@ -94,6 +95,7 @@ export default function ImpactPage() {
   ]
 
   return (
+    <AnimatedPage>
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
       {/* Hero Section */}
       <section className="py-20 relative overflow-hidden">
@@ -337,5 +339,6 @@ export default function ImpactPage() {
         </div>
       </section>
     </div>
+    </AnimatedPage>
   )
 }

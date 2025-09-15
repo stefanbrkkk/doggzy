@@ -1,16 +1,19 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { Heart, ShoppingBag, Menu, X, PawPrint } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { LanguageSwitcher } from '@/components/language-switcher'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMoreOpen, setIsMoreOpen] = useState(false)
+  const moreRef = useRef<HTMLDivElement | null>(null)
   const { t } = useLanguage()
 
   useEffect(() => {
@@ -21,6 +24,19 @@ export function Navigation() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Close More dropdown on outside click
+  useEffect(() => {
+    function onClickOutside(e: MouseEvent) {
+      if (!isMoreOpen) return
+      const target = e.target as Node
+      if (moreRef.current && !moreRef.current.contains(target)) {
+        setIsMoreOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', onClickOutside)
+    return () => document.removeEventListener('mousedown', onClickOutside)
+  }, [isMoreOpen])
+
   const navItems = [
     { label: t.nav.home, href: '/' },
     { label: t.nav.donate, href: '/donate' },
@@ -29,6 +45,13 @@ export function Navigation() {
     { label: t.nav.impact, href: '/impact' },
     { label: t.nav.partners, href: '/partners' },
     { label: t.nav.about, href: '/about' },
+  ]
+
+  const moreItems = [
+    { label: t.nav.adopt, href: '/adopt' },
+    { label: t.nav.foster, href: '/foster' },
+    { label: t.nav.careers, href: '/careers' },
+    { label: t.nav.report, href: '/report' },
   ]
 
   return (
@@ -69,6 +92,46 @@ export function Navigation() {
           {/* Action Buttons */}
           <div className="flex items-center space-x-2 xl:space-x-4">
             <LanguageSwitcher />
+
+            {/* Subtle hamburger dropdown moved to actions area */}
+            <div className="relative hidden lg:block" ref={moreRef}>
+              <button
+                className="flex items-center justify-center h-8 w-8 rounded-md hover:bg-accent/60 text-foreground/70 hover:text-foreground transition-colors"
+                aria-label="More"
+                onClick={() => setIsMoreOpen(!isMoreOpen)}
+                onBlur={() => setTimeout(() => setIsMoreOpen(false), 150)}
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+              <AnimatePresence>
+                {isMoreOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -6, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -6, scale: 0.98 }}
+                    transition={{ duration: 0.15, ease: 'easeOut' }}
+                    className="absolute right-0 mt-2 w-56 rounded-lg border border-border bg-background/95 backdrop-blur-md shadow-xl p-2 z-50 origin-top-right"
+                  >
+                    {moreItems.map((item, idx) => (
+                      <motion.div
+                        key={item.href}
+                        initial={{ opacity: 0, x: 8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.02 * idx }}
+                      >
+                        <Link
+                          href={item.href}
+                          className="block px-3 py-2 rounded-md text-sm hover:bg-accent hover:text-accent-foreground"
+                          onClick={() => setIsMoreOpen(false)}
+                        >
+                          {item.label}
+                        </Link>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
             
             <Link href="/favorites">
               <Button variant="ghost" size="icon" className="relative hover:scale-110 transition-transform duration-200">
@@ -128,6 +191,20 @@ export function Navigation() {
               {item.label}
             </Link>
           ))}
+          {/* More group on mobile */}
+          <div className="pt-2">
+            <div className="text-xs uppercase text-foreground/60 mb-2">More</div>
+            {moreItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="block py-2 text-base sm:text-lg font-medium text-foreground/80 hover:text-orange-500 transition-colors duration-200 whitespace-nowrap"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
           <div className="pt-4 border-t border-border">
             <Link href="/donate">
               <Button variant="glow" className="w-full hover:scale-105 transition-transform duration-200 text-sm sm:text-base">
