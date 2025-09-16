@@ -11,14 +11,27 @@ export default function DonatePage() {
   const { t } = useLanguage()
   const [amount, setAmount] = React.useState(25)
   const [isProcessing, setIsProcessing] = React.useState(false)
+  const [message, setMessage] = React.useState<string | null>(null)
+  const [error, setError] = React.useState<string | null>(null)
 
   const handleDonate = async () => {
     setIsProcessing(true)
+    setMessage(null)
+    setError(null)
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      alert('Thank you for your donation!')
-    } catch (error) {
-      alert('Error processing donation')
+      const res = await fetch('/api/donations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount, currency: 'USD', frequency: 'one-time' })
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || 'Failed to process donation')
+      }
+      const data = await res.json()
+      setMessage(`Thank you! Your donation of $${amount} was processed${data.mode === 'mock' ? ' (test mode)' : ''}.`)
+    } catch (e: any) {
+      setError(e?.message || 'Something went wrong')
     } finally {
       setIsProcessing(false)
     }
@@ -103,6 +116,16 @@ export default function DonatePage() {
 
               {/* Amount Selection */}
               <div className="space-y-6">
+                {message && (
+                  <div className="p-4 rounded-lg bg-green-50 text-green-700 border border-green-200">
+                    {message}
+                  </div>
+                )}
+                {error && (
+                  <div className="p-4 rounded-lg bg-red-50 text-red-700 border border-red-200">
+                    {error}
+                  </div>
+                )}
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {[25, 50, 100, 250, 500, 1000].map((presetAmount) => (
                     <button
