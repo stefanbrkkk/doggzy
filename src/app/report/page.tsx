@@ -11,6 +11,9 @@ import { AlertTriangle, Phone, Mail } from 'lucide-react'
 export default function ReportAbusePage() {
   const { t } = useLanguage()
 
+  const [step, setStep] = React.useState(1)
+  const [anonymous, setAnonymous] = React.useState(false)
+
   return (
     <AnimatedPage>
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 py-16">
@@ -54,16 +57,53 @@ export default function ReportAbusePage() {
 
           <Card className="border-0 shadow-md bg-white/90">
             <CardContent className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <input className="border rounded-md p-3" placeholder="Your Name (optional)" />
-                <input className="border rounded-md p-3" placeholder="Email (optional)" />
-                <input className="border rounded-md p-3" placeholder="Phone (optional)" />
-                <textarea className="border rounded-md p-3 md:col-span-3" rows={5} placeholder="Describe what you saw, including location, time, and any photos/links" />
-                <div className="md:col-span-3 flex items-center justify-between">
-                  <span className="text-sm text-gray-600">{t.report.sections.weFollowUp}</span>
-                  <Button><Mail className="h-4 w-4 mr-2" />{t.report.sections.submitReport}</Button>
+              {step === 1 && (
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="text-lg font-semibold">Describe the situation</div>
+                  <textarea className="border rounded-md p-3" rows={5} placeholder="Describe what you saw, including location, time, and any photos/links" />
+                  <div className="flex justify-end">
+                    <Button onClick={() => setStep(2)}>Next</Button>
+                  </div>
                 </div>
-              </div>
+              )}
+              {step === 2 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <div className="text-lg font-semibold mb-2">Location</div>
+                    <input className="border rounded-md p-3 w-full" placeholder="City, Country" />
+                  </div>
+                  <div>
+                    <div className="text-lg font-semibold mb-2">Date / Time</div>
+                    <input className="border rounded-md p-3 w-full" type="datetime-local" />
+                  </div>
+                  <div className="md:col-span-2 flex justify-between items-center">
+                    <Button variant="outline" onClick={() => setStep(1)}>Back</Button>
+                    <Button onClick={() => setStep(3)}>Next</Button>
+                  </div>
+                </div>
+              )}
+              {step === 3 && (
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="flex items-center justify-between">
+                    <div className="text-lg font-semibold">Your details</div>
+                    <label className="text-sm flex items-center gap-2"><input type="checkbox" checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)} /> Report anonymously</label>
+                  </div>
+                  {!anonymous && (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <input className="border rounded-md p-3" placeholder="Your Name (optional)" />
+                      <input className="border rounded-md p-3" placeholder="Email (optional)" />
+                      <input className="border rounded-md p-3" placeholder="Phone (optional)" />
+                    </div>
+                  )}
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">{t.report.sections.weFollowUp}</span>
+                    <div className="flex gap-2">
+                      <Button variant="outline" onClick={() => setStep(2)}>Back</Button>
+                      <Button><Mail className="h-4 w-4 mr-2" />{t.report.sections.submitReport}</Button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 

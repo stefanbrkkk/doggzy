@@ -19,8 +19,10 @@ import {
   MapPin
 } from 'lucide-react'
 import React from 'react'
+import { MotionContainer, MotionItem } from '@/components/shared/motion'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { AnimatedPage } from '@/components/animated-page'
+import { AnimatedCounter } from '@/components/shared/animated-counter'
 
 export default function ImpactPage() {
   const { t } = useLanguage()
@@ -142,26 +144,28 @@ export default function ImpactPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {globalStats.map((stat, index) => (
-              <Card key={stat.label} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm hover:scale-105 group">
-                <CardContent className="p-6 text-center">
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white mb-4 hover:scale-110 transition-transform duration-200">
-                    {React.createElement(stat.icon, { className: "h-8 w-8" })}
-                  </div>
-                  <div className="text-3xl font-bold text-orange-600 mb-2">
-                    {stat.value}
-                  </div>
-                  <div className="text-gray-600 font-medium mb-2">
-                    {stat.label}
-                  </div>
-                  <div className="text-sm text-green-600 font-medium">
-                    {stat.change}
-                  </div>
-                </CardContent>
-              </Card>
+          <MotionContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {globalStats.map((stat) => (
+              <MotionItem key={stat.label}>
+                <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm hover:scale-105 group">
+                  <CardContent className="p-6 text-center">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white mb-4 hover:scale-110 transition-transform duration-200">
+                      {React.createElement(stat.icon, { className: "h-8 w-8" })}
+                    </div>
+                    <div className="text-3xl font-bold text-orange-600 mb-2">
+                      <AnimatedCounter value={stat.value} />
+                    </div>
+                    <div className="text-gray-600 font-medium mb-2">
+                      {stat.label}
+                    </div>
+                    <div className="text-sm text-green-600 font-medium">
+                      {stat.change}
+                    </div>
+                  </CardContent>
+                </Card>
+              </MotionItem>
             ))}
-          </div>
+          </MotionContainer>
         </div>
       </section>
 

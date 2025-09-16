@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { AnimatedCounter } from '@/components/shared/animated-counter'
 
 // Mock pet data
 const pets = [
@@ -251,6 +252,7 @@ export default function SponsorPage() {
   const totalGoal = pets.reduce((sum, pet) => sum + pet.targetAmount, 0)
   const totalSponsors = pets.reduce((sum, pet) => sum + pet.sponsorCount, 0)
   const urgentPets = pets.filter(pet => pet.status === 'urgent').length
+  const firstUrgent = pets.find(p => p.status === 'urgent')
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
@@ -333,7 +335,7 @@ export default function SponsorPage() {
                       <stat.icon className="h-8 w-8" />
                     </motion.div>
                     <div className="text-3xl font-bold text-gray-900 mb-2">
-                      {stat.value}
+                      <AnimatedCounter value={stat.value} />
                     </div>
                     <div className="text-gray-600">
                       {stat.label}
@@ -345,6 +347,34 @@ export default function SponsorPage() {
           </div>
         </div>
       </section>
+
+      {/* Urgent Spotlight */}
+      {firstUrgent && (
+        <section className="py-10">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-0 rounded-2xl overflow-hidden shadow-xl bg-white/90 backdrop-blur-sm border border-gray-200">
+              <div className="relative md:col-span-1 h-56 md:h-full bg-gradient-to-br from-orange-100 to-red-100" />
+              <div className="p-6 md:p-8 md:col-span-2">
+                <div className="text-xs font-semibold text-red-600 mb-2">URGENT SPOTLIGHT</div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-1">{firstUrgent.name}</h3>
+                <div className="text-sm text-gray-600 mb-3">{firstUrgent.breed} • {firstUrgent.location}</div>
+                <p className="text-gray-700 mb-4">{firstUrgent.description}</p>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-sm text-gray-700">Raised</div>
+                  <div className="font-semibold text-orange-600">${firstUrgent.raisedAmount.toLocaleString()} / ${firstUrgent.targetAmount.toLocaleString()}</div>
+                </div>
+                <div className="h-2 rounded-full bg-gray-200 overflow-hidden mb-4">
+                  <div className="h-full bg-gradient-to-r from-orange-500 to-red-500" style={{ width: `${Math.min(100, Math.round((firstUrgent.raisedAmount / firstUrgent.targetAmount) * 100))}%` }} />
+                </div>
+                <div className="flex gap-3">
+                  <Button onClick={() => handleSponsor(firstUrgent)} className="bg-gradient-to-r from-orange-500 to-red-500 text-white">Sponsor {firstUrgent.name}</Button>
+                  <Button variant="outline" onClick={() => handleViewDetails(firstUrgent)}>View details</Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Filters */}
       <section className="py-8 bg-white/50 backdrop-blur-sm sticky top-20 z-40 border-b border-gray-200">
