@@ -70,7 +70,9 @@ export default function RootLayout({
         <LanguageProvider>
           <Navigation />
           <main className="pt-16 lg:pt-20">
-            {children}
+            <div className="container py-8 lg:py-12">
+              {children}
+            </div>
           </main>
           <Footer />
         </LanguageProvider>
