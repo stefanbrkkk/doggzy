@@ -4,11 +4,8 @@ import React from 'react'
 import { Heart, Shield, Globe, Users, CreditCard } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { useLanguage } from '@/contexts/LanguageContext'
-import { AnimatedPage } from '@/components/animated-page'
 
 export default function DonatePage() {
-  const { t } = useLanguage()
   const [amount, setAmount] = React.useState(25)
   const [isProcessing, setIsProcessing] = React.useState(false)
 
@@ -25,29 +22,29 @@ export default function DonatePage() {
   }
 
   return (
-    <AnimatedPage>
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-100 to-red-100 text-orange-800 px-4 py-2 rounded-full text-sm font-medium mb-6">
               <Heart className="h-4 w-4 fill-orange-500 text-orange-500" />
-              {t.donate.hero.badge}
+              Make a Difference Today
             </div>
             
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold leading-tight mb-6">
               <span className="bg-gradient-to-r from-gray-900 via-orange-600 to-red-600 bg-clip-text text-transparent">
-                {t.donate.hero.title}
+                Save a Life
               </span>
               <br />
               <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
-                {t.donate.hero.titleHighlight}
+                Make a Donation
               </span>
             </h1>
             
-            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-200 max-w-3xl mx-auto">
-              {t.donate.hero.subtitle}
+            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
+              Every dollar you donate goes directly to rescuing, rehabilitating, and rehoming dogs in need. 
+              Join thousands of compassionate donors making miracles happen every day.
             </p>
           </div>
 
@@ -56,18 +53,18 @@ export default function DonatePage() {
             {[
               {
                 icon: Shield,
-                title: t.donate.features.secure.title,
-                description: t.donate.features.secure.description
+                title: "Secure & Tax-Deductible",
+                description: "All donations are processed securely and are tax-deductible under 501(c)(3)"
               },
               {
                 icon: Globe,
-                title: t.donate.features.global.title,
-                description: t.donate.features.global.description
+                title: "Global Impact",
+                description: "Your donation helps rescue dogs across 47 countries through our partner network"
               },
               {
                 icon: Users,
-                title: t.donate.features.transparent.title,
-                description: t.donate.features.transparent.description
+                title: "Transparent Use",
+                description: "98% of donations go directly to rescue operations, medical care, and rehabilitation"
               }
             ].map((feature) => (
               <div
@@ -79,10 +76,10 @@ export default function DonatePage() {
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white mb-4">
                       <feature.icon className="h-8 w-8" />
                     </div>
-                    <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
+                    <h3 className="text-xl font-bold mb-2 text-gray-900">
                       {feature.title}
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-300">
+                    <p className="text-gray-600">
                       {feature.description}
                     </p>
                   </CardContent>
@@ -96,9 +93,9 @@ export default function DonatePage() {
             <CardContent className="p-8">
               <div className="text-center mb-8">
                 <h2 className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-2">
-                  {t.donate.form.title}
+                  Choose Your Impact
                 </h2>
-                <p className="text-gray-600">{t.donate.form.subtitle}</p>
+                <p className="text-gray-600">Every dollar makes a difference in a dog's life</p>
               </div>
 
               {/* Amount Selection */}
@@ -117,12 +114,12 @@ export default function DonatePage() {
                     >
                       <div className="text-2xl font-bold">${presetAmount}</div>
                       <div className="text-sm opacity-80">
-                        {presetAmount === 25 && t.donate.form.amountDescriptions.feedWeek}
-                        {presetAmount === 50 && t.donate.form.amountDescriptions.medicalCheckup}
-                        {presetAmount === 100 && t.donate.form.amountDescriptions.emergencyTreatment}
-                        {presetAmount === 250 && t.donate.form.amountDescriptions.completeRehabilitation}
-                        {presetAmount === 500 && t.donate.form.amountDescriptions.saveLife}
-                        {presetAmount === 1000 && t.donate.form.amountDescriptions.transformLife}
+                        {presetAmount === 25 && "Feed a dog for a week"}
+                        {presetAmount === 50 && "Medical checkup"}
+                        {presetAmount === 100 && "Emergency treatment"}
+                        {presetAmount === 250 && "Complete rehabilitation"}
+                        {presetAmount === 500 && "Save a life"}
+                        {presetAmount === 1000 && "Transform a life"}
                       </div>
                     </button>
                   ))}
@@ -130,7 +127,7 @@ export default function DonatePage() {
 
                 {/* Custom Amount */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">{t.donate.form.customAmount}</label>
+                  <label className="text-sm font-medium text-gray-700">Or enter custom amount</label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
                     <input
@@ -153,12 +150,12 @@ export default function DonatePage() {
                   {isProcessing ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                      {t.donate.form.processing}
+                      Processing...
                     </>
                   ) : (
                     <>
                       <Heart className="h-5 w-5 mr-2" />
-                      {t.donate.form.donateButton} ${amount}
+                      Donate ${amount}
                     </>
                   )}
                 </Button>
@@ -174,20 +171,20 @@ export default function DonatePage() {
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-display font-bold mb-6">
               <span className="bg-gradient-to-r from-gray-900 to-orange-600 bg-clip-text text-transparent">
-                {t.donate.impact.title}
+                Our Impact
               </span>
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-200 max-w-3xl mx-auto">
-              {t.donate.impact.subtitle}
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              See the real difference we're making in the lives of dogs worldwide.
             </p>
           </div>
 
           <div className="grid md:grid-cols-4 gap-8">
             {[
-              { number: "50,000+", label: t.donate.impact.stats.dogsRescued, icon: Heart },
-              { number: "156", label: t.donate.impact.stats.partnerShelters, icon: Users },
-              { number: "47", label: t.donate.impact.stats.countries, icon: Globe },
-              { number: "98%", label: t.donate.impact.stats.successRate, icon: CreditCard }
+              { number: "50,000+", label: "Dogs Rescued", icon: Heart },
+              { number: "156", label: "Partner Shelters", icon: Users },
+              { number: "47", label: "Countries", icon: Globe },
+              { number: "98%", label: "Success Rate", icon: CreditCard }
             ].map((stat) => (
               <div
                 key={stat.label}
@@ -198,10 +195,10 @@ export default function DonatePage() {
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white mb-4">
                       <stat.icon className="h-8 w-8" />
                     </div>
-                    <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                    <div className="text-3xl font-bold text-gray-900 mb-2">
                       {stat.number}
                     </div>
-                    <div className="text-gray-600 dark:text-gray-300">
+                    <div className="text-gray-600">
                       {stat.label}
                     </div>
                   </CardContent>
@@ -217,10 +214,11 @@ export default function DonatePage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div>
             <h2 className="text-3xl sm:text-4xl font-display font-bold mb-6">
-              {t.donate.cta.title}
+              Urgent: Dogs Need Your Help Right Now
             </h2>
             <p className="text-xl mb-8 max-w-3xl mx-auto opacity-90">
-              {t.donate.cta.subtitle}
+              Every day, hundreds of dogs are abandoned, abused, or left to die. 
+              Your donation today could literally save a life tomorrow.
             </p>
             <button 
               onClick={() => {
@@ -232,12 +230,11 @@ export default function DonatePage() {
               className="bg-white text-orange-500 px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition-colors duration-150 shadow-lg"
             >
               <Heart className="h-5 w-5 inline mr-2" />
-              {t.donate.cta.button}
+              Donate Now - Save a Life
             </button>
           </div>
         </div>
       </section>
     </div>
-    </AnimatedPage>
   )
 }
