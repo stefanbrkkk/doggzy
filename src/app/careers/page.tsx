@@ -22,11 +22,6 @@ export default function CareersPage() {
   const [showQuizResults, setShowQuizResults] = React.useState(false)
   const [selectedJob, setSelectedJob] = React.useState<any>(null)
   const [showVideo, setShowVideo] = React.useState(false)
-  const [benefitsCalculator, setBenefitsCalculator] = React.useState({
-    salary: 100000,
-    experience: 'mid',
-    location: 'remote'
-  })
 
   const companyStats = {
     totalEmployees: 47,
@@ -147,32 +142,6 @@ export default function CareersPage() {
     }
   ]
 
-  const benefitsDetails = [
-    {
-      category: "Health & Wellness",
-      items: [
-        { name: "Health Insurance", value: 12000, description: "100% company-paid premiums" },
-        { name: "Dental & Vision", value: 2000, description: "Comprehensive coverage" },
-        { name: "Mental Health", value: 3000, description: "Therapy and counseling support" }
-      ]
-    },
-    {
-      category: "Financial",
-      items: [
-        { name: "401k Matching", value: 6000, description: "Up to 6% company match" },
-        { name: "Stock Options", value: 15000, description: "Equity in a growing company" },
-        { name: "Learning Budget", value: 2000, description: "Professional development" }
-      ]
-    },
-    {
-      category: "Work-Life Balance",
-      items: [
-        { name: "Flexible PTO", value: 5000, description: "Unlimited vacation policy" },
-        { name: "Home Office", value: 1500, description: "Equipment and setup stipend" },
-        { name: "Wellness Stipend", value: 1000, description: "Gym, apps, and wellness activities" }
-      ]
-    }
-  ]
 
   const faqs = [
     { q: 'Is Doggzy remote-first?', a: 'Yes, we are remote-first with occasional in-person retreats.' },
@@ -221,11 +190,6 @@ export default function CareersPage() {
     })
   }
 
-  const calculateTotalBenefits = () => {
-    return benefitsDetails.reduce((total, category) => {
-      return total + category.items.reduce((catTotal, item) => catTotal + item.value, 0)
-    }, 0)
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
@@ -631,61 +595,6 @@ export default function CareersPage() {
           </div>
         </section>
 
-        {/* Interactive Benefits Calculator */}
-        <section className="py-16 bg-gradient-to-br from-gray-50 to-orange-50">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Benefits Calculator</h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
-                See the total value of our comprehensive benefits package
-              </p>
-            </div>
-            
-            <div className="max-w-4xl mx-auto">
-              <Card className="border-0 shadow-lg bg-white/95">
-                <CardContent className="p-8">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-6">Benefits Breakdown</h3>
-                      <div className="space-y-6">
-                        {benefitsDetails.map((category, idx) => (
-                          <div key={category.category}>
-                            <h4 className="font-semibold text-gray-900 mb-3">{category.category}</h4>
-                            <div className="space-y-2">
-                              {category.items.map((item) => (
-                                <div key={item.name} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                                  <div>
-                                    <div className="font-medium text-gray-900">{item.name}</div>
-                                    <div className="text-sm text-gray-600">{item.description}</div>
-                                  </div>
-                                  <div className="font-semibold text-orange-600">${item.value.toLocaleString()}</div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-8 text-white">
-                        <h3 className="text-2xl font-bold mb-4">Total Benefits Value</h3>
-                        <div className="text-4xl font-bold mb-2">
-                          <AnimatedCounter value={`$${calculateTotalBenefits().toLocaleString()}`} />
-                        </div>
-                        <p className="text-orange-100">Per year, in addition to salary</p>
-                        <div className="mt-6">
-                          <Button variant="secondary" size="lg">
-                            Apply Now
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section>
 
         {/* Enhanced FAQ Section */}
         <section className="py-16 bg-white">
@@ -717,18 +626,75 @@ export default function CareersPage() {
           </div>
         </section>
 
-        {/* Volunteer Opportunities */}
-        <section className="py-16 bg-gradient-to-br from-orange-50 to-red-50">
+        {/* Enhanced Volunteer Opportunities */}
+        <section className="py-20 bg-gradient-to-br from-orange-50 via-white to-red-50">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Volunteer Opportunities</h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
-                Join our community of passionate volunteers making a difference
+            <div className="text-center mb-16">
+              <Badge className="mb-6 bg-gradient-to-r from-orange-100 to-red-100 text-orange-800 border-orange-200">
+                <Users className="h-4 w-4 mr-2" />
+                Community Impact
+              </Badge>
+              <h2 className="text-4xl sm:text-5xl font-display font-bold mb-6">
+                <span className="bg-gradient-to-r from-gray-900 via-orange-600 to-red-600 bg-clip-text text-transparent">
+                  Volunteer Opportunities
+                </span>
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                Join our passionate community of volunteers and make a real difference in the lives of dogs and their families. Every hour you give creates lasting impact.
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {volunteerRoles.map((role, idx) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+              {[
+                {
+                  title: 'Event Volunteer',
+                  desc: 'Help at adoption events, fundraisers, and community outreach programs. Perfect for people who love meeting new faces and spreading awareness.',
+                  emoji: '🎪',
+                  timeCommitment: '2-4 hours per event',
+                  skills: ['Communication', 'Event planning', 'Customer service'],
+                  impact: 'Help 20+ dogs find homes per event'
+                },
+                {
+                  title: 'Transport Driver',
+                  desc: 'Drive dogs to foster homes, veterinary appointments, and adoption events. Essential role for our rescue operations.',
+                  emoji: '🚐',
+                  timeCommitment: 'Flexible scheduling',
+                  skills: ['Driving', 'Animal handling', 'Reliability'],
+                  impact: 'Save 50+ dogs monthly through transport'
+                },
+                {
+                  title: 'Content Creator',
+                  desc: 'Create compelling social media posts, write success stories, and help us share our mission with the world.',
+                  emoji: '📝',
+                  timeCommitment: '5-10 hours per week',
+                  skills: ['Writing', 'Social media', 'Photography'],
+                  impact: 'Reach 10,000+ people monthly'
+                },
+                {
+                  title: 'Foster Coordinator',
+                  desc: 'Match dogs with foster families, provide support to foster parents, and ensure smooth transitions.',
+                  emoji: '🏠',
+                  timeCommitment: '10-15 hours per week',
+                  skills: ['Organization', 'Communication', 'Problem solving'],
+                  impact: 'Coordinate 100+ foster placements'
+                },
+                {
+                  title: 'Veterinary Assistant',
+                  desc: 'Assist with medical care, health checks, and rehabilitation of rescued dogs. Great for vet students or animal lovers.',
+                  emoji: '🩺',
+                  timeCommitment: '4-8 hours per week',
+                  skills: ['Animal care', 'Medical knowledge', 'Compassion'],
+                  impact: 'Provide care for 200+ dogs annually'
+                },
+                {
+                  title: 'Community Outreach',
+                  desc: 'Build relationships with local businesses, schools, and organizations to expand our network and impact.',
+                  emoji: '🤝',
+                  timeCommitment: '6-12 hours per week',
+                  skills: ['Networking', 'Public speaking', 'Relationship building'],
+                  impact: 'Establish 20+ new partnerships yearly'
+                }
+              ].map((role, idx) => (
                 <motion.div
                   key={role.title}
                   initial={{ opacity: 0, y: 20 }}
@@ -736,20 +702,83 @@ export default function CareersPage() {
                   transition={{ delay: idx * 0.1 }}
                   className="group"
                 >
-                  <Card className="border-0 shadow-lg bg-white/95 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                    <CardContent className="p-6 text-center">
-                      <div className="text-4xl mb-4">{role.emoji}</div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-2">{role.title}</h3>
-                      <p className="text-gray-600 mb-4">{role.desc}</p>
-                      <Link href="/careers/apply">
-                        <Button size="sm" variant="outline" className="group-hover:bg-orange-500 group-hover:text-white transition-colors">
-                          I'm Interested
-                        </Button>
-                      </Link>
+                  <Card className="border-0 shadow-lg bg-white/95 hover:shadow-xl transition-all duration-300 hover:-translate-y-2 h-full">
+                    <CardContent className="p-8 h-full flex flex-col">
+                      <div className="text-center mb-6">
+                        <div className="text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">{role.emoji}</div>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-2">{role.title}</h3>
+                        <Badge variant="outline" className="text-orange-600 border-orange-200">
+                          {role.timeCommitment}
+                        </Badge>
+                      </div>
+                      
+                      <p className="text-gray-600 mb-6 flex-grow leading-relaxed">{role.desc}</p>
+                      
+                      <div className="space-y-4 mb-6">
+                        <div>
+                          <div className="text-sm font-semibold text-gray-900 mb-2">Skills needed:</div>
+                          <div className="flex flex-wrap gap-2">
+                            {role.skills.map((skill) => (
+                              <Badge key={skill} variant="secondary" className="text-xs">
+                                {skill}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="p-3 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg">
+                          <div className="text-sm font-semibold text-orange-800 mb-1">Impact:</div>
+                          <div className="text-sm text-orange-700">{role.impact}</div>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-auto">
+                        <Link href="/careers/apply">
+                          <Button 
+                            size="sm" 
+                            className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white group-hover:scale-105 transition-all duration-300"
+                          >
+                            <Heart className="h-4 w-4 mr-2" />
+                            I'm Interested
+                          </Button>
+                        </Link>
+                      </div>
                     </CardContent>
                   </Card>
                 </motion.div>
               ))}
+            </div>
+            
+            {/* Volunteer Benefits */}
+            <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
+              <div className="text-center mb-8">
+                <h3 className="text-3xl font-bold text-gray-900 mb-4">Why Volunteer with Doggzy?</h3>
+                <p className="text-gray-600 max-w-2xl mx-auto">
+                  Join a community that values your time and provides meaningful experiences
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[
+                  { icon: Heart, title: 'Make Real Impact', desc: 'See the direct results of your efforts in dogs\' lives' },
+                  { icon: Users, title: 'Join Community', desc: 'Connect with like-minded animal lovers and advocates' },
+                  { icon: Award, title: 'Gain Experience', desc: 'Develop skills in animal care, event planning, and more' },
+                  { icon: Coffee, title: 'Flexible Schedule', desc: 'Volunteer on your own time with various commitment levels' }
+                ].map((benefit, idx) => (
+                  <motion.div
+                    key={benefit.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.1 }}
+                    className="text-center"
+                  >
+                    <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white shadow-lg">
+                      <benefit.icon className="h-8 w-8" />
+                    </div>
+                    <h4 className="text-lg font-bold text-gray-900 mb-2">{benefit.title}</h4>
+                    <p className="text-gray-600 text-sm">{benefit.desc}</p>
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
