@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
+import { track } from '@/lib/analytics'
 
 interface Product {
   id: string
@@ -206,7 +207,7 @@ export function ProductCard({ product, onAddToCart, onAddToWishlist, onQuickView
           <Button
             className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white"
             disabled={!product.inStock}
-            onClick={() => onAddToCart(product)}
+            onClick={() => { track('add_to_cart', { id: product.id, name: product.name, price: product.price }); onAddToCart(product) }}
           >
             <ShoppingCart className="h-4 w-4 mr-2" />
             {product.inStock ? 'Add to Cart' : 'Out of Stock'}

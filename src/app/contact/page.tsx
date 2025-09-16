@@ -6,6 +6,7 @@ import { AnimatedPage } from '@/components/animated-page'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Mail, Phone, MapPin, Heart, Check } from 'lucide-react'
+import { track } from '@/lib/analytics'
 import { motion } from 'framer-motion'
 
 export default function ContactPage() {
@@ -29,6 +30,7 @@ export default function ContactPage() {
   function submitForm(e: React.FormEvent) {
     e.preventDefault()
     setSent(true)
+    track('contact_submit')
     setTimeout(() => setSent(false), 3000)
   }
 

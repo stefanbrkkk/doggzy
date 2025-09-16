@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { AnimatedPage } from '@/components/animated-page'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
+import { LargeStoryCard } from '@/components/shared/large-story-card'
 
 export default function FosterPage() {
   const { t } = useLanguage()
@@ -80,24 +81,20 @@ export default function FosterPage() {
               <Button variant="glow" size="lg">{t.foster.sections.apply}</Button>
             </Link>
           </div>
-          <div className="mt-16">
-            <h3 className="text-2xl font-bold mb-6">Foster Stories</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {stories.map((s) => (
-                <Card key={s.name} className="border-0 shadow-md bg-white/90 overflow-hidden">
-                  <CardContent className="p-0">
-                    <div className="relative h-40 w-full bg-gray-100">
-                      <Image alt={s.name} src={s.img} fill className="object-cover" />
-                    </div>
-                    <div className="p-6">
-                      <div className="font-semibold text-gray-900 mb-1">{s.name}</div>
-                      <div className="text-sm text-gray-700 mb-2">{s.text}</div>
-                      <div className="text-2xl">{s.emoji}</div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+          <div className="mt-16 space-y-8">
+            <h3 className="text-2xl font-bold">Foster Stories</h3>
+            {stories.map((s, idx) => (
+              <LargeStoryCard
+                key={s.name}
+                title={s.name}
+                subtitle={s.emoji}
+                quote={s.text}
+                badges={[idx === 0 ? 'Family' : 'Community']}
+                media={{ type: 'image', src: s.img, caption: s.name }}
+                primaryCta={{ label: t.foster.sections.apply, onClick: () => { window.location.href = '/foster/apply' } }}
+                secondaryCta={{ label: 'Talk to a coordinator', onClick: () => { window.location.href = '/contact' } }}
+              />
+            ))}
           </div>
           <div className="mt-16">
             <h3 className="text-2xl font-bold mb-6">{t.foster.sections.benefitsTitle}</h3>

@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { useLanguage } from '@/contexts/LanguageContext'
 
 import { products } from '@/components/shop/products.data'
+import { track } from '@/lib/analytics'
 
 const categories = ['All', 'Apparel', 'Technology', 'Furniture', 'Accessories', 'Food', 'Travel', 'Toys', 'Grooming']
 
@@ -85,8 +86,7 @@ export default function ShopPage() {
 
   const handleAddToCart = (product: typeof products[0]) => {
     setCartItems(prev => [...prev, product.id])
-    // Show success message
-    console.log(`Added ${product.name} to cart`)
+    track('add_to_cart', { id: product.id, name: product.name, price: product.price })
   }
 
   const handleAddToWishlist = (product: typeof products[0]) => {
@@ -299,6 +299,7 @@ export default function ShopPage() {
                   setSearchQuery('')
                   setSelectedCategory('All')
                   setSortBy('popular')
+                  track('shop_clear_filters')
                 }}
                 className="bg-orange-500 hover:bg-orange-600"
               >

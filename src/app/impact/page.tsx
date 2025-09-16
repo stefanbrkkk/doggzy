@@ -22,6 +22,7 @@ import React from 'react'
 import { MotionContainer, MotionItem } from '@/components/shared/motion'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { AnimatedPage } from '@/components/animated-page'
+import { AnimatedCounter } from '@/components/shared/animated-counter'
 
 export default function ImpactPage() {
   const { t } = useLanguage()
@@ -152,7 +153,7 @@ export default function ImpactPage() {
                       {React.createElement(stat.icon, { className: "h-8 w-8" })}
                     </div>
                     <div className="text-3xl font-bold text-orange-600 mb-2">
-                      {stat.value}
+                      <AnimatedCounter value={stat.value} />
                     </div>
                     <div className="text-gray-600 font-medium mb-2">
                       {stat.label}
