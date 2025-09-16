@@ -17,6 +17,7 @@ import {
   HandHeart
 } from 'lucide-react'
 import React from 'react'
+import { MotionContainer, MotionItem } from '@/components/shared/motion'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { AnimatedPage } from '@/components/animated-page'
 
@@ -140,21 +141,23 @@ export default function AboutPage() {
             </p>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-              {stats.map((stat, index) => (
-                <div key={stat.label} className="text-center hover:scale-105 transition-transform duration-200">
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white mb-4 hover:scale-110 transition-transform duration-200">
-                    {React.createElement(stat.icon, { className: "h-8 w-8" })}
+            <MotionContainer className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+              {stats.map((stat) => (
+                <MotionItem key={stat.label}>
+                  <div className="text-center hover:scale-105 transition-transform duration-200">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white mb-4 hover:scale-110 transition-transform duration-200">
+                      {React.createElement(stat.icon, { className: "h-8 w-8" })}
+                    </div>
+                    <div className="text-3xl font-bold text-orange-600 mb-2">
+                      {stat.value}
+                    </div>
+                    <div className="text-gray-600 font-medium">
+                      {stat.label}
+                    </div>
                   </div>
-                  <div className="text-3xl font-bold text-orange-600 mb-2">
-                    {stat.value}
-                  </div>
-                  <div className="text-gray-600 font-medium">
-                    {stat.label}
-                  </div>
-                </div>
+                </MotionItem>
               ))}
-            </div>
+            </MotionContainer>
           </div>
         </div>
       </section>
