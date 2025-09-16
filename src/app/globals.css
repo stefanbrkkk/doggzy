@@ -1,0 +1,266 @@
+@import "tailwindcss";
+
+/* Modern Dark Theme System */
+@theme {
+  --font-sans: ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+
+  /* Unified Dark Color System */
+  --color-background: oklch(0.08 0.01 240);
+  --color-foreground: oklch(0.98 0.01 240);
+  --color-muted: oklch(0.12 0.02 240);
+  --color-muted-foreground: oklch(0.7 0.02 240);
+  --color-accent: oklch(0.15 0.02 240);
+  --color-accent-foreground: oklch(0.98 0.01 240);
+  --color-border: oklch(0.2 0.02 240);
+  --color-card: oklch(0.10 0.01 240);
+  --color-card-foreground: oklch(0.98 0.01 240);
+  --color-primary: oklch(0.65 0.2 25);
+  --color-primary-foreground: oklch(1 0 0);
+  --color-secondary: oklch(0.6 0.25 15);
+  --color-secondary-foreground: oklch(1 0 0);
+  --radius: 16px;
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  * {
+    border-color: theme(colors.border);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    font-kerning: normal;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    background: 
+      radial-gradient(circle at 20% 80%, oklch(0.65 0.2 25 / 0.08), transparent 50%),
+      radial-gradient(circle at 80% 20%, oklch(0.6 0.25 15 / 0.06), transparent 50%),
+      radial-gradient(circle at 40% 40%, oklch(0.65 0.2 25 / 0.04), transparent 50%),
+      var(--color-background);
+    background-attachment: fixed;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Typography System */
+  h1 {
+    @apply text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground;
+  }
+
+  h2 {
+    @apply text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight text-foreground;
+  }
+
+  h3 {
+    @apply text-xl sm:text-2xl font-semibold tracking-tight text-foreground;
+  }
+
+  p {
+    @apply leading-7 text-muted-foreground;
+  }
+
+  a {
+    @apply text-foreground/90 hover:text-primary transition-colors duration-300;
+  }
+
+  /* Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: theme(colors.background);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: theme(colors.border);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: theme(colors.muted);
+  }
+}
+
+/* Animation System */
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.6s ease-out forwards;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.4s ease-out forwards;
+  }
+
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from { 
+      opacity: 0; 
+      transform: translateY(30px); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
+
+  @keyframes scaleIn {
+    from { 
+      opacity: 0; 
+      transform: scale(0.9); 
+    }
+    to { 
+      opacity: 1; 
+      transform: scale(1); 
+    }
+  }
+
+  @keyframes glow {
+    from { box-shadow: 0 0 20px rgba(255, 107, 53, 0.2); }
+    to { box-shadow: 0 0 40px rgba(255, 107, 53, 0.4); }
+  }
+
+  /* Layout Utilities */
+  .container {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .section {
+    @apply py-16 lg:py-24;
+  }
+
+  .section-container {
+    @apply container mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .hero-section {
+    @apply min-h-screen flex items-center justify-center;
+  }
+
+  /* Modern Card System */
+  .card {
+    @apply rounded-2xl border border-border/50 bg-card/80 backdrop-blur-xl shadow-2xl;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card:hover {
+    @apply border-border shadow-2xl;
+    transform: translateY(-4px);
+    box-shadow: 
+      0 20px 25px -5px rgba(0, 0, 0, 0.3),
+      0 10px 10px -5px rgba(0, 0, 0, 0.2),
+      0 0 0 1px rgba(255, 107, 53, 0.1);
+  }
+
+  .glass {
+    @apply bg-card/60 backdrop-blur-2xl border border-border/30;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .glow {
+    box-shadow: 
+      0 0 20px rgba(255, 107, 53, 0.3),
+      0 0 40px rgba(255, 107, 53, 0.1);
+  }
+
+  .glow:hover {
+    box-shadow: 
+      0 0 30px rgba(255, 107, 53, 0.4),
+      0 0 60px rgba(255, 107, 53, 0.2);
+  }
+
+  /* Interactive States */
+  .interactive {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .interactive:hover {
+    transform: translateY(-2px);
+  }
+
+  .interactive:active {
+    transform: translateY(0);
+  }
+
+  /* Gradient Text */
+  .gradient-text {
+    background: linear-gradient(135deg, #ff6b35, #ff4444);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Focus States */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background;
+  }
+}
+
+/* Page-specific Animations */
+@layer components {
+  .page-enter {
+    animation: pageEnter 0.8s ease-out forwards;
+  }
+
+  @keyframes pageEnter {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .stagger-children > * {
+    animation: slideUp 0.6s ease-out forwards;
+  }
+
+  .stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
+  .stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
+  .stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
+  .stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
+  .stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
+  .stagger-children > *:nth-child(6) { animation-delay: 0.6s; }
+}
+
+/* Loading States */
+.skeleton {
+  @apply bg-muted animate-pulse;
+  background: linear-gradient(
+    90deg,
+    var(--color-muted) 25%,
+    var(--color-accent) 50%,
+    var(--color-muted) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
