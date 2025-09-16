@@ -43,11 +43,11 @@ export default function Home() {
         transition={{ duration: 0.6 }}
         viewport={{ once: true }}
       >
-        <section className="py-16">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-            <h2 className="text-3xl font-display font-bold">Latest Stories</h2>
+        <section className="section">
+          <div className="section-container space-y-8">
+            <h2 className="text-3xl font-display font-bold text-center">Latest Stories</h2>
             <LargeStoryCard
-              title="Bella’s First Day Home"
+              title="Bella's First Day Home"
               subtitle="💛🐶"
               quote="She was shy for an hour, then decided the couch was hers."
               badges={["Adopted", "Family"]}

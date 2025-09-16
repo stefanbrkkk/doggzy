@@ -69,10 +69,8 @@ export default function RootLayout({
       <body className="min-h-screen bg-background text-foreground antialiased">
         <LanguageProvider>
           <Navigation />
-          <main className="pt-16 lg:pt-20">
-            <div className="container py-8 lg:py-12">
-              {children}
-            </div>
+          <main className="pt-16 lg:pt-20 min-h-screen">
+            {children}
           </main>
           <Footer />
         </LanguageProvider>
