@@ -29,9 +29,10 @@ interface ProductCardProps {
   product: Product
   onAddToCart: (product: Product) => void
   onAddToWishlist: (product: Product) => void
+  onQuickView?: (product: Product) => void
 }
 
-export function ProductCard({ product, onAddToCart, onAddToWishlist }: ProductCardProps) {
+export function ProductCard({ product, onAddToCart, onAddToWishlist, onQuickView }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [imageLoaded, setImageLoaded] = useState(false)
 
@@ -115,6 +116,7 @@ export function ProductCard({ product, onAddToCart, onAddToWishlist }: ProductCa
               size="icon"
               variant="secondary"
               className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg"
+              onClick={() => onQuickView && onQuickView(product)}
             >
               <Eye className="h-4 w-4" />
             </Button>

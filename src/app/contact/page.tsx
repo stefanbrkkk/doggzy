@@ -56,10 +56,11 @@ export default function ContactPage() {
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1, duration: 0.5 }}
-                  className="mt-3 flex gap-3"
+                  className="mt-3 flex gap-3 items-center"
                 >
                   <a href="mailto:hello@doggzy.org" className="px-5 py-2.5 rounded-full bg-white text-gray-900 font-medium hover:opacity-90">Email us</a>
                   <a href="/contact#form" className="px-5 py-2.5 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-medium hover:from-orange-600 hover:to-red-600">Book a 15‑min call</a>
+                  <span className="ml-2 text-sm text-gray-700 bg-white/70 rounded-full px-3 py-1">Replies ~2h</span>
                 </motion.div>
               </div>
             </div>

@@ -5,6 +5,7 @@ import { HeroSection } from '@/components/hero-section'
 import { ImpactStats } from '@/components/impact-stats'
 import { SuccessStories } from '@/components/success-stories'
 import { GlobalPartners } from '@/components/global-partners'
+import { ShopPreview } from '@/components/home/shop-preview'
 
 export default function Home() {
   return (
@@ -35,6 +36,15 @@ export default function Home() {
         <SuccessStories />
       </motion.div>
       
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
+      >
+        <ShopPreview />
+      </motion.div>
+
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}

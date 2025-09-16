@@ -9,93 +9,9 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useLanguage } from '@/contexts/LanguageContext'
 
-// Mock product data
-const products = [
-  {
-    id: '1',
-    name: 'Custom Dog Portrait Hoodie',
-    price: 45,
-    originalPrice: 65,
-    image: '/api/placeholder/400/400',
-    rating: 4.9,
-    reviewCount: 234,
-    category: 'Apparel',
-    tags: ['Custom', 'Organic Cotton', 'Personalized'],
-    description: 'High-quality hoodie with your dog\'s portrait printed on it. Made from organic cotton.',
-    inStock: true,
-    isEcoFriendly: true,
-    isBestSeller: true
-  },
-  {
-    id: '2',
-    name: 'GPS Dog Collar Pro',
-    price: 89,
-    image: '/api/placeholder/400/400',
-    rating: 4.7,
-    reviewCount: 156,
-    category: 'Technology',
-    tags: ['GPS', 'Waterproof', 'Long Battery'],
-    description: 'Advanced GPS tracking collar with real-time location updates and health monitoring.',
-    inStock: true,
-    isNew: true
-  },
-  {
-    id: '3',
-    name: 'Eco-Friendly Dog Bed',
-    price: 75,
-    originalPrice: 95,
-    image: '/api/placeholder/400/400',
-    rating: 4.8,
-    reviewCount: 189,
-    category: 'Furniture',
-    tags: ['Recycled Materials', 'Memory Foam', 'Machine Washable'],
-    description: 'Sustainable dog bed made from recycled materials with memory foam support.',
-    inStock: true,
-    isEcoFriendly: true
-  },
-  {
-    id: '4',
-    name: 'Rescue Dog T-Shirt',
-    price: 25,
-    image: '/api/placeholder/400/400',
-    rating: 4.9,
-    reviewCount: 445,
-    category: 'Apparel',
-    tags: ['Cause', 'Comfortable', 'Unisex'],
-    description: 'Show your support for rescue dogs with this comfortable, cause-driven t-shirt.',
-    inStock: true,
-    isBestSeller: true
-  },
-  {
-    id: '5',
-    name: 'Smart Water Bottle',
-    price: 35,
-    image: '/api/placeholder/400/400',
-    rating: 4.6,
-    reviewCount: 98,
-    category: 'Accessories',
-    tags: ['Smart', 'BPA-Free', 'Portable'],
-    description: 'Smart water bottle that tracks your dog\'s hydration and reminds you to refill.',
-    inStock: true,
-    isNew: true
-  },
-  {
-    id: '6',
-    name: 'Organic Dog Treats Pack',
-    price: 18,
-    image: '/api/placeholder/400/400',
-    rating: 4.9,
-    reviewCount: 567,
-    category: 'Food',
-    tags: ['Organic', 'Grain-Free', 'Healthy'],
-    description: 'Premium organic dog treats made with natural ingredients and no artificial preservatives.',
-    inStock: true,
-    isEcoFriendly: true,
-    isBestSeller: true
-  }
-]
+import { products } from '@/components/shop/products.data'
 
-const categories = ['All', 'Apparel', 'Technology', 'Furniture', 'Accessories', 'Food']
+const categories = ['All', 'Apparel', 'Technology', 'Furniture', 'Accessories', 'Food', 'Travel', 'Toys', 'Grooming']
 
 export default function ShopPage() {
   const { t } = useLanguage()
@@ -104,6 +20,17 @@ export default function ShopPage() {
   const [sortBy, setSortBy] = useState('popular')
   const [cartItems, setCartItems] = useState<string[]>([])
   const [wishlistItems, setWishlistItems] = useState<string[]>([])
+  const [quickViewProduct, setQuickViewProduct] = useState<typeof products[0] | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [ecoOnly, setEcoOnly] = useState(false)
+  const [bestOnly, setBestOnly] = useState(false)
+  const [inStockOnly, setInStockOnly] = useState(false)
+  // Simulate brief loading on filter/sort/search changes for skeletons
+  React.useEffect(() => {
+    setLoading(true)
+    const id = setTimeout(() => setLoading(false), 250)
+    return () => clearTimeout(id)
+  }, [searchQuery, selectedCategory, sortBy, ecoOnly, bestOnly, inStockOnly])
 
   const sortOptions = [
     { value: 'popular', label: t.shop.filters.sortPopular },
@@ -129,6 +56,11 @@ export default function ShopPage() {
     if (selectedCategory !== 'All') {
       filtered = filtered.filter(product => product.category === selectedCategory)
     }
+
+    // Additional toggles
+    if (ecoOnly) filtered = filtered.filter(p => p.isEcoFriendly)
+    if (bestOnly) filtered = filtered.filter(p => p.isBestSeller)
+    if (inStockOnly) filtered = filtered.filter(p => p.inStock)
 
     // Sort products
     switch (sortBy) {
@@ -286,6 +218,12 @@ export default function ShopPage() {
               ))}
             </select>
           </div>
+          {/* Toggles */}
+          <div className="mt-4 flex gap-2 flex-wrap">
+            <Button variant={ecoOnly ? 'default' : 'outline'} size="sm" className={ecoOnly ? 'bg-emerald-500 hover:bg-emerald-600' : ''} onClick={() => setEcoOnly(v => !v)}>Eco-Friendly</Button>
+            <Button variant={bestOnly ? 'default' : 'outline'} size="sm" className={bestOnly ? 'bg-yellow-500 hover:bg-yellow-600' : ''} onClick={() => setBestOnly(v => !v)}>Best Seller</Button>
+            <Button variant={inStockOnly ? 'default' : 'outline'} size="sm" className={inStockOnly ? 'bg-blue-500 hover:bg-blue-600' : ''} onClick={() => setInStockOnly(v => !v)}>In Stock</Button>
+          </div>
         </div>
       </section>
 
@@ -311,19 +249,36 @@ export default function ShopPage() {
           </div>
 
           {/* Products */}
-          {filteredAndSortedProducts.length > 0 ? (
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="rounded-2xl overflow-hidden shadow-sm border border-gray-200 bg-white">
+                  <div className="animate-pulse">
+                    <div className="aspect-square bg-gray-200" />
+                    <div className="p-4 space-y-3">
+                      <div className="h-4 bg-gray-200 rounded w-3/4" />
+                      <div className="h-3 bg-gray-100 rounded w-full" />
+                      <div className="h-3 bg-gray-100 rounded w-5/6" />
+                      <div className="h-5 bg-gray-200 rounded w-1/3" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : filteredAndSortedProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {filteredAndSortedProducts.map((product, index) => (
                 <motion.div
                   key={product.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1, duration: 0.5 }}
+                  transition={{ delay: index * 0.08, duration: 0.45 }}
                 >
                   <ProductCard
                     product={product}
                     onAddToCart={handleAddToCart}
                     onAddToWishlist={handleAddToWishlist}
+                    onQuickView={(p) => setQuickViewProduct(p)}
                   />
                 </motion.div>
               ))}
@@ -353,6 +308,49 @@ export default function ShopPage() {
           )}
         </div>
       </section>
+
+      {/* Quick View Side-Sheet */}
+      {quickViewProduct && (
+        <motion.div
+          className="fixed inset-0 z-50"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <div className="absolute inset-0 bg-black/40" onClick={() => setQuickViewProduct(null)} />
+          <motion.div
+            className="absolute right-0 top-0 h-full w-full sm:w-[420px] bg-white dark:bg-slate-900 shadow-2xl p-6 overflow-y-auto"
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', stiffness: 260, damping: 28 }}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold">{quickViewProduct.name}</h3>
+              <button onClick={() => setQuickViewProduct(null)} className="text-gray-500 hover:text-gray-900">✕</button>
+            </div>
+            <div className="aspect-square rounded-xl bg-gradient-to-br from-orange-100 to-red-100 mb-4" />
+            <p className="text-gray-700 dark:text-gray-300 mb-4">{quickViewProduct.description}</p>
+            <div className="flex items-center gap-2 mb-6">
+              <span className="text-2xl font-bold text-orange-600">${quickViewProduct.price}</span>
+              {quickViewProduct.originalPrice && (
+                <span className="text-lg text-gray-500 line-through">${quickViewProduct.originalPrice}</span>
+              )}
+            </div>
+            <div className="grid grid-cols-2 gap-2 mb-6">
+              {quickViewProduct.tags.map(tag => (
+                <span key={tag} className="text-xs px-2 py-1 rounded-md bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300">{tag}</span>
+              ))}
+            </div>
+            <div className="flex gap-3">
+              <Button className="bg-gradient-to-r from-orange-500 to-red-500 text-white" onClick={() => { handleAddToCart(quickViewProduct); setQuickViewProduct(null) }}>
+                <ShoppingCart className="h-4 w-4 mr-2" /> Add to Cart
+              </Button>
+              <Button variant="outline" onClick={() => setQuickViewProduct(null)}>Close</Button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
 
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-orange-500 to-red-500 text-white">
