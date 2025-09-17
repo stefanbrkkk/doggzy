@@ -82,7 +82,7 @@ export default function ShopPage() {
     }
 
     return filtered
-  }, [searchQuery, selectedCategory, sortBy])
+  }, [searchQuery, selectedCategory, sortBy, ecoOnly, bestOnly, inStockOnly])
 
   const handleAddToCart = (product: typeof products[0]) => {
     setCartItems(prev => [...prev, product.id])

@@ -167,7 +167,7 @@ export function SuccessStories() {
                 <div className="relative mb-4">
                   <Quote className="h-6 w-6 text-orange-200 absolute -top-2 -left-2" />
                   <p className="text-gray-600 dark:text-gray-300 text-sm italic pl-4">
-                    "{story.story}"
+                    &quot;{story.story}&quot;
                   </p>
                 </div>
 
