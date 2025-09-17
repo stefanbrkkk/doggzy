@@ -428,7 +428,7 @@ export default function AdoptPage() {
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Adoption Process</h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
-                We've streamlined our process to make finding your perfect companion as smooth as possible
+                We&apos;ve streamlined our process to make finding your perfect companion as smooth as possible
               </p>
             </div>
             
@@ -491,7 +491,7 @@ export default function AdoptPage() {
                       </div>
                       <div className="p-8 flex flex-col justify-center">
                         <h3 className="text-2xl font-bold text-gray-900 mb-4">{story.name}</h3>
-                        <p className="text-gray-700 mb-6 leading-relaxed">"{story.story}"</p>
+                        <p className="text-gray-700 mb-6 leading-relaxed">&quot;{story.story}&quot;</p>
                         <div className="flex gap-4">
                           <Button 
                             size="sm"
