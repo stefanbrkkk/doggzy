@@ -33,13 +33,12 @@ export function HeroSection() {
   }, [stats.length])
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-orange-50 via-white to-red-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute top-40 right-20 w-48 h-48 bg-secondary/8 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute bottom-20 left-1/4 w-24 h-24 bg-primary/12 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-1/2 right-1/3 w-20 h-20 bg-secondary/6 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '3s' }} />
+        <div className="absolute top-20 left-10 w-20 h-20 bg-orange-200/30 dark:bg-orange-500/20 rounded-full blur-xl animate-pulse" />
+        <div className="absolute top-40 right-20 w-32 h-32 bg-red-200/20 dark:bg-red-500/15 rounded-full blur-xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute bottom-20 left-1/4 w-16 h-16 bg-yellow-200/40 dark:bg-yellow-500/20 rounded-full blur-xl animate-pulse" style={{ animationDelay: '2s' }} />
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
