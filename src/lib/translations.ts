@@ -980,7 +980,13 @@ export const translations = {
       sections: {
         openings: "Posiciones Abiertas",
         culture: "Nuestra Cultura",
+        cultureDesc: "Somos una organización centrada en la misión, remota y obsesionada con los perros.",
         benefits: "Beneficios",
+        benefitsList: {
+          impact: "Trabajo de alto impacto, impulsado por la misión",
+          flexibility: "Flexibilidad remota primero",
+          growth: "Presupuesto de aprendizaje y oportunidades de crecimiento"
+        },
         apply: "Cómo Postular"
       }
     },
@@ -994,8 +1000,17 @@ export const translations = {
       },
       sections: {
         process: "Proceso de Adopción",
+        processDesc: "Envía una aplicación, conoce a nuestro equipo y programa una reunión.",
         requirements: "Requisitos",
+        requirementsDesc: "Proporciona identificación, información del hogar, aprobación del propietario si alquilas y referencias veterinarias.",
         availableDogs: "Perros Disponibles",
+        availableDogsDesc: "Explora perros listos para hogares y encuentra tu pareja perfecta.",
+        benefitsTitle: "Beneficios de Adoptar un Perro",
+        benefits: {
+          saveLife: "Salvas directamente una vida",
+          companionship: "Compañía y rutina incomparables",
+          community: "Únete a una comunidad de adoptantes cariñosa"
+        },
         apply: "Postular para Adoptar"
       }
     },
@@ -1009,8 +1024,17 @@ export const translations = {
       },
       sections: {
         whyFoster: "¿Por Qué Ser Hogar Temporal?",
+        whyFosterDesc: "Crea espacio para más rescates y ayuda a los perros a descompresarse.",
         responsibilities: "Responsabilidades",
+        responsibilitiesDesc: "Proporciona cuidado diario, espacio seguro, transporte a visitas veterinarias y actualizaciones.",
         support: "Apoyo que Brindamos",
+        supportDesc: "Cubrimos los costos médicos y proporcionamos suministros cuando están disponibles.",
+        benefitsTitle: "Beneficios de Ser Hogar Temporal",
+        benefits: {
+          lifesaving: "Impacto inmediato de salvamento de vidas",
+          flexible: "Duraciones de compromiso flexibles",
+          rewarding: "Experiencia profundamente gratificante"
+        },
         apply: "Postular para Ser Hogar Temporal"
       }
     },
@@ -1597,7 +1621,13 @@ export const translations = {
       sections: {
         openings: "Postes Ouverts",
         culture: "Notre Culture",
+        cultureDesc: "Nous sommes axés sur la mission, favorables au télétravail et obsédés par les chiens.",
         benefits: "Avantages",
+        benefitsList: {
+          impact: "Travail à fort impact, axé sur la mission",
+          flexibility: "Flexibilité axée sur le télétravail",
+          growth: "Budget d'apprentissage et opportunités de croissance"
+        },
         apply: "Comment Postuler"
       }
     },
@@ -1611,8 +1641,17 @@ export const translations = {
       },
       sections: {
         process: "Processus d'Adoption",
+        processDesc: "Soumettez une demande, rencontrez notre équipe et planifiez une rencontre.",
         requirements: "Exigences",
+        requirementsDesc: "Fournissez une pièce d'identité, des informations sur le domicile, l'approbation du propriétaire si vous louez et des références vétérinaires.",
         availableDogs: "Chiens Disponibles",
+        availableDogsDesc: "Parcourez les chiens prêts pour des foyers et trouvez votre match parfait.",
+        benefitsTitle: "Avantages d'Adopter un Chien",
+        benefits: {
+          saveLife: "Vous sauvez directement une vie",
+          companionship: "Compagnie et routine inégalées",
+          community: "Rejoignez une communauté bienveillante d'adoptants"
+        },
         apply: "Postuler pour Adopter"
       }
     },
@@ -1626,8 +1665,17 @@ export const translations = {
       },
       sections: {
         whyFoster: "Pourquoi Accueillir ?",
+        whyFosterDesc: "Créez de l'espace pour plus de sauvetages et aidez les chiens à décompresser.",
         responsibilities: "Responsabilités",
+        responsibilitiesDesc: "Fournissez des soins quotidiens, un espace sûr, le transport aux visites vétérinaires et des mises à jour.",
         support: "Soutien que Nous Fournissons",
+        supportDesc: "Nous couvrons les coûts médicaux et fournissons des fournitures lorsqu'elles sont disponibles.",
+        benefitsTitle: "Avantages d'Accueillir",
+        benefits: {
+          lifesaving: "Impact immédiat de sauvetage de vies",
+          flexible: "Durées d'engagement flexibles",
+          rewarding: "Expérience profondément enrichissante"
+        },
         apply: "Postuler pour Accueillir"
       }
     },

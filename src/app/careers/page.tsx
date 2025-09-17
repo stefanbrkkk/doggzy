@@ -20,7 +20,7 @@ export default function CareersPage() {
   const [activeQuizStep, setActiveQuizStep] = React.useState(0)
   const [quizAnswers, setQuizAnswers] = React.useState<Record<string, string>>({})
   const [showQuizResults, setShowQuizResults] = React.useState(false)
-  const [selectedJob, setSelectedJob] = React.useState<any>(null)
+  const [selectedJob, setSelectedJob] = React.useState<object | null>(null)
   const [showVideo, setShowVideo] = React.useState(false)
 
   const companyStats = {
