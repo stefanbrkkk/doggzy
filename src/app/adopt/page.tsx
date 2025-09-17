@@ -21,7 +21,7 @@ export default function AdoptPage() {
   const [activeQuizStep, setActiveQuizStep] = React.useState(0)
   const [quizAnswers, setQuizAnswers] = React.useState<Record<string, string>>({})
   const [showQuizResults, setShowQuizResults] = React.useState(false)
-  const [selectedDog, setSelectedDog] = React.useState<any>(null)
+  const [selectedDog, setSelectedDog] = React.useState<object | null>(null)
   const [filterAge, setFilterAge] = React.useState('')
   const [filterSize, setFilterSize] = React.useState('')
   const [showVideo, setShowVideo] = React.useState(false)

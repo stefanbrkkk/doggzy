@@ -211,7 +211,7 @@ export default function AdminDashboard() {
                 ].map((story, index) => (
                   <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                     <div>
-                      <h4 className="font-medium">{story.name}'s Story</h4>
+                      <h4 className="font-medium">{story.name}&apos;s Story</h4>
                       <p className="text-sm text-gray-600">{story.location}</p>
                     </div>
                     <div className="flex items-center gap-2">

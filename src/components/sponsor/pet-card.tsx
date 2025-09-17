@@ -9,7 +9,7 @@ import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 
-interface Pet {
+export interface Pet {
   id: string
   name: string
   age: string
