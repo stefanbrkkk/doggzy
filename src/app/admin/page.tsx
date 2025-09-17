@@ -138,7 +138,7 @@ export default function AdminDashboard() {
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button variant="outline" className="w-full">
-                <Image className="h-4 w-4 mr-2" />
+                <Image className="h-4 w-4 mr-2" alt="Add product icon" />
                 Add Product
               </Button>
             </motion.div>
@@ -211,7 +211,7 @@ export default function AdminDashboard() {
                 ].map((story, index) => (
                   <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                     <div>
-                      <h4 className="font-medium">{story.name}'s Story</h4>
+                      <h4 className="font-medium">{story.name}&apos;s Story</h4>
                       <p className="text-sm text-gray-600">{story.location}</p>
                     </div>
                     <div className="flex items-center gap-2">

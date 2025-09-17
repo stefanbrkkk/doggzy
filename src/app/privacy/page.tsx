@@ -108,7 +108,7 @@ export default function PrivacyPage() {
                     <h2 className="text-2xl font-bold text-gray-900 mb-4">Last Updated: January 2024</h2>
                     
                     <p className="text-gray-700 mb-6">
-                      Doggzy ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy 
+                      Doggzy (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) is committed to protecting your privacy. This Privacy Policy 
                       explains how we collect, use, disclose, and safeguard your information when you visit our 
                       website or use our services.
                     </p>

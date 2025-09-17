@@ -25,7 +25,7 @@ interface LargeStoryCardProps {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 18 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' } }
+  visible: { opacity: 1, y: 0 }
 }
 
 export function LargeStoryCard({ title, subtitle, quote, badges = [], media, primaryCta, secondaryCta, onOpenLightbox }: LargeStoryCardProps) {
@@ -37,6 +37,7 @@ export function LargeStoryCard({ title, subtitle, quote, badges = [], media, pri
       variants={itemVariants}
       initial="hidden"
       animate="visible"
+      transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
       whileHover={{ y: -6, scale: 1.01 }}
       onHoverStart={() => setIsHover(true)}
       onHoverEnd={() => setIsHover(false)}
