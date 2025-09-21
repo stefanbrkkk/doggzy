@@ -9,7 +9,8 @@ Use this page as the central index and navigation.
 
 ## Business Plan (final documents)
 - [Document List](business-plan/documents-list.md)
-  - Executive Summary (One‑Pager) — to be created: `business-plan/executive-summary.md`
+  - [Executive Summary (Draft)](business-plan/executive-summary.md)
+  - [One‑Pager (Draft)](business-plan/one-pager.md)
   - Full Business Plan — to be created: `business-plan/business-plan.md`
   - GTM & Marketing Plan — to be created: `business-plan/marketing-plan.md`
   - Financial Model & Assumptions — to be created: `business-plan/financial-model.md`
@@ -25,6 +26,8 @@ Use this page as the central index and navigation.
 - [Initial High‑Level Plan](execution-plan/1-initial-high-level-plan.md)
 - [Execution Plan — Investigation‑First](execution-plan/execution-plan.md)
 - [First Steps — 2‑Person Plan](execution-plan/first-steps.md)
+- [Partner Pre‑Brief](execution-plan/partner-prebrief.md)
+- [Partner Pre‑Brief (SRB)](execution-plan/partner-prebrief.sr.md)
 
 ### Detailed Execution Plans (by section)
 - [01 Executive Summary](execution-plan/detailed-plan/01-executive-summary.md)
@@ -43,6 +46,23 @@ Use this page as the central index and navigation.
 - [14 Implementation Plan & Roadmap](execution-plan/detailed-plan/14-implementation-roadmap.md)
 - [15 Data Room](execution-plan/detailed-plan/15-data-room.md)
 - [16 Templates & Boilerplates](execution-plan/detailed-plan/16-templates-boilerplates.md)
+
+### Investigation Templates
+- [Interview Guide](execution-plan/templates/interview-guide.md)
+- [Outreach Templates](execution-plan/templates/outreach-templates.md)
+- [Research Notes Template](execution-plan/templates/research-notes-template.md)
+- [Comparables Matrix (CSV)](execution-plan/templates/comparables-matrix.csv)
+
+### Reports (in progress)
+- [Serbia Landscape Report (Skeleton)](execution-plan/reports/serbia-landscape-report.md)
+
+### Trackers
+- [Partner Pipeline (CSV)](execution-plan/trackers/partner-pipeline.csv)
+- [Vet Directory (CSV)](execution-plan/trackers/vet-directory.csv)
+
+### Research Notes
+- Folder: `docs/execution-plan/research/notes/`
+- Today: [2025-09-21](execution-plan/research/notes/2025-09-21.md)
 
 ## How to Resume Work
 - Use the `/pickup-session` workflow.
