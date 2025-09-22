@@ -1,0 +1,178 @@
+{
+  "validation": {
+    "required": "This field is required",
+    "email": "Please enter a valid email address",
+    "phone": "Please enter a valid phone number",
+    "minLength": "Must be at least {min} characters",
+    "maxLength": "Must be no more than {max} characters",
+    "pattern": "Please enter a valid format"
+  },
+  "adoption": {
+    "title": "Adoption Application",
+    "subtitle": "Tell us about yourself and your interest in adopting",
+    "personalInfo": "Personal Information",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "address": "Address",
+    "city": "City",
+    "state": "State/Province",
+    "zipCode": "ZIP/Postal Code",
+    "country": "Country",
+    "experience": "Tell us about your experience with dogs",
+    "experiencePlaceholder": "Describe your experience with dogs, including any previous pets...",
+    "housing": "Housing Information",
+    "housingType": "Housing Type",
+    "housingTypes": {
+      "house": "House",
+      "apartment": "Apartment",
+      "condo": "Condo",
+      "other": "Other"
+    },
+    "ownRent": "Do you own or rent?",
+    "ownRentOptions": {
+      "own": "Own",
+      "rent": "Rent"
+    },
+    "landlordApproval": "Do you have landlord approval for pets?",
+    "yardFenced": "Do you have a fenced yard?",
+    "household": "Household Information",
+    "householdSize": "Number of people in household",
+    "children": "Ages of children in household (if any)",
+    "otherPets": "Other pets in household",
+    "preferences": "Dog Preferences",
+    "preferredAge": "Preferred age range",
+    "preferredSize": "Preferred size",
+    "sizeOptions": {
+      "small": "Small (under 25 lbs)",
+      "medium": "Medium (25-60 lbs)",
+      "large": "Large (60-90 lbs)",
+      "giant": "Giant (over 90 lbs)",
+      "noPreference": "No preference"
+    },
+    "activityLevel": "Preferred activity level",
+    "activityOptions": {
+      "low": "Low - Calm, enjoys relaxing",
+      "moderate": "Moderate - Daily walks and some play",
+      "high": "High - Lots of exercise and activity",
+      "noPreference": "No preference"
+    },
+    "specialNeeds": "Are you open to special needs dogs?",
+    "commitment": "Commitment",
+    "timeCommitment": "How many hours per day can you dedicate to your dog?",
+    "lifespan": "Are you prepared for a 10-15 year commitment?",
+    "emergencyContact": "Emergency Contact",
+    "emergencyName": "Emergency contact name",
+    "emergencyPhone": "Emergency contact phone",
+    "emergencyRelationship": "Relationship to you",
+    "veterinarian": "Veterinary Information",
+    "vetName": "Veterinarian name (if you have one)",
+    "vetPhone": "Veterinarian phone",
+    "additionalInfo": "Additional Information",
+    "whyAdopt": "Why do you want to adopt a dog?",
+    "anythingElse": "Anything else you'd like us to know?",
+    "agreement": "Agreement",
+    "agreeTerms": "I agree to the terms and conditions",
+    "agreeHomeVisit": "I agree to a home visit as part of the adoption process",
+    "agreeUpdates": "I agree to provide updates on my adopted dog",
+    "submit": "Submit Application",
+    "submitting": "Submitting...",
+    "success": {
+      "title": "Application Submitted!",
+      "message": "Thank you for your interest in adoption. We'll review your application and get back to you within 48 hours.",
+      "nextSteps": "Next steps:",
+      "step1": "We'll review your application",
+      "step2": "If approved, we'll schedule an interview",
+      "step3": "Home visit and meet & greet",
+      "step4": "Finalize the adoption"
+    }
+  },
+  "foster": {
+    "title": "Foster Application",
+    "subtitle": "Help us save more lives by providing temporary care",
+    "experience": "Tell us about your experience with dogs",
+    "availability": "When would you be available to foster?",
+    "duration": "How long can you foster?",
+    "durationOptions": {
+      "shortTerm": "Short-term (1-4 weeks)",
+      "mediumTerm": "Medium-term (1-3 months)",
+      "longTerm": "Long-term (3+ months)",
+      "flexible": "Flexible"
+    },
+    "dogTypes": "What types of dogs are you willing to foster?",
+    "dogTypeOptions": {
+      "puppies": "Puppies (under 6 months)",
+      "adults": "Adult dogs",
+      "seniors": "Senior dogs (7+ years)",
+      "medical": "Dogs with medical needs",
+      "behavioral": "Dogs with behavioral needs",
+      "pregnant": "Pregnant dogs",
+      "nursing": "Nursing mothers with puppies"
+    },
+    "transportation": "Can you provide transportation to vet appointments?",
+    "submit": "Submit Foster Application",
+    "success": {
+      "title": "Foster Application Submitted!",
+      "message": "Thank you for your willingness to foster. We'll be in touch soon with next steps."
+    }
+  },
+  "careers": {
+    "title": "Job Application",
+    "subtitle": "Join our mission to save dogs worldwide",
+    "position": "Position applying for",
+    "resume": "Resume/CV",
+    "coverLetter": "Cover Letter",
+    "coverLetterPlaceholder": "Tell us why you're passionate about our mission and what you'd bring to this role...",
+    "availability": "When can you start?",
+    "salary": "Salary expectations",
+    "remote": "Are you open to remote work?",
+    "relocation": "Are you willing to relocate?",
+    "submit": "Submit Application",
+    "success": {
+      "title": "Application Submitted!",
+      "message": "Thank you for your interest in joining our team. We'll review your application and get back to you soon."
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "We'd love to hear from you",
+    "name": "Name",
+    "subject": "Subject",
+    "message": "Message",
+    "messagePlaceholder": "How can we help you?",
+    "submit": "Send Message",
+    "success": {
+      "title": "Message Sent!",
+      "message": "Thank you for contacting us. We'll get back to you within 24 hours."
+    }
+  },
+  "report": {
+    "title": "Report Animal Abuse",
+    "subtitle": "Help us protect animals from harm",
+    "anonymous": "Report anonymously",
+    "location": "Location of incident",
+    "locationPlaceholder": "Address or general area where the incident occurred",
+    "description": "Description of incident",
+    "descriptionPlaceholder": "Please provide as much detail as possible about what you witnessed...",
+    "date": "Date of incident",
+    "time": "Time of incident (approximate)",
+    "ongoing": "Is this an ongoing situation?",
+    "animals": "Animals involved",
+    "animalsPlaceholder": "Type and number of animals (e.g., '2 dogs', '1 cat')",
+    "evidence": "Do you have photos or video evidence?",
+    "contactAuthorities": "Have you contacted local authorities?",
+    "urgency": "Urgency level",
+    "urgencyOptions": {
+      "immediate": "Immediate danger - animal needs help now",
+      "urgent": "Urgent - animal in distress",
+      "concern": "Concern - suspicious situation"
+    },
+    "submit": "Submit Report",
+    "success": {
+      "title": "Report Submitted",
+      "message": "Thank you for reporting this incident. We take all reports seriously and will follow up appropriately.",
+      "nextSteps": "If this is an emergency, please also contact local authorities immediately."
+    }
+  }
+}
