@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import React from 'react'
 import { AnimatedPage } from '@/components/animated-page'
 import { Card, CardContent } from '@/components/ui/card'

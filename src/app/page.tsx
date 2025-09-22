@@ -1,12 +1,23 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { motion } from 'framer-motion'
 import { HeroSection } from '@/components/hero-section'
 import { ImpactStats } from '@/components/impact-stats'
-import { SuccessStories } from '@/components/success-stories'
-import { GlobalPartners } from '@/components/global-partners'
-import { ShopPreview } from '@/components/home/shop-preview'
-import { LargeStoryCard } from '@/components/shared/large-story-card'
+
+// Dynamically import below-the-fold components
+const SuccessStories = dynamic(() => import('@/components/success-stories').then(mod => ({ default: mod.SuccessStories })), {
+  loading: () => <div className="h-32 animate-pulse bg-gray-100 rounded-lg" />
+})
+const GlobalPartners = dynamic(() => import('@/components/global-partners').then(mod => ({ default: mod.GlobalPartners })), {
+  loading: () => <div className="h-32 animate-pulse bg-gray-100 rounded-lg" />
+})
+const ShopPreview = dynamic(() => import('@/components/home/shop-preview').then(mod => ({ default: mod.ShopPreview })), {
+  loading: () => <div className="h-32 animate-pulse bg-gray-100 rounded-lg" />
+})
+const LargeStoryCard = dynamic(() => import('@/components/shared/large-story-card').then(mod => ({ default: mod.LargeStoryCard })), {
+  loading: () => <div className="h-32 animate-pulse bg-gray-100 rounded-lg" />
+})
 
 export default function Home() {
   return (

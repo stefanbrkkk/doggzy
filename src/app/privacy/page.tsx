@@ -1,4 +1,6 @@
 'use client'
+
+export const dynamic = 'force-dynamic'
 import { motion } from 'framer-motion'
 import { Shield, Lock, Eye, Globe, Mail, Phone, FileText } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
@@ -186,7 +188,7 @@ export default function PrivacyPage() {
                       privacy practices of these external sites. We encourage you to review their privacy policies.
                     </p>
 
-                    <h3 className="text-xl font-semibold text-gray-900 mb-4 mt-8">8. Children's Privacy</h3>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-4 mt-8">8. Children&apos;s Privacy</h3>
                     <p className="text-gray-700 mb-6">
                       We do not knowingly collect personal information from children under 13. If you believe 
                       we have collected information from a child, please contact us immediately.
@@ -202,7 +204,7 @@ export default function PrivacyPage() {
                     <h3 className="text-xl font-semibold text-gray-900 mb-4 mt-8">10. Changes to This Policy</h3>
                     <p className="text-gray-700 mb-6">
                       We may update this Privacy Policy from time to time. We will notify you of any changes 
-                      by posting the new policy on this page and updating the "Last Updated" date.
+                      by posting the new policy on this page and updating the &quot;Last Updated&quot; date.
                     </p>
 
                     <h3 className="text-xl font-semibold text-gray-900 mb-4 mt-8">11. Contact Us</h3>

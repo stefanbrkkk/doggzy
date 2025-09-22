@@ -1,8 +1,16 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { ErrorBoundary } from "@/components/error-boundary";
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
 
 export const metadata: Metadata = {
   title: "Doggzy - Global Dog Rescue Charity | Donate & Shop to Save Lives",
@@ -61,19 +69,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      </head>
-      <body className="min-h-screen bg-background text-foreground antialiased">
-        <LanguageProvider>
-          <Navigation />
-          <main className="pt-16 lg:pt-20">
-            {children}
-          </main>
-          <Footer />
-        </LanguageProvider>
+    <html lang="en" className={`scroll-smooth ${inter.variable}`}>
+      <body className={`min-h-screen bg-background text-foreground antialiased ${inter.className}`}>
+        <ErrorBoundary>
+          <LanguageProvider>
+            <ErrorBoundary>
+              <Navigation />
+            </ErrorBoundary>
+            <main className="pt-16 lg:pt-20">
+              <ErrorBoundary>
+                {children}
+              </ErrorBoundary>
+            </main>
+            <ErrorBoundary>
+              <Footer />
+            </ErrorBoundary>
+          </LanguageProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

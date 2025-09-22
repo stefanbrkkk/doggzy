@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import React, { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Search, Filter, ShoppingCart, Heart, Star, Truck, Shield, Leaf } from 'lucide-react'

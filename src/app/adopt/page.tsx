@@ -1,16 +1,16 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import React from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useLanguage } from '@/contexts/LanguageContext'
-import { Heart, Play, Users, Clock, MapPin, Star, CheckCircle, ArrowRight, Filter, Search, Camera, Phone, Mail } from 'lucide-react'
-import Link from 'next/link'
+import { Heart, Play, Search, CheckCircle, MapPin, Star } from 'lucide-react'
 import { AnimatedPage } from '@/components/animated-page'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
-import { LargeStoryCard } from '@/components/shared/large-story-card'
 import { MediaLightbox } from '@/components/shared/media-lightbox'
 import { StickyCTA } from '@/components/shared/sticky-cta'
 import { AnimatedCounter } from '@/components/shared/animated-counter'
@@ -21,10 +21,7 @@ export default function AdoptPage() {
   const [activeQuizStep, setActiveQuizStep] = React.useState(0)
   const [quizAnswers, setQuizAnswers] = React.useState<Record<string, string>>({})
   const [showQuizResults, setShowQuizResults] = React.useState(false)
-  const [selectedDog, setSelectedDog] = React.useState<object | null>(null)
-  const [filterAge, setFilterAge] = React.useState('')
-  const [filterSize, setFilterSize] = React.useState('')
-  const [showVideo, setShowVideo] = React.useState(false)
+  // Removed unused state variables
 
   const adoptionStats = {
     totalAdopted: 2847,
@@ -164,11 +161,7 @@ export default function AdoptPage() {
     })
   }
 
-  const filteredDogs = availableDogs.filter(dog => {
-    if (filterAge && !dog.age.includes(filterAge)) return false
-    if (filterSize && dog.size !== filterSize) return false
-    return true
-  })
+  // Filtering logic removed as filter state variables were unused
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
@@ -206,7 +199,6 @@ export default function AdoptPage() {
                 <Button 
                   size="lg" 
                   variant="glow"
-                  onClick={() => setShowVideo(true)}
                   className="group"
                 >
                   <Play className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
@@ -394,7 +386,7 @@ export default function AdoptPage() {
                             </div>
                             <div className="flex justify-between items-center">
                               <span className="font-semibold text-orange-600">${dog.adoptionFee}</span>
-                              <Button size="sm" onClick={() => setSelectedDog(dog)}>
+                              <Button size="sm">
                                 Learn More
                               </Button>
                             </div>
@@ -428,7 +420,7 @@ export default function AdoptPage() {
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Adoption Process</h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
-                We've streamlined our process to make finding your perfect companion as smooth as possible
+                We&apos;ve streamlined our process to make finding your perfect companion as smooth as possible
               </p>
             </div>
             
@@ -491,7 +483,7 @@ export default function AdoptPage() {
                       </div>
                       <div className="p-8 flex flex-col justify-center">
                         <h3 className="text-2xl font-bold text-gray-900 mb-4">{story.name}</h3>
-                        <p className="text-gray-700 mb-6 leading-relaxed">"{story.story}"</p>
+                        <p className="text-gray-700 mb-6 leading-relaxed">&quot;{story.story}&quot;</p>
                         <div className="flex gap-4">
                           <Button 
                             size="sm"

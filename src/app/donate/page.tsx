@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import React from 'react'
 import { Heart, Shield, Globe, Users, CreditCard } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -25,7 +27,7 @@ export default function DonatePage() {
   }
 
   return (
-    <AnimatedPage>
+    <div>
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
@@ -238,6 +240,6 @@ export default function DonatePage() {
         </div>
       </section>
     </div>
-    </AnimatedPage>
+    </div>
   )
 }

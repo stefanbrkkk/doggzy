@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useLanguage } from '@/contexts/LanguageContext'
 import { LanguageSwitcher } from '@/components/language-switcher'
 
