@@ -136,7 +136,7 @@ export default function AdminDashboard() {
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button variant="outline" className="w-full">
-                <Image className="h-4 w-4 mr-2" alt="Add product icon" />
+                <Image className="h-4 w-4 mr-2" aria-hidden="true" />
                 Add Product
               </Button>
             </motion.div>
