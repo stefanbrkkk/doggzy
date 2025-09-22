@@ -1,0 +1,26 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="url(#gradient)"/>
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fed7aa"/>
+      <stop offset="50%" style="stop-color:#ffffff"/>
+      <stop offset="100%" style="stop-color:#fecaca"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Dog silhouette -->
+  <circle cx="300" cy="315" r="80" fill="#f97316" opacity="0.8"/>
+  <circle cx="270" cy="285" r="12" fill="#000"/>
+  <circle cx="330" cy="285" r="12" fill="#000"/>
+  <ellipse cx="300" cy="315" rx="20" ry="15" fill="#000"/>
+  
+  <!-- Text -->
+  <text x="500" y="280" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="#1f2937">Doggzy</text>
+  <text x="500" y="340" font-family="Arial, sans-serif" font-size="36" fill="#4b5563">Global Dog Rescue Charity</text>
+  <text x="500" y="390" font-family="Arial, sans-serif" font-size="28" fill="#6b7280">Saving lives, creating happy endings</text>
+  
+  <!-- Hearts -->
+  <text x="1050" y="200" font-family="Arial, sans-serif" font-size="48" fill="#ef4444">♥</text>
+  <text x="1100" y="450" font-family="Arial, sans-serif" font-size="36" fill="#f97316">♥</text>
+  <text x="100" y="150" font-family="Arial, sans-serif" font-size="42" fill="#ec4899">♥</text>
+</svg>

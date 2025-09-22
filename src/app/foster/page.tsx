@@ -212,7 +212,11 @@ export default function FosterPage() {
                 <Button 
                   size="lg" 
                   variant="glow"
-                  onClick={() => setShowVideo(true)}
+                  onClick={() => {
+                    setLightboxMedia({ type: 'video', src: '/api/placeholder/video/foster-success', caption: 'Foster Success Stories' })
+                    setLightboxOpen(true)
+                    track('hero_video_clicked', { page: 'foster', video: 'success_stories' })
+                  }}
                   className="group"
                 >
                   <Play className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
@@ -405,6 +409,7 @@ export default function FosterPage() {
                         setShowQuizResults(false)
                         setActiveQuizStep(0)
                         setQuizAnswers({})
+                        track('foster_quiz_retaken', { page: 'foster' })
                       }}
                     >
                       Retake Quiz

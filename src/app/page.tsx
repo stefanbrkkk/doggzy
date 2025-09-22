@@ -51,7 +51,7 @@ export default function Home() {
               subtitle="💛🐶"
               quote="She was shy for an hour, then decided the couch was hers."
               badges={["Adopted", "Family"]}
-              media={{ type: 'image', src: '/api/placeholder/800/600', caption: 'Bella' }}
+              media={{ type: 'image', src: '/api/placeholder/800/600', caption: 'Bella - A happy rescued dog in her new home' }}
               primaryCta={{ label: 'Read full story', onClick: () => { window.location.href = '/sponsor' } }}
               secondaryCta={{ label: 'Meet similar dogs', onClick: () => { window.location.href = '/sponsor' } }}
             />
