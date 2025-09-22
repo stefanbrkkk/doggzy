@@ -41,8 +41,8 @@ Research dog welfare and adoption ecosystem in Serbia first: shelters, donors, a
 - Contributors: Partnerships, Ops
 
 ## Current Status
-- Status: Not started
-- Last updated: <fill>
+- Status: In progress
+- Last updated: 2025-09-22T03:54
 
 ## Decisions & Open Questions
 - Access to gov/registry data; partner intros.
@@ -52,6 +52,8 @@ Research dog welfare and adoption ecosystem in Serbia first: shelters, donors, a
 - [ ] Interviews scheduled
 - [ ] Drafted
 - [ ] Finalized
+ - 2025-09-22: Set up research scaffolding — created `templates/question-tree.md`, `templates/partner-info-schema.md`, `trackers/partner-info.csv`; updated warm‑intro outreach and interview guide; ready to seed warm contacts and begin interviews.
 
 ## Links & Artifacts
 - High‑level plan: `../1-initial-high-level-plan.md`
+

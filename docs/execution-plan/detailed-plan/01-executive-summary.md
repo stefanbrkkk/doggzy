@@ -42,14 +42,14 @@ Purpose: keep a crisp, one‑page overview aligned with the evolving plan; updat
 - Contributors: Marketing lead, Product lead, Finance lead
 
 ## Current Status
-- Status: Not started
-- Last updated: <fill>
+- Status: Drafted (v1 in `docs/business-plan/executive-summary.md`)
+- Last updated: 2025-09-22T03:42
 
 ## Decisions & Open Questions
 - Final org type; fundraising pathway; Serbia legal positionings.
 
 ## Progress Log
-- [ ] Draft v1
+- [x] Draft v1
 - [ ] Stakeholder review
 - [ ] Localize for Serbia
 - [ ] Approve and publish internally

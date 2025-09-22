@@ -38,10 +38,11 @@ Purpose: Execute an investigation-first program to build authoritative, Serbia-f
 - Outputs: Legal Checklist, Draft policies (Privacy, TOS/AUP, Adoption/Virtual Adoption terms).
 
 ### 3) Partnerships & Vet Network — High Priority
-- Identify and rank shelters/rescue groups; define eligibility, KYC checklist.
-- Vet/clinic directory: coverage, services, pricing; ambulance services.
-- MOUs draft (update cadence, evidence standards for donor follow‑ups).
-- Outputs: Partner Pipeline, 10–20 pilot shelters, 5–10 vet contacts, draft MOUs.
+ - Use warm introductions only (no cold outreach). Start with people we know who love dogs; ask for referrals and recommendations to shelters, individuals, programs/projects, and vets.
+ - Maintain a referral graph (who introduced whom) to prioritize trusted connections and track momentum.
+ - Define eligibility and KYC checklist; prepare MOU drafts (update cadence, evidence standards for donor follow‑ups).
+ - Vet/clinic directory via introductions: coverage, services, pricing; ambulance services.
+ - Outputs: Partner Pipeline built via warm intros, 10–20 pilot shelters, 5–10 vet contacts, draft MOUs.
 
 ### 4) Adoption & Virtual Adoption Mapping — High Priority
 - Current adoption funnels; bottlenecks; best practices.
@@ -76,6 +77,7 @@ Purpose: Execute an investigation-first program to build authoritative, Serbia-f
 - Daily: 1–2 pages of notes per person (facts, sources, highlights).
 - Twice-weekly: 30–45 min sync; update `docs/README.md` status.
 - Weekly: Synthesis publish — update execution files under `docs/execution-plan/detailed-plan/`.
+- Outreach method note: We rely on warm introductions and referral chains (no cold outreach). Track intros in the Partner Pipeline.
 
 ## 30–60–90 Day Plan (Investigation‑First)
 - Days 1–30: Interviews (15–25), legal discovery, partner pipeline, landscape report v1.
@@ -89,4 +91,5 @@ Purpose: Execute an investigation-first program to build authoritative, Serbia-f
 
 ## Next Actions
 - See `first-steps.md` for concrete starting tasks split for two people.
+
 

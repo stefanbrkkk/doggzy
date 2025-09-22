@@ -8,6 +8,8 @@ Purpose: Concrete starting actions using AI and the internet to quickly build fa
 - Split and conquer, but sync frequently. Keep daily notes and sources.
 - Favor primary sources (calls, official docs) over blogs when possible.
 - Use structured templates for interviews and desk research; log everything.
+ - Outreach via warm introductions only (no cold outreach). Start with people we know who love dogs and can recommend/connect us to shelters, individuals, programs/projects, and vets.
+ - Track a referral graph (who introduced whom) and capture partner info in `trackers/partner-info.csv` per `templates/partner-info-schema.md`.
 
 ## Day 1–3: Kickoff
 - Set up a shared notes folder (e.g., `research/notes/YYYY-MM-DD.md`).
@@ -15,13 +17,13 @@ Purpose: Concrete starting actions using AI and the internet to quickly build fa
 - Draft interview guide (10–12 core questions; tailored variants for shelters/vets/adopters).
 
 ## Track A (Founder): Partnerships & Legal Discovery
-- Shelters/Rescuers
-  - Identify 30–40 candidates in Serbia. Prioritize by activity and reputation.
-  - Outreach: intro, explain mission, request short call (15–20 min). Ask for referrals.
-  - Capture: needs (food/medicine/vet), adoption process, evidence and update feasibility.
+- Shelters/Rescuers (Warm intros only)
+  - List 15–20 trusted warm contacts (friends/allies/creators) and ask for introductions to shelters/rescuers.
+  - After each intro, send a short context + request for a 15–20 min call; log introducer and relationship strength.
+  - Capture: needs (food/medicine/vet), adoption process, feasibility of updates/evidence; record constraints.
 - Vets/Clinics/Ambulances
-  - Build a list of 15–20 clinics and any ambulance services by region.
-  - Outreach: services, pricing ranges, willingness to partner, verification practices.
+  - Identify warm paths to 10–15 clinics/ambulances (ask mutuals for intros by region).
+  - Discuss services, price ranges, willingness to partner, and verification practices.
 - Legal/Compliance (desk research + consult)
   - Registration options for Serbia; fundraising/solicitation requirements.
   - Adoption requirements: contracts, consents, data and photo usage.
@@ -46,12 +48,16 @@ Purpose: Concrete starting actions using AI and the internet to quickly build fa
   - Define donor follow-up expectations (time‑to‑first‑update, cadence) and acceptable evidence.
 - Partner Eligibility v0
   - Draft KYC checklist and update obligations (include in MOUs later).
+ - Data capture & question flow
+   - Use `templates/question-tree.md` during interviews to guide from general to specific questions.
+   - Capture partner info using `templates/partner-info-schema.md` and log in `trackers/partner-info.csv`.
 
 ## Tools & Templates
 - Interview guide and notes template.
 - Outreach email/DM templates.
 - Comparables matrix spreadsheet.
 - Persona/journey template.
+ - Question tree template and partner info schema.
 
 ## Next Milestones
 - End of Week 1: 10 interviews booked; 1st Serbia landscape draft; 10+ shelters identified.
@@ -60,3 +66,5 @@ Purpose: Concrete starting actions using AI and the internet to quickly build fa
 ## Where to Log Progress
 - Update `docs/execution-plan/detailed-plan/03-market-ecosystem-research.md` and `06-legal-compliance.md` Progress Logs.
 - Capture daily notes and sources in a shared `research/` folder.
+ - Maintain warm-intro referral graph and partner info in `trackers/partner-info.csv`.
+

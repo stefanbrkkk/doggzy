@@ -8,6 +8,9 @@ Purpose: Consistent interviews to gather facts for Serbia-first investigation. P
 - Record date, org/person, role, contact, consent to use non-PII quotes.
 - Ask open-ended; avoid leading; probe for evidence and examples.
 - Capture metrics whenever possible (counts, costs, timeframes).
+ - Use the question flow in `templates/question-tree.md` to branch from general to specific topics.
+ - Capture structured partner info per `templates/partner-info-schema.md` and log entries in `trackers/partner-info.csv`.
+ - Note the introducer (warm intro only), relationship strength (1–5), and any referral suggestions.
 
 ---
 
@@ -46,9 +49,25 @@ Purpose: Consistent interviews to gather facts for Serbia-first investigation. P
 ## Capture Template
 - Date/Time:
 - Interviewee/Org/Role:
-- Contact:
-- Key quotes:
-- Metrics:
+- Entity Type: (Shelter/Rescuer/Vet/Clinic/Ambulance/Adopter/Donor/Other)
+- City/Region, Country:
+- Contact (email/phone/preferred):
+- Introducer (Name/Org):
+- Relationship Strength (1–5):
+- Consent: (recording allowed? Y/N) (use of non‑PII quotes? Y/N)
+- Media/Privacy Notes (any restrictions):
+- Current Capacity: (# dogs; avg intake/month; adoption rate)
+- Vet Access: (clinics used; ambulance availability; typical pricing ranges)
+- Costs (monthly ranges): (food; medicine; vet care; transport; other)
+- Adoption Process: (screening steps; contracts; challenges)
+- Updates/Transparency: (willing cadence; evidence they can provide; constraints)
+- Virtual Adoption: (interest; visit policy; safety; consent approach)
+- Funding Sources: (donations; grants incl. EU; corporate; shop; other) + reporting obligations
+- Systems/Tools: (current tools; gaps)
 - Risks/Concerns:
 - Opportunities/Ideas:
-- Follow-ups:
+- Referrals: (2–3 names)
+- Key Quotes:
+- Metrics (numbers captured):
+- Follow-ups (owner + due date):
+

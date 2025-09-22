@@ -3,6 +3,55 @@
 # Outreach Templates (Email/DM)
 
 Purpose: Speed up scheduling of interviews with shelters, vets/clinics, rescuers, adopters, and donors. Personalize lightly for each contact.
+ 
+ Note: We rely on warm introductions only (no cold outreach). Use the warm‑intro templates below and track introducers in `trackers/partner-info.csv`.
+
+## Warm Intro — Forwardable Blurb (send to mutual contact)
+Subject: Would you intro us? Helping dogs in Serbia (15–20 min)
+
+Hi <Introducer>,
+
+Could you introduce us to <Target Name/Org> if you’re comfortable? We’re building a Serbia‑first, transparent portal to help dogs — donations (with follow‑ups), adoption & virtual adoption, knowledge base, and a shop where 100% of profit funds care. We’re doing short discovery calls to learn and shape pilots.
+
+Forwardable blurb:
+“Hi <Target>,
+I’d like to intro <Us>. They’re exploring a transparent dog‑welfare portal in Serbia and would value your perspective. Would you be up for a 15–20 min chat? They’ll keep it light and share findings back.”
+
+Thanks so much,
+<Name>
+
+## Warm Intro — Direct Email from Mutual (for the introducer)
+Subject: Intro: <Us> ↔ <Target> (helping dogs in Serbia)
+
+Hi <Target>,
+
+Connecting you with <Us>. They’re mapping needs/challenges and transparency standards for dog welfare in Serbia (donations with follow‑ups, adoption/virtual adoption, knowledge base). If you’re open, could you spare 15–20 min to share your perspective? I think you’ll have a lot to teach each other.
+
+<Us>, meet <Target>. <One sentence of context>
+
+I’ll step back — thanks both!
+
+## Warm Intro — Accepted Intro (our first reply to target)
+Subject: Thanks — quick 15–20 min chat?
+
+Hi <Name>,
+
+Thanks for taking the intro from <Introducer>. We’d love to learn about your work and share what we’re building. Could we find 15–20 min this/next week? Happy to adapt to your schedule.
+
+Topics: needs (funding/food/medicine/vet), adoption flow, feasibility of donor updates (photos/receipts), and vet access/pricing.
+
+Best,
+<Name>
+
+## Warm Referral Ask (to someone who knows dog space)
+Subject: Who should we talk to about shelters/vets in <City/Region>?
+
+Hi <Name>,
+
+We’re speaking with people who love dogs to learn and connect with shelters/rescuers and vets. Would you recommend 2–3 people we should talk to? A short intro would be amazing — we keep it to 15–20 min and share learnings back.
+
+Thanks!
+<Name>
 
 ## Shelter/Rescuer — Initial Outreach
 Subject: Partnering to help dogs in Serbia — 15–20 min intro call

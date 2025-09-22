@@ -5,7 +5,7 @@
 This file lists the final, outward-facing documents to be produced under `docs/business-plan/`. These are the polished artifacts used for fundraising, partnerships, and governance. Drafting and working notes live under `docs/execution-plan/`.
 
 ## Core Documents (to be created)
-- Executive Summary (One‑Pager) — `executive-summary.md`
+- Executive Summary (One‑Pager) — `executive-summary.md` (Draft available)
 - Full Business Plan — `business-plan.md`
 - GTM & Marketing Plan — `marketing-plan.md`
 - Financial Model & Assumptions — `financial-model.md`
@@ -25,3 +25,4 @@ This file lists the final, outward-facing documents to be produced under `docs/b
 ## Notes
 - Drafts and execution detail are maintained in `docs/execution-plan/`.
 - Each of the above files will be created as content matures; this list is the source of truth for the intended set.
+
