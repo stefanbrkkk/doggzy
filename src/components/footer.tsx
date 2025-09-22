@@ -223,7 +223,7 @@ export function Footer() {
         {/* Features Section */}
         <div className="py-12 border-t border-gray-700">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
+            {features.map((feature) => (
               <div key={feature.title} className="text-center hover:scale-105 transition-transform duration-200">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white mb-4 hover:scale-110 transition-transform duration-200">
                   {React.createElement(feature.icon, { className: "h-8 w-8" })}

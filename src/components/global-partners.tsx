@@ -119,7 +119,7 @@ export function GlobalPartners() {
 
           {/* Impact Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-2xl mx-auto">
-            {stats.map((stat, index) => (
+            {stats.map((stat) => (
               <div key={stat.label} className="text-center hover:scale-105 transition-transform duration-200">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white mb-4 hover:scale-110 transition-transform duration-200">
                   {React.createElement(stat.icon, { className: "h-8 w-8" })}
@@ -137,7 +137,7 @@ export function GlobalPartners() {
 
         {/* Partners Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          {partners.map((partner, index) => (
+          {partners.map((partner) => (
             <Card key={partner.name} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm hover:scale-105 group">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between mb-4">
@@ -177,7 +177,7 @@ export function GlobalPartners() {
 
         {/* Features */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          {features.map((feature, index) => (
+          {features.map((feature) => (
             <div key={feature.title} className="text-center hover:scale-105 transition-transform duration-200">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white mb-4 hover:scale-110 transition-transform duration-200">
                 {React.createElement(feature.icon, { className: "h-8 w-8" })}

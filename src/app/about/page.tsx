@@ -8,13 +8,8 @@ import {
   Users, 
   Globe, 
   Award, 
-  Shield, 
-  Star,
+  Shield,
   ArrowRight,
-  PawPrint,
-  Target,
-  Lightbulb,
-  HandHeart
 } from 'lucide-react'
 import React from 'react'
 import { MotionContainer, MotionItem } from '@/components/shared/motion'
@@ -216,7 +211,7 @@ export default function AboutPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {values.map((value, index) => (
+            {values.map((value) => (
               <Card key={value.title} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm hover:scale-105 group">
                 <CardContent className="p-6 text-center">
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white mb-4 hover:scale-110 transition-transform duration-200">
@@ -250,7 +245,7 @@ export default function AboutPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {team.map((member, index) => (
+            {team.map((member) => (
               <Card key={member.name} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm hover:scale-105 group">
                 <CardContent className="p-6 text-center">
                   <div className="text-6xl mb-4">{member.image}</div>
@@ -286,7 +281,7 @@ export default function AboutPage() {
 
           <div className="max-w-4xl mx-auto">
             <div className="space-y-8">
-              {milestones.map((milestone, index) => (
+              {milestones.map((milestone) => (
                 <div key={milestone.year} className="flex items-start space-x-6 hover:scale-105 transition-transform duration-200">
                   <div className="flex-shrink-0">
                     <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white font-bold text-lg hover:scale-110 transition-transform duration-200">
