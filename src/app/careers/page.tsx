@@ -216,7 +216,11 @@ export default function CareersPage() {
                 <Button 
                   size="lg" 
                   variant="glow"
-                  onClick={() => setShowVideo(true)}
+                  onClick={() => {
+                    setLightboxMedia({ type: 'video', src: '/api/placeholder/video/team-stories', caption: 'Team Stories' })
+                    setLightboxOpen(true)
+                    track('hero_video_clicked', { page: 'careers', video: 'team_stories' })
+                  }}
                   className="group"
                 >
                   <Play className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
@@ -407,6 +411,7 @@ export default function CareersPage() {
                         setShowQuizResults(false)
                         setActiveQuizStep(0)
                         setQuizAnswers({})
+                        track('careers_quiz_retaken', { page: 'careers' })
                       }}
                     >
                       Retake Quiz

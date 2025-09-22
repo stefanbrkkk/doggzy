@@ -55,7 +55,7 @@ export default function AdoptPage() {
       size: "Medium",
       location: "Foster Home",
       description: "Sweet, gentle, great with kids and other dogs. Loves fetch and cuddles.",
-      images: ['/api/placeholder/400/400', '/api/placeholder/400/300'],
+      images: ['/images/dogs/bella.svg', '/images/dogs/bella.svg'],
       personality: ["Gentle", "Playful", "Social"],
       urgent: false,
       adoptionFee: 250,
@@ -69,7 +69,7 @@ export default function AdoptPage() {
       size: "Large",
       location: "Main Shelter",
       description: "Loyal, intelligent, needs experienced owner. Great guard dog.",
-      images: ['/api/placeholder/400/400', '/api/placeholder/400/300'],
+      images: ['/images/dogs/max.svg', '/images/dogs/max.svg'],
       personality: ["Loyal", "Protective", "Smart"],
       urgent: true,
       adoptionFee: 200,
@@ -83,7 +83,7 @@ export default function AdoptPage() {
       size: "Medium",
       location: "Foster Home",
       description: "Energetic puppy, very affectionate, learning basic commands.",
-      images: ['/api/placeholder/400/400', '/api/placeholder/400/300'],
+      images: ['/images/dogs/luna.svg', '/images/dogs/luna.svg'],
       personality: ["Energetic", "Affectionate", "Learning"],
       urgent: false,
       adoptionFee: 300,
@@ -103,16 +103,16 @@ export default function AdoptPage() {
     {
       name: "Bella & The Johnson Family",
       story: "After losing our previous dog, we weren't sure we were ready. But when we saw Bella's photo, something clicked. The matching quiz suggested we'd be perfect together, and they were right! Bella has brought so much joy back into our home.",
-      beforeImg: '/api/placeholder/300/300',
-      afterImg: '/api/placeholder/300/300',
+      beforeImg: '/images/dogs/bella.svg',
+      afterImg: '/images/dogs/bella.svg',
       adoptionDate: "March 2024",
       video: '/api/placeholder/600/400'
     },
     {
       name: "Rocky & Sarah",
       story: "As a single professional, I needed a companion who could handle my busy schedule but still be loving. Rocky has been the perfect balance - independent enough when I'm at work, but always ready for weekend adventures.",
-      beforeImg: '/api/placeholder/300/300',
-      afterImg: '/api/placeholder/300/300',
+      beforeImg: '/images/dogs/max.svg',
+      afterImg: '/images/dogs/max.svg',
       adoptionDate: "January 2024",
       video: '/api/placeholder/600/400'
     }
@@ -195,7 +195,11 @@ export default function AdoptPage() {
                 <Button 
                   size="lg" 
                   variant="glow"
-                  onClick={() => setShowVideo(true)}
+                  onClick={() => {
+                    setLightboxMedia({ type: 'video', src: '/api/placeholder/video/adoption-success', caption: 'Adoption Success Stories' })
+                    setLightboxOpen(true)
+                    track('hero_video_clicked', { page: 'adopt', video: 'success_stories' })
+                  }}
                   className="group"
                 >
                   <Play className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
@@ -383,7 +387,13 @@ export default function AdoptPage() {
                             </div>
                             <div className="flex justify-between items-center">
                               <span className="font-semibold text-orange-600">${dog.adoptionFee}</span>
-                              <Button size="sm" onClick={() => setSelectedDog(dog)}>
+                              <Button 
+                                size="sm" 
+                                onClick={() => {
+                                  track('dog_selected', { page: 'adopt', dog_name: dog.name })
+                                  window.location.href = '/adopt/apply'
+                                }}
+                              >
                                 Learn More
                               </Button>
                             </div>
@@ -400,6 +410,7 @@ export default function AdoptPage() {
                         setShowQuizResults(false)
                         setActiveQuizStep(0)
                         setQuizAnswers({})
+                        track('adoption_quiz_retaken', { page: 'adopt' })
                       }}
                     >
                       Retake Quiz

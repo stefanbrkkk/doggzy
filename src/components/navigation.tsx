@@ -97,7 +97,9 @@ export function Navigation() {
             <div className="relative hidden lg:block" ref={moreRef}>
               <button
                 className="flex items-center justify-center h-8 w-8 rounded-md hover:bg-accent/60 text-foreground/70 hover:text-foreground transition-colors"
-                aria-label="More"
+                aria-label="More navigation options"
+                aria-expanded={isMoreOpen}
+                aria-haspopup="true"
                 onClick={() => setIsMoreOpen(!isMoreOpen)}
                 onBlur={() => setTimeout(() => setIsMoreOpen(false), 150)}
               >
@@ -164,6 +166,9 @@ export function Navigation() {
               size="icon"
               className="lg:hidden hover:scale-110 transition-transform duration-200"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label={isMobileMenuOpen ? "Close mobile menu" : "Open mobile menu"}
+              aria-expanded={isMobileMenuOpen}
+              aria-haspopup="true"
             >
               {isMobileMenuOpen ? (
                 <X className="h-6 w-6" />
