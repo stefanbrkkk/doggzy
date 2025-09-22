@@ -155,7 +155,10 @@ export default function FosterPage() {
       setActiveQuizStep(activeQuizStep + 1)
     } else {
       setShowQuizResults(true)
-      track('foster_quiz_completed', { answers: quizAnswers })
+      track('foster_quiz_completed', { 
+        answers_count: Object.keys(quizAnswers).length,
+        quiz_completed: true
+      })
     }
   }
 

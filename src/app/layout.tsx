@@ -69,7 +69,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-background text-foreground antialiased">
         <LanguageProvider>
           <Navigation />
-          <main className="pt-16 lg:pt-20">
+          <main id="main-content" className="pt-16 lg:pt-20">
             {children}
           </main>
           <Footer />

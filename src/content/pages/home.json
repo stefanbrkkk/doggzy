@@ -1,0 +1,153 @@
+{
+  "seo": {
+    "title": "Doggzy - Every Dog Deserves a Happy Ending",
+    "description": "Join our global movement to rescue, rehabilitate, and rehome dogs in need. Every donation and purchase directly saves lives and creates miracles.",
+    "keywords": ["dog rescue", "animal charity", "pet adoption", "dog donation", "animal welfare"],
+    "ogImage": "/og-image.jpg",
+    "ogType": "website",
+    "twitterCard": "summary_large_image"
+  },
+  "hero": {
+    "badge": "Trusted by 50,000+ Donors Worldwide",
+    "title": "Every Dog Deserves",
+    "titleHighlight": "A Happy Ending",
+    "subtitle": "Join our global movement to rescue, rehabilitate, and rehome dogs in need. Every donation and purchase directly saves lives and creates miracles.",
+    "primaryCta": {
+      "label": "Donate Now",
+      "href": "/donate",
+      "variant": "primary"
+    },
+    "secondaryCta": {
+      "label": "Learn More",
+      "href": "/about",
+      "variant": "outline"
+    },
+    "trustIndicators": [
+      {
+        "value": "4.9★",
+        "label": "Trustpilot",
+        "icon": "star"
+      },
+      {
+        "value": "501(c)(3)",
+        "label": "Tax Deductible",
+        "icon": "shield"
+      },
+      {
+        "value": "98%",
+        "label": "Success Rate",
+        "icon": "trending-up"
+      }
+    ],
+    "media": {
+      "type": "video",
+      "src": "/videos/default.mp4",
+      "alt": "Happy rescued dogs playing",
+      "autoplay": true
+    }
+  },
+  "impact": {
+    "title": "Making a Real Difference",
+    "subtitle": "Every number represents a life changed, a family reunited, and hope restored. Join thousands of compassionate donors making miracles happen every day.",
+    "stats": [
+      {
+        "id": "dogs-saved",
+        "label": "Dogs Saved",
+        "value": "15,247",
+        "change": "+12%",
+        "changeType": "positive"
+      },
+      {
+        "id": "partner-shelters",
+        "label": "Partner Shelters",
+        "value": "342",
+        "change": "+8%",
+        "changeType": "positive"
+      },
+      {
+        "id": "countries",
+        "label": "Countries",
+        "value": "47",
+        "change": "+3",
+        "changeType": "positive"
+      },
+      {
+        "id": "success-rate",
+        "label": "Success Rate",
+        "value": "98%",
+        "change": "+2%",
+        "changeType": "positive"
+      },
+      {
+        "id": "response-time",
+        "label": "Response Time",
+        "value": "< 24h",
+        "change": "Improved",
+        "changeType": "positive"
+      },
+      {
+        "id": "growth-rate",
+        "label": "Growth Rate",
+        "value": "156%",
+        "change": "YoY",
+        "changeType": "positive"
+      }
+    ]
+  },
+  "successStories": {
+    "title": "Real Stories,",
+    "titleHighlight": "Real Impact",
+    "subtitle": "Every donation and purchase creates a ripple effect of love and hope. See how your support transforms lives and creates beautiful new beginnings.",
+    "stats": [
+      {
+        "label": "Happy Endings Created",
+        "value": "12,847"
+      },
+      {
+        "label": "Success Rate",
+        "value": "98%"
+      },
+      {
+        "label": "Partner Shelters",
+        "value": "342"
+      },
+      {
+        "label": "Support Available",
+        "value": "24/7"
+      }
+    ],
+    "cta": {
+      "title": "Help Create More Happy Endings",
+      "subtitle": "Every donation and purchase directly supports rescue operations, medical care, and finding loving homes for dogs in need. Be part of the next success story.",
+      "primaryCta": {
+        "label": "Donate Now",
+        "href": "/donate",
+        "variant": "primary"
+      },
+      "secondaryCta": {
+        "label": "Shop for a Cause",
+        "href": "/shop",
+        "variant": "secondary"
+      }
+    }
+  },
+  "latestStory": {
+    "title": "Bella's First Day Home",
+    "subtitle": "💛🐶",
+    "quote": "She was shy for an hour, then decided the couch was hers.",
+    "badges": ["Adopted", "Family"],
+    "media": {
+      "type": "image",
+      "src": "/images/dogs/bella.svg",
+      "caption": "Bella - A happy rescued dog in her new home"
+    },
+    "primaryCta": {
+      "label": "Read full story",
+      "href": "/sponsor"
+    },
+    "secondaryCta": {
+      "label": "Meet similar dogs",
+      "href": "/sponsor"
+    }
+  }
+}

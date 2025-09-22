@@ -24,7 +24,7 @@ export function Navigation() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Close More dropdown on outside click
+  // Close More dropdown on outside click and Escape key
   useEffect(() => {
     function onClickOutside(e: MouseEvent) {
       if (!isMoreOpen) return
@@ -33,9 +33,21 @@ export function Navigation() {
         setIsMoreOpen(false)
       }
     }
+
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape' && (isMoreOpen || isMobileMenuOpen)) {
+        setIsMoreOpen(false)
+        setIsMobileMenuOpen(false)
+      }
+    }
+
     document.addEventListener('mousedown', onClickOutside)
-    return () => document.removeEventListener('mousedown', onClickOutside)
-  }, [isMoreOpen])
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('mousedown', onClickOutside)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [isMoreOpen, isMobileMenuOpen])
 
   const navItems = [
     { label: t.nav.home, href: '/' },
@@ -55,14 +67,25 @@ export function Navigation() {
   ]
 
   return (
-    <nav
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-200",
-        isScrolled 
-          ? "bg-background/95 backdrop-blur-md border-b border-border shadow-lg" 
-          : "bg-transparent"
-      )}
-    >
+    <>
+      {/* Skip to main content link */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-[60] bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium"
+      >
+        Skip to main content
+      </a>
+      
+      <nav
+        className={cn(
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-200",
+          isScrolled 
+            ? "bg-background/95 backdrop-blur-md border-b border-border shadow-lg" 
+            : "bg-transparent"
+        )}
+        role="navigation"
+        aria-label="Main navigation"
+      >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
@@ -136,18 +159,35 @@ export function Navigation() {
             </div>
             
             <Link href="/favorites">
-              <Button variant="ghost" size="icon" className="relative hover:scale-110 transition-transform duration-200">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative hover:scale-110 transition-transform duration-200"
+                aria-label="Favorites (3 items)"
+              >
                 <Heart className="h-4 w-4 xl:h-5 xl:w-5" />
-                <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 xl:h-5 xl:w-5 flex items-center justify-center animate-pulse">
+                <div 
+                  className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 xl:h-5 xl:w-5 flex items-center justify-center animate-pulse"
+                  aria-hidden="true"
+                >
                   3
                 </div>
               </Button>
             </Link>
 
             <Link href="/basket">
-              <Button variant="ghost" size="icon" className="relative hover:scale-110 transition-transform duration-200">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative hover:scale-110 transition-transform duration-200"
+                aria-label="Shopping basket (2 items)"
+              >
                 <ShoppingBag className="h-4 w-4 xl:h-5 xl:w-5" />
-                <div className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full h-4 w-4 xl:h-5 xl:w-5 flex items-center justify-center animate-pulse" style={{ animationDelay: '0.5s' }}>
+                <div 
+                  className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full h-4 w-4 xl:h-5 xl:w-5 flex items-center justify-center animate-pulse" 
+                  style={{ animationDelay: '0.5s' }}
+                  aria-hidden="true"
+                >
                   2
                 </div>
               </Button>
@@ -221,5 +261,6 @@ export function Navigation() {
         </div>
       </div>
     </nav>
+    </>
   )
 }

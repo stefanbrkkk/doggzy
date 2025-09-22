@@ -1,0 +1,130 @@
+{
+  "seo": {
+    "title": "Adopt a Dog - Find Your Best Friend | Doggzy",
+    "description": "Adoption changes two lives: yours and theirs. Learn about our adoption process and find available dogs ready for their forever homes.",
+    "keywords": ["dog adoption", "adopt a dog", "rescue dogs", "pet adoption process", "find a dog"],
+    "ogImage": "/og-image.jpg"
+  },
+  "hero": {
+    "badge": "Find Your Best Friend",
+    "title": "Adopt",
+    "titleHighlight": "Give a Dog a Home",
+    "subtitle": "Adoption changes two lives: yours and theirs. Learn about our adoption process and available dogs.",
+    "primaryCta": {
+      "label": "Apply to Adopt",
+      "href": "/adopt/apply",
+      "variant": "primary"
+    },
+    "secondaryCta": {
+      "label": "Browse Dogs",
+      "href": "/sponsor",
+      "variant": "outline"
+    },
+    "media": {
+      "type": "video",
+      "src": "/videos/adoption-hero.mp4",
+      "alt": "Happy family with their newly adopted dog",
+      "autoplay": true
+    }
+  },
+  "process": {
+    "title": "Adoption Process",
+    "description": "Submit an application, meet our team, and schedule a meet-and-greet.",
+    "steps": [
+      {
+        "title": "Submit Application",
+        "description": "Fill out our comprehensive adoption application form",
+        "icon": "file-text"
+      },
+      {
+        "title": "Review & Interview",
+        "description": "Our team reviews your application and conducts a brief interview",
+        "icon": "users"
+      },
+      {
+        "title": "Meet & Greet",
+        "description": "Schedule a meeting with your potential new family member",
+        "icon": "heart"
+      },
+      {
+        "title": "Home Visit",
+        "description": "We conduct a friendly home visit to ensure a safe environment",
+        "icon": "home"
+      },
+      {
+        "title": "Adoption Day",
+        "description": "Complete the adoption and welcome your new family member home",
+        "icon": "check-circle"
+      }
+    ]
+  },
+  "requirements": {
+    "title": "Requirements",
+    "description": "Provide ID, home info, landlord approval if renting, and vet references.",
+    "items": [
+      "Valid government-issued photo ID",
+      "Proof of residence and housing stability",
+      "Landlord approval if renting (pet policy documentation)",
+      "Veterinary references for current or previous pets",
+      "All household members must meet the dog",
+      "Commitment to provide lifelong care and love"
+    ]
+  },
+  "benefits": {
+    "title": "Benefits of Adopting a Dog",
+    "subtitle": "Discover the incredible rewards of giving a rescue dog a second chance at happiness.",
+    "features": [
+      {
+        "id": "save-life",
+        "title": "Save a Life",
+        "description": "You directly save a life and make space for another rescue",
+        "icon": "heart"
+      },
+      {
+        "id": "companionship",
+        "title": "Unmatched Companionship",
+        "description": "Gain a loyal friend who will bring joy and routine to your life",
+        "icon": "users"
+      },
+      {
+        "id": "community",
+        "title": "Join a Caring Community",
+        "description": "Connect with other adopters and our supportive rescue community",
+        "icon": "globe"
+      },
+      {
+        "id": "health-benefits",
+        "title": "Health & Wellness",
+        "description": "Enjoy improved physical and mental health through pet ownership",
+        "icon": "activity"
+      },
+      {
+        "id": "pre-trained",
+        "title": "Often Pre-Trained",
+        "description": "Many of our dogs come with basic training and socialization",
+        "icon": "award"
+      },
+      {
+        "id": "ongoing-support",
+        "title": "Ongoing Support",
+        "description": "Receive continued guidance and support from our team",
+        "icon": "phone"
+      }
+    ]
+  },
+  "cta": {
+    "title": "Ready to Change Two Lives?",
+    "subtitle": "Start your adoption journey today and discover the incredible bond that comes from giving a rescue dog their forever home.",
+    "primaryCta": {
+      "label": "Apply to Adopt",
+      "href": "/adopt/apply",
+      "variant": "primary"
+    },
+    "secondaryCta": {
+      "label": "Browse Available Dogs",
+      "href": "/sponsor",
+      "variant": "secondary"
+    },
+    "background": "accent"
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "seo": {
+    "title": "Foster a Dog - Provide Temporary Love | Doggzy",
+    "description": "Fostering creates space for more rescues. Learn how you can help by opening your home temporarily to dogs in need.",
+    "keywords": ["dog fostering", "foster a dog", "temporary care", "rescue fostering", "dog rehabilitation"],
+    "ogImage": "/og-image.jpg"
+  },
+  "hero": {
+    "badge": "Be a Lifesaver",
+    "title": "Foster",
+    "titleHighlight": "Provide Temporary Love",
+    "subtitle": "Fostering creates space for more rescues. Learn how you can help by opening your home temporarily.",
+    "primaryCta": {
+      "label": "Apply to Foster",
+      "href": "/foster/apply",
+      "variant": "primary"
+    },
+    "secondaryCta": {
+      "label": "Learn More",
+      "href": "#why-foster",
+      "variant": "outline"
+    },
+    "media": {
+      "type": "video",
+      "src": "/videos/foster-hero.mp4",
+      "alt": "Foster family caring for rescue dogs",
+      "autoplay": true
+    }
+  },
+  "whyFoster": {
+    "title": "Why Foster?",
+    "description": "Create space for more rescues and help dogs decompress.",
+    "benefits": [
+      "Save multiple lives by creating space for new rescues",
+      "Help dogs decompress and heal from trauma",
+      "Provide socialization and basic training",
+      "Experience the joy of nurturing without long-term commitment",
+      "Make a direct impact on rescue capacity",
+      "Gain experience before considering adoption"
+    ]
+  },
+  "responsibilities": {
+    "title": "Foster Responsibilities",
+    "description": "Provide daily care, safe space, transport to vet visits, and updates.",
+    "items": [
+      "Provide daily care including feeding, exercise, and companionship",
+      "Maintain a safe, secure environment for the foster dog",
+      "Transport to veterinary appointments and adoption events",
+      "Provide regular updates and photos to our team",
+      "Help with basic training and socialization",
+      "Assist with meet-and-greets with potential adopters",
+      "Follow medical care instructions from our veterinary team",
+      "Maintain open communication with rescue coordinators"
+    ]
+  },
+  "support": {
+    "title": "Support We Provide",
+    "description": "We cover medical costs and provide supplies when available.",
+    "items": [
+      "All medical expenses including emergency care",
+      "Food, bowls, leashes, and basic supplies when available",
+      "24/7 emergency support and veterinary guidance",
+      "Training resources and behavioral support",
+      "Transportation assistance when needed",
+      "Ongoing communication and check-ins",
+      "Marketing support for adoption placement",
+      "Foster community network and events"
+    ]
+  },
+  "benefits": {
+    "title": "Benefits of Fostering",
+    "subtitle": "Experience the rewards of making an immediate, lifesaving impact in a dog's journey to their forever home.",
+    "features": [
+      {
+        "id": "lifesaving",
+        "title": "Immediate Lifesaving Impact",
+        "description": "Your foster home directly saves lives by creating space for new rescues",
+        "icon": "heart"
+      },
+      {
+        "id": "flexible",
+        "title": "Flexible Commitment",
+        "description": "Choose fostering periods that work with your schedule and lifestyle",
+        "icon": "calendar"
+      },
+      {
+        "id": "rewarding",
+        "title": "Deeply Rewarding Experience",
+        "description": "Watch dogs transform and heal while preparing for their forever homes",
+        "icon": "smile"
+      },
+      {
+        "id": "community",
+        "title": "Supportive Community",
+        "description": "Join a network of dedicated foster families and rescue volunteers",
+        "icon": "users"
+      },
+      {
+        "id": "learning",
+        "title": "Learn About Dogs",
+        "description": "Gain valuable experience with different breeds, ages, and personalities",
+        "icon": "book"
+      },
+      {
+        "id": "trial",
+        "title": "Trial for Adoption",
+        "description": "Perfect opportunity to see if a particular dog is right for your family",
+        "icon": "home"
+      }
+    ]
+  },
+  "cta": {
+    "title": "Ready to Save Lives?",
+    "subtitle": "Open your heart and home temporarily to make a permanent difference. Every foster placement saves multiple lives.",
+    "primaryCta": {
+      "label": "Apply to Foster",
+      "href": "/foster/apply",
+      "variant": "primary"
+    },
+    "secondaryCta": {
+      "label": "Contact Us",
+      "href": "/contact",
+      "variant": "secondary"
+    },
+    "background": "accent"
+  }
+}
