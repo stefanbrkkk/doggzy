@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Heart, ShoppingCart, Star, Eye, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
@@ -149,7 +149,7 @@ export default function FavoritesPage() {
 
               {/* Products */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                {favorites.map((product, index) => (
+                {favorites.map((product) => (
                   <div
                     key={product.id}
                     className="group hover:scale-105 transition-transform duration-200"

@@ -67,7 +67,7 @@ export default function DonationForm() {
       })
       setSelectedAmount(null)
       setCurrentStep('amount')
-    } catch (error) {
+    } catch {
       alert('There was an error processing your donation. Please try again.')
     } finally {
       setIsProcessing(false)
@@ -153,7 +153,7 @@ export default function DonationForm() {
                   <CardTitle className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
                     Choose Your Impact
                   </CardTitle>
-                  <p className="text-gray-600">Every dollar makes a difference in a dog's life</p>
+                  <p className="text-gray-600">Every dollar makes a difference in a dog&apos;s life</p>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Preset Amounts */}

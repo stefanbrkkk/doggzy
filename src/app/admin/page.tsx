@@ -5,11 +5,9 @@ import { motion } from 'framer-motion'
 import { 
   Plus, 
   Edit, 
-  Trash2, 
   Eye, 
   Upload, 
   Save, 
-  X, 
   Users, 
   Heart, 
   ShoppingBag, 

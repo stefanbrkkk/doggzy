@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Heart, MapPin, Calendar, Users, DollarSign, Camera, MessageCircle } from 'lucide-react'
+import { Heart, MapPin, Calendar, Users, Camera, MessageCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'

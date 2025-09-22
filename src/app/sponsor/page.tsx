@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { Heart, Filter, Search, MapPin, Calendar, Users, DollarSign, Camera, MessageCircle } from 'lucide-react'
+import { Heart, Search, Calendar, Users, DollarSign } from 'lucide-react'
 import { PetCard, type Pet } from '@/components/sponsor/pet-card'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'

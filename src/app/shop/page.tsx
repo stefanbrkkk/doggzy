@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { Search, Filter, ShoppingCart, Heart, Star, Truck, Shield, Leaf } from 'lucide-react'
+import { Search, ShoppingCart, Heart, Truck, Shield, Leaf } from 'lucide-react'
 import { ProductCard } from '@/components/shop/product-card'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -82,7 +82,7 @@ export default function ShopPage() {
     }
 
     return filtered
-  }, [searchQuery, selectedCategory, sortBy])
+  }, [searchQuery, selectedCategory, sortBy, bestOnly, ecoOnly, inStockOnly])
 
   const handleAddToCart = (product: typeof products[0]) => {
     setCartItems(prev => [...prev, product.id])
@@ -151,7 +151,7 @@ export default function ShopPage() {
                 title: t.shop.features.freeShipping,
                 description: t.shop.features.freeShippingDesc
               }
-            ].map((feature, index) => (
+              ].map((feature) => (
               <div
                 key={feature.title}
                 className="hover:transform hover:-translate-y-1 transition-transform duration-200"

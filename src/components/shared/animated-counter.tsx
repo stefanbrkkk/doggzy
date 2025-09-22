@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { motion, useMotionValue, useTransform, animate } from 'framer-motion'
+import { useMotionValue, useTransform, animate } from 'framer-motion'
 
 export function AnimatedCounter({ value, duration = 1.2, className }: { value: string | number; duration?: number; className?: string }) {
   const text = String(value)
