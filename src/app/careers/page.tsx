@@ -157,7 +157,10 @@ export default function CareersPage() {
       setActiveQuizStep(activeQuizStep + 1)
     } else {
       setShowQuizResults(true)
-      track('careers_quiz_completed', { answers: quizAnswers })
+      track('careers_quiz_completed', { 
+        answers_count: Object.keys(quizAnswers).length,
+        quiz_completed: true
+      })
     }
   }
 

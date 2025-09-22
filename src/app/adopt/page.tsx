@@ -138,7 +138,10 @@ export default function AdoptPage() {
       setActiveQuizStep(activeQuizStep + 1)
     } else {
       setShowQuizResults(true)
-      track('adoption_quiz_completed', { answers: quizAnswers })
+      track('adoption_quiz_completed', { 
+        answers_count: Object.keys(quizAnswers).length,
+        quiz_completed: true
+      })
     }
   }
 

@@ -1,0 +1,127 @@
+{
+  "seo": {
+    "title": "Donate to Save Dogs - Make a Difference Today | Doggzy",
+    "description": "Every dollar you donate goes directly to rescuing, rehabilitating, and rehoming dogs in need. Join thousands making miracles happen.",
+    "keywords": ["dog donation", "animal charity donation", "rescue donation", "help dogs", "save dogs"],
+    "ogImage": "/og-image.jpg"
+  },
+  "hero": {
+    "badge": "Make a Difference Today",
+    "title": "Save a Life",
+    "titleHighlight": "Make a Donation",
+    "subtitle": "Every dollar you donate goes directly to rescuing, rehabilitating, and rehoming dogs in need. Join thousands of compassionate donors making miracles happen every day.",
+    "primaryCta": {
+      "label": "Donate Now",
+      "href": "#donation-form",
+      "variant": "primary"
+    },
+    "secondaryCta": {
+      "label": "See Our Impact",
+      "href": "/impact",
+      "variant": "outline"
+    },
+    "trustIndicators": [
+      {
+        "value": "501(c)(3)",
+        "label": "Tax Deductible",
+        "icon": "shield"
+      },
+      {
+        "value": "98%",
+        "label": "Goes to Dogs",
+        "icon": "heart"
+      },
+      {
+        "value": "A+",
+        "label": "Charity Rating",
+        "icon": "award"
+      }
+    ]
+  },
+  "features": {
+    "title": "Why Donate to Doggzy?",
+    "subtitle": "Your donation makes a direct, measurable impact on dogs' lives worldwide.",
+    "features": [
+      {
+        "id": "secure",
+        "title": "Secure & Tax-Deductible",
+        "description": "All donations are processed securely and are tax-deductible under 501(c)(3)",
+        "icon": "shield"
+      },
+      {
+        "id": "global",
+        "title": "Global Impact",
+        "description": "Your donation helps rescue dogs across 47 countries through our partner network",
+        "icon": "globe"
+      },
+      {
+        "id": "transparent",
+        "title": "Transparent Use",
+        "description": "98% of donations go directly to rescue operations, medical care, and rehabilitation",
+        "icon": "eye"
+      },
+      {
+        "id": "immediate",
+        "title": "Immediate Impact",
+        "description": "Funds are deployed quickly to where they're needed most urgently",
+        "icon": "zap"
+      },
+      {
+        "id": "tracking",
+        "title": "Impact Tracking",
+        "description": "Receive updates on how your specific donation helped save lives",
+        "icon": "bar-chart"
+      },
+      {
+        "id": "recurring",
+        "title": "Flexible Giving",
+        "description": "Choose one-time donations or set up recurring monthly support",
+        "icon": "repeat"
+      }
+    ]
+  },
+  "impact": {
+    "title": "Our Impact",
+    "subtitle": "See the real difference we're making in the lives of dogs worldwide.",
+    "stats": [
+      {
+        "id": "dogs-rescued",
+        "label": "Dogs Rescued",
+        "value": "15,247",
+        "change": "+1,247",
+        "changeType": "positive"
+      },
+      {
+        "id": "partner-shelters",
+        "label": "Partner Shelters",
+        "value": "342",
+        "change": "+28",
+        "changeType": "positive"
+      },
+      {
+        "id": "countries",
+        "label": "Countries",
+        "value": "47",
+        "change": "+3",
+        "changeType": "positive"
+      },
+      {
+        "id": "success-rate",
+        "label": "Success Rate",
+        "value": "98%",
+        "change": "Maintained",
+        "changeType": "positive"
+      }
+    ]
+  },
+  "urgentCta": {
+    "title": "Urgent: Dogs Need Your Help Right Now",
+    "subtitle": "Every day, hundreds of dogs are abandoned, abused, or left to die. Your donation today could literally save a life tomorrow.",
+    "primaryCta": {
+      "label": "Donate Now - Save a Life",
+      "href": "#donation-form",
+      "variant": "primary"
+    },
+    "background": "accent"
+  }
+}

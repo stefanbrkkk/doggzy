@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { validateFormData, formatValidationErrors, FormType } from '@/lib/form-validation'
 
 // Simple in-memory rate limiting
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
@@ -21,39 +22,29 @@ function rateLimit(ip: string, maxRequests = 10, windowMs = 60000): boolean {
   return true
 }
 
-function validateFormData(data: Record<string, unknown>, formType: string): { valid: boolean; errors: string[] } {
-  const errors: string[] = []
+// Sanitize string input
+function sanitizeString(input: unknown, maxLength: number = 1000): string {
+  if (typeof input !== 'string') return ''
+  return input.trim().substring(0, maxLength)
+}
+
+// Sanitize form data
+function sanitizeFormData(data: Record<string, unknown>): Record<string, unknown> {
+  const sanitized: Record<string, unknown> = {}
   
-  // Common validations
-  if (!data.name || typeof data.name !== 'string' || data.name.trim().length < 2) {
-    errors.push('Name is required and must be at least 2 characters')
+  for (const [key, value] of Object.entries(data)) {
+    if (typeof value === 'string') {
+      sanitized[key] = sanitizeString(value, key === 'message' || key === 'description' ? 2000 : 500)
+    } else if (typeof value === 'boolean' || typeof value === 'number') {
+      sanitized[key] = value
+    } else if (Array.isArray(value)) {
+      sanitized[key] = value.map(item => typeof item === 'string' ? sanitizeString(item, 100) : item)
+    } else {
+      sanitized[key] = value
+    }
   }
   
-  if (!data.email || typeof data.email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-    errors.push('Valid email is required')
-  }
-  
-  // Honeypot check
-  if (data.website) {
-    errors.push('Bot detected')
-  }
-  
-  // Form-specific validations
-  switch (formType) {
-    case 'adopt':
-    case 'foster':
-      if (!data.experience || typeof data.experience !== 'string') {
-        errors.push('Experience level is required')
-      }
-      break
-    case 'careers':
-      if (!data.position || typeof data.position !== 'string') {
-        errors.push('Position is required')
-      }
-      break
-  }
-  
-  return { valid: errors.length === 0, errors }
+  return sanitized
 }
 
 export async function POST(request: NextRequest) {
@@ -62,73 +53,125 @@ export async function POST(request: NextRequest) {
     const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
     if (!rateLimit(ip)) {
       return NextResponse.json(
-        { error: 'Too many requests. Please try again later.' },
+        { 
+          success: false,
+          error: 'Too many requests. Please try again later.',
+          code: 'RATE_LIMIT_EXCEEDED'
+        },
         { status: 429 }
       )
     }
     
     // Parse and validate content length
     const contentLength = request.headers.get('content-length')
-    if (contentLength && parseInt(contentLength) > 10000) { // 10KB limit
+    if (contentLength && parseInt(contentLength) > 50000) { // 50KB limit
       return NextResponse.json(
-        { error: 'Request too large' },
+        { 
+          success: false,
+          error: 'Request too large. Please reduce the amount of information.',
+          code: 'REQUEST_TOO_LARGE'
+        },
         { status: 413 }
       )
     }
     
     const body = await request.json()
-    const formType = body.formType || 'general'
+    const formType = body.formType as FormType
     
-    // Validate form data
-    const validation = validateFormData(body, formType)
-    if (!validation.valid) {
+    // Validate form type
+    if (!formType || !['contact', 'adopt', 'foster', 'careers', 'report'].includes(formType)) {
       return NextResponse.json(
-        { error: 'Validation failed', details: validation.errors },
-        { status: 422 }
+        { 
+          success: false,
+          error: 'Invalid form type.',
+          code: 'INVALID_FORM_TYPE'
+        },
+        { status: 400 }
       )
     }
     
-    // Sanitize input (basic)
-    const sanitizedData = {
-      ...body,
-      name: body.name?.trim().substring(0, 100),
-      email: body.email?.trim().toLowerCase().substring(0, 255),
-      message: body.message?.trim().substring(0, 2000),
+    // Sanitize input first
+    const sanitizedData = sanitizeFormData(body)
+    
+    // Validate form data with Zod schemas
+    const validation = validateFormData(sanitizedData, formType)
+    if (!validation.success) {
+      return NextResponse.json(
+        { 
+          success: false,
+          error: 'Validation failed. Please check your input.',
+          code: 'VALIDATION_ERROR',
+          fieldErrors: formatValidationErrors(validation.errors!)
+        },
+        { status: 422 }
+      )
     }
     
     // Generate submission ID
     const submissionId = `${formType}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
     
+    // Prepare submission data
+    const submissionData = {
+      id: submissionId,
+      formType,
+      data: validation.data,
+      metadata: {
+        ip,
+        userAgent: request.headers.get('user-agent'),
+        timestamp: new Date().toISOString(),
+        referrer: request.headers.get('referer'),
+      }
+    }
+    
     // Log submission (in production, you'd save to database and send email)
+    const logData = validation.data as Record<string, unknown>
     console.log(`[Form Submission] ${submissionId}:`, {
       type: formType,
-      name: sanitizedData.name,
-      email: sanitizedData.email,
-      timestamp: new Date().toISOString(),
+      name: logData?.name || logData?.firstName,
+      email: logData?.email,
+      timestamp: submissionData.metadata.timestamp,
       ip,
     })
     
-    // In production, you would:
+    // TODO: In production, implement:
     // 1. Save to database
     // 2. Send notification email to team
     // 3. Send confirmation email to user
     // 4. Add to CRM/pipeline
+    // 5. Trigger any automation workflows
+    
+    // Form-specific success messages
+    const successMessages = {
+      contact: 'Thank you for contacting us! We\'ll get back to you within 24 hours.',
+      adopt: 'Thank you for your adoption application! We\'ll review it and contact you within 48 hours.',
+      foster: 'Thank you for your foster application! We\'ll be in touch soon with next steps.',
+      careers: 'Thank you for your job application! We\'ll review it and get back to you soon.',
+      report: 'Thank you for your report. We take all reports seriously and will follow up appropriately.'
+    }
     
     return NextResponse.json({
+      success: true,
       id: submissionId,
-      status: 'received',
-      message: 'Thank you for your submission! We\'ll be in touch soon.',
+      message: successMessages[formType],
+      timestamp: submissionData.metadata.timestamp
     }, {
       status: 200,
       headers: {
         'Cache-Control': 'no-store',
+        'Content-Type': 'application/json',
       },
     })
     
   } catch (error) {
     console.error('Form submission error:', error)
+    
+    // Don't expose internal errors to client
     return NextResponse.json(
-      { error: 'Internal server error. Please try again.' },
+      { 
+        success: false,
+        error: 'An unexpected error occurred. Please try again.',
+        code: 'INTERNAL_ERROR'
+      },
       { status: 500 }
     )
   }

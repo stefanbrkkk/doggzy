@@ -7,4 +7,73 @@ export function track(event: string, props?: Record<string, unknown>) {
   } catch {}
 }
 
+// Privacy-first approach with Do Not Track support
+export function isDoNotTrackEnabled(): boolean {
+  if (typeof window === 'undefined') return true
+  
+  return (
+    navigator.doNotTrack === '1' ||
+    // @ts-expect-error - Legacy browser support
+    navigator.msDoNotTrack === '1' ||
+    // @ts-expect-error - Legacy browser support
+    window.doNotTrack === '1'
+  )
+}
 
+// Enhanced tracking function with consent checking
+export function trackWithConsent(event: string, props?: Record<string, unknown>) {
+  // Respect Do Not Track
+  if (isDoNotTrackEnabled()) {
+    console.log('Analytics tracking skipped (Do Not Track enabled)', event)
+    return
+  }
+  
+  // Basic consent check (can be enhanced with consent management)
+  if (typeof window !== 'undefined') {
+    const consent = localStorage.getItem('doggzy-analytics-consent')
+    if (consent !== 'true') {
+      console.log('Analytics tracking skipped (no consent)', event)
+      return
+    }
+  }
+  
+  track(event, props)
+}
+
+// Predefined event helpers
+export const analytics = {
+  pageView: (page?: string) => trackWithConsent('page_view', { 
+    page: page || (typeof window !== 'undefined' ? window.location.pathname : '') 
+  }),
+  
+  ctaClick: (cta: string, page?: string) => trackWithConsent('cta_clicked', {
+    cta,
+    page: page || (typeof window !== 'undefined' ? window.location.pathname : '')
+  }),
+  
+  formSubmit: (formType: string, page?: string) => trackWithConsent('form_submitted', {
+    form_type: formType,
+    page: page || (typeof window !== 'undefined' ? window.location.pathname : '')
+  }),
+  
+  formError: (formType: string, error: string) => trackWithConsent('form_error', {
+    form_type: formType,
+    error,
+    page: typeof window !== 'undefined' ? window.location.pathname : ''
+  }),
+}
+
+// Simple consent management
+export function setAnalyticsConsent(consent: boolean) {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('doggzy-analytics-consent', consent.toString())
+  }
+}
+
+export function getAnalyticsConsent(): boolean | null {
+  if (typeof window === 'undefined') return null
+  
+  const consent = localStorage.getItem('doggzy-analytics-consent')
+  if (consent === null) return null
+  return consent === 'true'
+}
