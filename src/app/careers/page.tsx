@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import React from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -524,7 +526,7 @@ export default function CareersPage() {
                       <div className="p-8 flex flex-col justify-center">
                         <h3 className="text-2xl font-bold text-gray-900 mb-2">{employee.name}</h3>
                         <p className="text-orange-600 font-semibold mb-4">{employee.role}</p>
-                        <p className="text-gray-700 mb-6 leading-relaxed">"{employee.quote}"</p>
+                        <p className="text-gray-700 mb-6 leading-relaxed">&quot;{employee.quote}&quot;</p>
                         <div className="space-y-2 mb-6">
                           <div className="text-sm font-semibold text-gray-900">Day in the life:</div>
                           {employee.dayInLife.map((activity, i) => (
@@ -738,7 +740,7 @@ export default function CareersPage() {
                             className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white group-hover:scale-105 transition-all duration-300"
                           >
                             <Heart className="h-4 w-4 mr-2" />
-                            I'm Interested
+                            I&apos;m Interested
                           </Button>
                         </Link>
                       </div>

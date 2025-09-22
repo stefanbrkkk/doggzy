@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import React from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -525,7 +527,7 @@ export default function FosterPage() {
                       </div>
                       <div className="p-8 flex flex-col justify-center">
                         <h3 className="text-2xl font-bold text-gray-900 mb-4">{story.name}</h3>
-                        <p className="text-gray-700 mb-6 leading-relaxed">"{story.story}"</p>
+                        <p className="text-gray-700 mb-6 leading-relaxed">&quot;{story.story}&quot;</p>
                         <div className="flex gap-4">
                           <Button 
                             size="sm"

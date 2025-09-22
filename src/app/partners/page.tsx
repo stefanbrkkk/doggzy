@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { GlobalPartners } from '@/components/global-partners'
 import { MotionContainer, MotionItem } from '@/components/shared/motion'
 import { AnimatedPage } from '@/components/animated-page'

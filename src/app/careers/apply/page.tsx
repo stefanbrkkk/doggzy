@@ -1,13 +1,13 @@
 'use client'
 
-import React from 'react'
+import React, { Suspense } from 'react'
 import { AnimatedPage } from '@/components/animated-page'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useSearchParams } from 'next/navigation'
 
-export default function CareersApplyPage() {
+function CareersApplyForm() {
   const params = useSearchParams()
   const role = params.get('role') || 'Role'
 
@@ -36,4 +36,10 @@ export default function CareersApplyPage() {
   )
 }
 
-
+export default function CareersApplyPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CareersApplyForm />
+    </Suspense>
+  )
+}
