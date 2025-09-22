@@ -42,13 +42,13 @@ Research dog welfare and adoption ecosystem in Serbia first: shelters, donors, a
 
 ## Current Status
 - Status: In progress
-- Last updated: 2025-09-22T03:54
+- Last updated: 2025-09-22T04:56
 
 ## Decisions & Open Questions
 - Access to gov/registry data; partner intros.
 
 ## Progress Log
-- [ ] Sources compiled
+- [x] Sources compiled
 - [ ] Interviews scheduled
 - [ ] Drafted
 - [ ] Finalized
