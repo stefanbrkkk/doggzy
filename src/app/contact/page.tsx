@@ -10,12 +10,6 @@ import { track } from '@/lib/analytics'
 import { motion } from 'framer-motion'
 
 export default function ContactPage() {
-  const gallery = [
-    '/api/placeholder/600/400',
-    '/api/placeholder/600/400',
-    '/api/placeholder/600/400',
-    '/api/placeholder/600/400',
-  ]
 
   const [copied, setCopied] = React.useState<string | null>(null)
   const [sent, setSent] = React.useState(false)
@@ -104,7 +98,7 @@ export default function ContactPage() {
                 </div>
                 <div className="p-6 md:p-8 md:col-span-2">
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">Every message can save a life</h3>
-                  <p className="text-gray-700 mb-3">Whether you're adopting, fostering, partnering, or reporting abuse—your note sets a rescue in motion. We read every message and typically respond within a few hours.</p>
+                  <p className="text-gray-700 mb-3">Whether you&apos;re adopting, fostering, partnering, or reporting abuse—your note sets a rescue in motion. We read every message and typically respond within a few hours.</p>
                   <div className="text-gray-700">We’ve helped thousands of dogs find safety and love. Tell us how we can help today.</div>
                 </div>
               </motion.div>

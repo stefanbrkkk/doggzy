@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useLanguage } from '@/contexts/LanguageContext'
-import { Briefcase, Heart, Play, Users, Clock, MapPin, Star, CheckCircle, ArrowRight, Filter, Search, Camera, Phone, Mail, DollarSign, Calendar, Award, Coffee, Laptop, Globe } from 'lucide-react'
+import { Briefcase, Heart, Play, Users, Award, Coffee, Globe } from 'lucide-react'
 import Link from 'next/link'
 import { AnimatedPage } from '@/components/animated-page'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -20,8 +20,6 @@ export default function CareersPage() {
   const [activeQuizStep, setActiveQuizStep] = React.useState(0)
   const [quizAnswers, setQuizAnswers] = React.useState<Record<string, string>>({})
   const [showQuizResults, setShowQuizResults] = React.useState(false)
-  const [selectedJob, setSelectedJob] = React.useState<object | null>(null)
-  const [showVideo, setShowVideo] = React.useState(false)
 
   const companyStats = {
     totalEmployees: 47,
@@ -149,20 +147,10 @@ export default function CareersPage() {
     { q: 'How do I apply?', a: 'Use the Apply buttons to submit your application; our team responds within a week.' }
   ]
 
-  const volunteerRoles = [
-    { title: 'Event Volunteer', desc: 'Help at adoption events and outreach.', emoji: '🎪' },
-    { title: 'Transport Driver', desc: 'Drive dogs to fosters and appointments.', emoji: '🚐' },
-    { title: 'Content Creator', desc: 'Create social posts and stories.', emoji: '📝' },
-  ]
 
   const [lightboxOpen, setLightboxOpen] = React.useState(false)
   const [lightboxMedia, setLightboxMedia] = React.useState<{type:'image'|'video'; src:string; poster?:string; caption?:string} | undefined>()
 
-  const benefits = [
-    t.careers.sections.benefitsList?.impact,
-    t.careers.sections.benefitsList?.flexibility,
-    t.careers.sections.benefitsList?.growth
-  ].filter(Boolean) as string[]
 
   const handleQuizNext = () => {
     if (activeQuizStep < jobMatchingQuiz.length - 1) {
@@ -402,7 +390,7 @@ export default function CareersPage() {
                             </div>
                             <div className="flex justify-between items-center">
                               <span className="font-semibold text-orange-600">{job.salary}</span>
-                              <Button size="sm" onClick={() => setSelectedJob(job)}>
+                              <Button size="sm">
                                 Learn More
                               </Button>
                             </div>
@@ -524,7 +512,7 @@ export default function CareersPage() {
                       <div className="p-8 flex flex-col justify-center">
                         <h3 className="text-2xl font-bold text-gray-900 mb-2">{employee.name}</h3>
                         <p className="text-orange-600 font-semibold mb-4">{employee.role}</p>
-                        <p className="text-gray-700 mb-6 leading-relaxed">"{employee.quote}"</p>
+                        <p className="text-gray-700 mb-6 leading-relaxed">&quot;{employee.quote}&quot;</p>
                         <div className="space-y-2 mb-6">
                           <div className="text-sm font-semibold text-gray-900">Day in the life:</div>
                           {employee.dayInLife.map((activity, i) => (
@@ -738,7 +726,7 @@ export default function CareersPage() {
                             className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white group-hover:scale-105 transition-all duration-300"
                           >
                             <Heart className="h-4 w-4 mr-2" />
-                            I'm Interested
+                            I&apos;m Interested
                           </Button>
                         </Link>
                       </div>
@@ -759,7 +747,7 @@ export default function CareersPage() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
-                  { icon: Heart, title: 'Make Real Impact', desc: 'See the direct results of your efforts in dogs\' lives' },
+                  { icon: Heart, title: 'Make Real Impact', desc: 'See the direct results of your efforts in dogs&apos; lives' },
                   { icon: Users, title: 'Join Community', desc: 'Connect with like-minded animal lovers and advocates' },
                   { icon: Award, title: 'Gain Experience', desc: 'Develop skills in animal care, event planning, and more' },
                   { icon: Coffee, title: 'Flexible Schedule', desc: 'Volunteer on your own time with various commitment levels' }

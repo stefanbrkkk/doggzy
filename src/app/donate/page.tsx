@@ -17,7 +17,7 @@ export default function DonatePage() {
     try {
       await new Promise(resolve => setTimeout(resolve, 2000))
       alert('Thank you for your donation!')
-    } catch (error) {
+    } catch {
       alert('Error processing donation')
     } finally {
       setIsProcessing(false)

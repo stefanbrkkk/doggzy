@@ -125,7 +125,7 @@ export function SuccessStories() {
 
           {/* Impact Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-            {stats.map((stat, index) => (
+            {stats.map((stat) => (
               <div key={stat.label} className="text-center hover:scale-105 transition-transform duration-200">
                 <div className="text-3xl md:text-4xl font-bold text-orange-600 mb-2">
                   {stat.number}
@@ -140,7 +140,7 @@ export function SuccessStories() {
 
         {/* Success Stories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {stories.map((story, index) => (
+          {stories.map((story) => (
             <Card key={story.id} className="border-0 shadow-lg hover:shadow-xl dark:hover:shadow-white/10 transition-all duration-300 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:scale-105 group">
               <CardContent className="p-6">
                 {/* Story Header */}
@@ -167,7 +167,7 @@ export function SuccessStories() {
                 <div className="relative mb-4">
                   <Quote className="h-6 w-6 text-orange-200 absolute -top-2 -left-2" />
                   <p className="text-gray-600 dark:text-gray-300 text-sm italic pl-4">
-                    "{story.story}"
+                    &quot;{story.story}&quot;
                   </p>
                 </div>
 

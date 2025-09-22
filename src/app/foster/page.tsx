@@ -5,12 +5,10 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useLanguage } from '@/contexts/LanguageContext'
-import { HandHeart, Play, Users, Clock, MapPin, Star, CheckCircle, ArrowRight, Filter, Search, Camera, Phone, Mail, Heart, Shield, Home, Calendar } from 'lucide-react'
-import Link from 'next/link'
+import { HandHeart, Play, Users, CheckCircle, Heart, Shield, Home, Phone, Star } from 'lucide-react'
 import { AnimatedPage } from '@/components/animated-page'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
-import { LargeStoryCard } from '@/components/shared/large-story-card'
 import { MediaLightbox } from '@/components/shared/media-lightbox'
 import { StickyCTA } from '@/components/shared/sticky-cta'
 import { AnimatedCounter } from '@/components/shared/animated-counter'
@@ -21,8 +19,6 @@ export default function FosterPage() {
   const [activeQuizStep, setActiveQuizStep] = React.useState(0)
   const [quizAnswers, setQuizAnswers] = React.useState<Record<string, string>>({})
   const [showQuizResults, setShowQuizResults] = React.useState(false)
-  const [selectedFosterType, setSelectedFosterType] = React.useState('')
-  const [showVideo, setShowVideo] = React.useState(false)
 
   const fosterStats = {
     totalFostered: 1247,
@@ -392,7 +388,7 @@ export default function FosterPage() {
                               {type.urgent && (
                                 <Badge className="bg-red-500 text-white text-xs">Urgent Need</Badge>
                               )}
-                              <Button size="sm" onClick={() => setSelectedFosterType(type.name)}>
+                              <Button size="sm">
                                 Learn More
                               </Button>
                             </div>
@@ -525,7 +521,7 @@ export default function FosterPage() {
                       </div>
                       <div className="p-8 flex flex-col justify-center">
                         <h3 className="text-2xl font-bold text-gray-900 mb-4">{story.name}</h3>
-                        <p className="text-gray-700 mb-6 leading-relaxed">"{story.story}"</p>
+                        <p className="text-gray-700 mb-6 leading-relaxed">&quot;{story.story}&quot;</p>
                         <div className="flex gap-4">
                           <Button 
                             size="sm"

@@ -5,12 +5,10 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useLanguage } from '@/contexts/LanguageContext'
-import { Heart, Play, Users, Clock, MapPin, Star, CheckCircle, ArrowRight, Filter, Search, Camera, Phone, Mail } from 'lucide-react'
-import Link from 'next/link'
+import { Heart, Play, CheckCircle, MapPin, Star, Search } from 'lucide-react'
 import { AnimatedPage } from '@/components/animated-page'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
-import { LargeStoryCard } from '@/components/shared/large-story-card'
 import { MediaLightbox } from '@/components/shared/media-lightbox'
 import { StickyCTA } from '@/components/shared/sticky-cta'
 import { AnimatedCounter } from '@/components/shared/animated-counter'
@@ -21,10 +19,6 @@ export default function AdoptPage() {
   const [activeQuizStep, setActiveQuizStep] = React.useState(0)
   const [quizAnswers, setQuizAnswers] = React.useState<Record<string, string>>({})
   const [showQuizResults, setShowQuizResults] = React.useState(false)
-  const [selectedDog, setSelectedDog] = React.useState<object | null>(null)
-  const [filterAge, setFilterAge] = React.useState('')
-  const [filterSize, setFilterSize] = React.useState('')
-  const [showVideo, setShowVideo] = React.useState(false)
 
   const adoptionStats = {
     totalAdopted: 2847,
@@ -164,11 +158,6 @@ export default function AdoptPage() {
     })
   }
 
-  const filteredDogs = availableDogs.filter(dog => {
-    if (filterAge && !dog.age.includes(filterAge)) return false
-    if (filterSize && dog.size !== filterSize) return false
-    return true
-  })
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
@@ -290,11 +279,11 @@ export default function AdoptPage() {
                   <div className="text-center mb-8">
                     <h2 className="text-3xl font-bold text-gray-900 mb-4">Find Your Perfect Match</h2>
                     <div className="flex justify-center mb-4">
-                      {quizQuestions.map((_, index) => (
+                      {quizQuestions.map((_, idx) => (
                         <div
-                          key={index}
+                          key={idx}
                           className={`w-3 h-3 rounded-full mx-1 ${
-                            index <= activeQuizStep ? 'bg-orange-500' : 'bg-gray-300'
+                            idx <= activeQuizStep ? 'bg-orange-500' : 'bg-gray-300'
                           }`}
                         />
                       ))}
@@ -428,19 +417,19 @@ export default function AdoptPage() {
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Adoption Process</h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
-                We've streamlined our process to make finding your perfect companion as smooth as possible
+                We&apos;ve streamlined our process to make finding your perfect companion as smooth as possible
               </p>
             </div>
             
             <div className="relative">
               <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-gray-200 transform -translate-y-1/2 hidden md:block" />
               <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
-                {adoptionProcess.map((step, index) => (
+                {adoptionProcess.map((step, idx) => (
                   <motion.div
                     key={step.step}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
+                    transition={{ delay: idx * 0.1 }}
                     className="relative text-center group"
                   >
                     <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
@@ -491,7 +480,7 @@ export default function AdoptPage() {
                       </div>
                       <div className="p-8 flex flex-col justify-center">
                         <h3 className="text-2xl font-bold text-gray-900 mb-4">{story.name}</h3>
-                        <p className="text-gray-700 mb-6 leading-relaxed">"{story.story}"</p>
+                        <p className="text-gray-700 mb-6 leading-relaxed">&quot;{story.story}&quot;</p>
                         <div className="flex gap-4">
                           <Button 
                             size="sm"

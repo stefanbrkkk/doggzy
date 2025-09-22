@@ -8,14 +8,9 @@ import {
   Heart, 
   Users, 
   Globe, 
-  Award, 
-  Shield, 
-  Star,
+  Award,
   ArrowRight,
-  PawPrint,
-  Target,
   TrendingUp,
-  Calendar,
   MapPin
 } from 'lucide-react'
 import React from 'react'
@@ -186,7 +181,7 @@ export default function ImpactPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Chart Area */}
             <div className="space-y-6">
-              {monthlyImpact.map((month, index) => (
+              {monthlyImpact.map((month) => (
                 <Card key={month.month} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm hover:scale-105">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-4">
@@ -220,7 +215,7 @@ export default function ImpactPage() {
             <div>
               <h3 className="text-2xl font-bold text-gray-900 mb-8">{t.impact.regionalImpact.title}</h3>
               <div className="space-y-6">
-                {topRegions.map((region, index) => (
+                {topRegions.map((region) => (
                   <Card key={region.region} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm hover:scale-105">
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between mb-3">
@@ -258,7 +253,7 @@ export default function ImpactPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {successStories.map((story, index) => (
+            {successStories.map((story) => (
               <Card key={story.name} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm hover:scale-105 group">
                 <CardContent className="p-6 text-center">
                   <div className="text-6xl mb-4">{story.image}</div>
@@ -296,7 +291,7 @@ export default function ImpactPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {goals.map((goal, index) => (
+            {goals.map((goal) => (
               <Card key={goal.title} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm hover:scale-105">
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold text-gray-900 mb-4">
