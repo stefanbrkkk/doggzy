@@ -7,7 +7,7 @@ export async function GET(
   try {
     const { slug } = await params
     
-    // Handle video requests
+    // Handle video requests - redirect to actual video files
     if (slug[0] === 'video') {
       const videoName = slug[1] || 'default'
       
@@ -23,17 +23,8 @@ export async function GET(
       
       const videoPath = videoMap[videoName] || '/videos/default.mp4'
       
-      // For now, return a simple response since we don't have actual video files
-      return new NextResponse(
-        JSON.stringify({ message: `Video placeholder for ${videoName}`, path: videoPath }),
-        {
-          status: 200,
-          headers: {
-            'Content-Type': 'application/json',
-            'Cache-Control': 'public, max-age=86400, stale-while-revalidate=604800',
-          },
-        }
-      )
+      // Redirect to the actual video file
+      return NextResponse.redirect(new URL(videoPath, request.url), 302)
     }
     
     // Handle image requests (width/height)
