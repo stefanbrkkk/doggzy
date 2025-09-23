@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next'
+import { blogStoryAdapter } from '@/lib/storage/file-adapter'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://doggzy.org'
   const lastModified = new Date()
 
@@ -41,6 +42,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified,
       changeFrequency: 'daily' as const,
       priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/stories`,
+      lastModified,
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
     },
     {
       url: `${baseUrl}/donate`,
@@ -129,6 +136,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.4,
     },
   ]
+
+  // Get published stories for dynamic routes
+  try {
+    const storiesResult = await blogStoryAdapter.getAll(
+      { status: 'published', limit: 1000 },
+      { field: 'publishedAt', direction: 'desc' }
+    )
+
+    const storyRoutes = storiesResult.items.map(story => ({
+      url: `${baseUrl}/stories/${story.slug}`,
+      lastModified: new Date(story.updatedAt),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    }))
+
+    routes.push(...storyRoutes)
+  } catch (error) {
+    console.error('Failed to generate story routes for sitemap:', error)
+  }
 
   return routes
 }

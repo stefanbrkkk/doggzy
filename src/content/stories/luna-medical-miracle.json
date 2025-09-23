@@ -1,0 +1,52 @@
+{
+  "id": "1704033600000_luna_story",
+  "slug": "luna-medical-miracle",
+  "status": "published",
+  "createdAt": "2024-12-31T12:00:00.000Z",
+  "updatedAt": "2024-12-31T12:00:00.000Z",
+  "publishedAt": "2024-12-31T12:00:00.000Z",
+  "title": "Luna's Medical Miracle: Overcoming the Impossible",
+  "summary": "When Luna arrived with a severe spinal injury, veterinarians weren't sure she would ever walk again. Her determination and the dedication of her medical team proved that miracles do happen.",
+  "content": "Luna's story began with a devastating accident. Found by the roadside with a severe spinal injury, the young German Shepherd mix was paralyzed from the waist down. The initial prognosis was grim, and many suggested that the kindest option would be to end her suffering.\n\nBut Dr. Elena Rodriguez, our head veterinarian, saw something special in Luna's eyes – a fighting spirit that refused to give up. 'Luna had this incredible determination,' Dr. Rodriguez recalls. 'Even when she couldn't move her back legs, she would try to drag herself forward. Her will to live was extraordinary.'\n\nThe medical team developed an intensive rehabilitation program for Luna. Physical therapy sessions twice a day, hydrotherapy in our specialized pool, and experimental treatments that pushed the boundaries of veterinary medicine. Luna approached each session with enthusiasm, as if she knew these treatments were her path back to mobility.\n\nThe breakthrough came after three months of intensive therapy. During a routine session, Luna's back leg twitched. Then, slowly, she began to regain feeling and movement. The veterinary team was amazed – this level of recovery from such a severe injury was almost unheard of.\n\nToday, Luna not only walks but runs, plays, and lives life to the fullest. She was adopted by Dr. Rodriguez herself, who couldn't bear to part with the dog who had taught her so much about resilience and hope.\n\n'Luna is now my therapy dog,' Dr. Rodriguez explains. 'She visits other animals in recovery and somehow communicates to them that healing is possible. Her presence alone seems to inspire hope in the most challenging cases.'\n\nLuna's story reminds us that with dedication, advanced veterinary care, and an unbreakable spirit, even the most dire situations can have happy endings.",
+  "tags": ["medical-miracle", "spinal-injury", "rehabilitation", "determination", "veterinary-care"],
+  "heroImage": {
+    "id": "luna_hero_1",
+    "src": "/images/dogs/luna.svg",
+    "alt": "Luna running freely in a field, fully recovered from her spinal injury",
+    "caption": "Luna running free - a true medical miracle"
+  },
+  "gallery": [
+    {
+      "id": "luna_therapy_1",
+      "src": "/images/dogs/luna.svg",
+      "alt": "Luna during her physical therapy sessions",
+      "caption": "Luna during her intensive rehabilitation therapy"
+    },
+    {
+      "id": "luna_hydrotherapy_1",
+      "src": "/images/dogs/luna.svg",
+      "alt": "Luna in the hydrotherapy pool working on her recovery",
+      "caption": "Hydrotherapy sessions helped Luna regain her strength"
+    },
+    {
+      "id": "luna_first_steps_1",
+      "src": "/images/dogs/luna.svg",
+      "alt": "Luna taking her first steps after the injury",
+      "caption": "The moment Luna took her first steps again"
+    }
+  ],
+  "author": {
+    "name": "Dr. Elena Rodriguez",
+    "bio": "Head Veterinarian and Medical Director at Doggzy",
+    "email": "elena@doggzy.org"
+  },
+  "category": "medical-stories",
+  "readingTime": 4,
+  "featured": true,
+  "seo": {
+    "seoTitle": "Luna's Medical Miracle - Spinal Injury Recovery Against All Odds",
+    "seoDescription": "Follow Luna's incredible journey from paralysis to full recovery. A medical miracle that showcases the power of advanced veterinary care and unwavering determination.",
+    "ogImage": "/images/dogs/luna.svg",
+    "ogType": "article"
+  }
+}

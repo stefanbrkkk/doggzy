@@ -1,0 +1,46 @@
+{
+  "id": "1703947200000_max_story",
+  "slug": "max-adoption-journey",
+  "status": "published",
+  "createdAt": "2024-12-30T12:00:00.000Z",
+  "updatedAt": "2024-12-30T12:00:00.000Z",
+  "publishedAt": "2024-12-30T12:00:00.000Z",
+  "title": "Max's Second Chance: A Senior Dog's New Beginning",
+  "summary": "At 8 years old, Max thought his chances of finding a loving home were slim. This is the story of how a special family proved that age is just a number when it comes to love.",
+  "content": "Max had spent three years in various shelters. At 8 years old, he watched as younger dogs found homes while he remained behind. His graying muzzle and slower pace seemed to make potential adopters look past him, searching for more energetic companions.\n\nWhen Max arrived at our facility, he was withdrawn and seemed to have given up hope. Our team knew that senior dogs like Max had so much love to give, but finding the right family would take patience and the perfect match.\n\nThat match came in the form of the Petrov family. Elena and Miloš had recently lost their 12-year-old dog and weren't looking for a puppy to train. They wanted a calm, gentle companion who could appreciate the quieter moments in life.\n\n'When we saw Max, we didn't see an old dog,' Elena explains. 'We saw wisdom, gentleness, and a soul that just needed someone to appreciate him for who he was.'\n\nThe adoption process was smooth. Max seemed to sense that this was his moment, and he charmed the family with his gentle nature and grateful spirit. On his first night in his new home, he slept peacefully for the first time in years.\n\nNow, six months later, Max has become the perfect companion. He enjoys leisurely walks, afternoon naps in the garden, and quiet evenings by the fireplace. His new family says he's taught them that sometimes the best things in life come to those who wait.\n\n'Max has shown us that senior dogs make the most grateful and loving companions,' Miloš shares. 'He appreciates every moment of love and comfort, and his gratitude is evident in everything he does.'",
+  "tags": ["senior-dog", "adoption", "second-chance", "grateful", "patience"],
+  "heroImage": {
+    "id": "max_hero_1",
+    "src": "/images/dogs/max.svg",
+    "alt": "Max, a distinguished senior dog, relaxing in his comfortable new home",
+    "caption": "Max enjoying his golden years in his loving forever home"
+  },
+  "gallery": [
+    {
+      "id": "max_shelter_1",
+      "src": "/images/dogs/max.svg",
+      "alt": "Max in the shelter, looking hopeful despite his circumstances",
+      "caption": "Max waiting patiently at the shelter"
+    },
+    {
+      "id": "max_meeting_1",
+      "src": "/images/dogs/max.svg",
+      "alt": "Max meeting his new family for the first time",
+      "caption": "The moment Max met the Petrov family"
+    }
+  ],
+  "author": {
+    "name": "Michael Chen",
+    "bio": "Senior Dog Specialist at Doggzy",
+    "email": "michael@doggzy.org"
+  },
+  "category": "adoption-stories",
+  "readingTime": 3,
+  "featured": false,
+  "seo": {
+    "seoTitle": "Max's Senior Dog Adoption Story - Proving Age is Just a Number",
+    "seoDescription": "Discover how 8-year-old Max found his perfect forever home. A touching story about senior dog adoption and the special bond between older dogs and loving families.",
+    "ogImage": "/images/dogs/max.svg",
+    "ogType": "article"
+  }
+}

@@ -34,6 +34,10 @@ export const mainNavigation: NavigationItem[] = [
     href: '/shop'
   },
   {
+    label: 'Stories',
+    href: '/stories'
+  },
+  {
     label: 'More',
     href: '#',
     children: [
@@ -85,6 +89,10 @@ export const mobileNavigation: NavigationItem[] = [
   {
     label: 'Shop',
     href: '/shop'
+  },
+  {
+    label: 'Stories',
+    href: '/stories'
   },
   {
     label: 'Sponsor a Pet',
