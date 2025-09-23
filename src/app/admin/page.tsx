@@ -136,6 +136,7 @@ export default function AdminDashboard() {
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button variant="outline" className="w-full">
+                {/* eslint-disable-next-line jsx-a11y/alt-text */}
                 <Image className="h-4 w-4 mr-2" />
                 Add Product
               </Button>

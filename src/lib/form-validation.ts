@@ -16,8 +16,16 @@ export const ContactFormSchema = BaseFormSchema.extend({
   message: z.string().min(10, 'Message must be at least 10 characters').max(2000, 'Message too long'),
 })
 
-// Adoption form schema
+// Simplified adoption form schema (for initial contact)
 export const AdoptionFormSchema = BaseFormSchema.extend({
+  phone: z.string().optional(),
+  location: z.string().min(2, 'Location is required').max(200, 'Location too long'),
+  experience: z.string().min(1, 'Please select experience level').max(100, 'Experience selection too long'),
+  message: z.string().max(2000, 'Message too long').optional(),
+})
+
+// Full adoption form schema (for detailed applications)
+export const AdoptionFormFullSchema = BaseFormSchema.extend({
   // Personal information
   firstName: z.string().min(2, 'First name is required').max(50, 'First name too long'),
   lastName: z.string().min(2, 'Last name is required').max(50, 'Last name too long'),
@@ -75,8 +83,16 @@ export const AdoptionFormSchema = BaseFormSchema.extend({
   agreeUpdates: z.boolean().refine(val => val === true, 'You must agree to provide updates'),
 })
 
-// Foster form schema
+// Simplified foster form schema (for initial contact)
 export const FosterFormSchema = BaseFormSchema.extend({
+  phone: z.string().optional(),
+  location: z.string().min(2, 'Location is required').max(200, 'Location too long'),
+  experience: z.string().min(1, 'Please select experience level').max(100, 'Experience selection too long'),
+  message: z.string().max(2000, 'Message too long').optional(),
+})
+
+// Full foster form schema (for detailed applications)
+export const FosterFormFullSchema = BaseFormSchema.extend({
   firstName: z.string().min(2, 'First name is required').max(50, 'First name too long'),
   lastName: z.string().min(2, 'Last name is required').max(50, 'Last name too long'),
   phone: z.string().min(10, 'Phone number is required').max(20, 'Phone number too long'),
@@ -123,15 +139,10 @@ export const FosterFormSchema = BaseFormSchema.extend({
 
 // Careers form schema
 export const CareersFormSchema = BaseFormSchema.extend({
-  firstName: z.string().min(2, 'First name is required').max(50, 'First name too long'),
-  lastName: z.string().min(2, 'Last name is required').max(50, 'Last name too long'),
-  phone: z.string().min(10, 'Phone number is required').max(20, 'Phone number too long'),
+  portfolio: z.string().max(200, 'Portfolio URL too long').optional(),
+  location: z.string().max(100, 'Location too long').optional(),
   position: z.string().min(2, 'Position is required').max(100, 'Position too long'),
-  coverLetter: z.string().min(50, 'Cover letter must be at least 50 characters').max(2000, 'Cover letter too long'),
-  availability: z.string().min(5, 'Availability is required').max(100, 'Availability too long'),
-  salary: z.string().max(50, 'Salary expectation too long').optional(),
-  remote: z.boolean(),
-  relocation: z.boolean(),
+  message: z.string().min(10, 'Please tell us about yourself and why you want to join').max(2000, 'Message too long'),
 })
 
 // Report form schema
@@ -150,8 +161,52 @@ export const ReportFormSchema = BaseFormSchema.extend({
   }),
 })
 
-// Form type mapping
+// Light schemas for Phase 1 - match current form fields
+export const LightContactFormSchema = BaseFormSchema.extend({
+  subject: z.string().min(2, 'Subject is required').max(200, 'Subject too long'),
+  message: z.string().min(10, 'Message must be at least 10 characters').max(2000, 'Message too long'),
+})
+
+export const LightAdoptionFormSchema = BaseFormSchema.extend({
+  location: z.string().optional(),
+  experience: z.string().min(1, 'Experience level is required'),
+  message: z.string().optional(),
+})
+
+export const LightFosterFormSchema = BaseFormSchema.extend({
+  location: z.string().optional(),
+  experience: z.string().min(1, 'Experience level is required'),
+  message: z.string().optional(),
+})
+
+export const LightCareersFormSchema = BaseFormSchema.extend({
+  portfolio: z.string().optional(),
+  location: z.string().optional(),
+  position: z.string().min(1, 'Position is required'),
+  message: z.string().optional(),
+})
+
+export const LightReportFormSchema = BaseFormSchema.extend({
+  anonymous: z.boolean().default(false),
+  location: z.string().min(5, 'Location is required').max(300, 'Location too long'),
+  description: z.string().min(20, 'Please provide more details about the incident').max(2000, 'Description too long'),
+  date: z.string().min(8, 'Date is required'),
+  time: z.string().max(20, 'Time too long').optional(),
+  ongoing: z.boolean().optional(),
+  animals: z.string().max(200, 'Animal description too long').optional(),
+})
+
+// Form type mapping - using light schemas for Phase 1
 export const FormSchemas = {
+  contact: LightContactFormSchema,
+  adopt: LightAdoptionFormSchema,
+  foster: LightFosterFormSchema,
+  careers: LightCareersFormSchema,
+  report: LightReportFormSchema,
+} as const
+
+// Keep full schemas for future use
+export const FullFormSchemas = {
   contact: ContactFormSchema,
   adopt: AdoptionFormSchema,
   foster: FosterFormSchema,
@@ -160,13 +215,20 @@ export const FormSchemas = {
 } as const
 
 export type FormType = keyof typeof FormSchemas
-export type ContactFormData = z.infer<typeof ContactFormSchema>
-export type AdoptionFormData = z.infer<typeof AdoptionFormSchema>
-export type FosterFormData = z.infer<typeof FosterFormSchema>
-export type CareersFormData = z.infer<typeof CareersFormSchema>
-export type ReportFormData = z.infer<typeof ReportFormSchema>
+export type ContactFormData = z.infer<typeof LightContactFormSchema>
+export type AdoptionFormData = z.infer<typeof LightAdoptionFormSchema>
+export type FosterFormData = z.infer<typeof LightFosterFormSchema>
+export type CareersFormData = z.infer<typeof LightCareersFormSchema>
+export type ReportFormData = z.infer<typeof LightReportFormSchema>
 
 export type FormData = ContactFormData | AdoptionFormData | FosterFormData | CareersFormData | ReportFormData
+
+// Full schema types for future use
+export type FullContactFormData = z.infer<typeof ContactFormSchema>
+export type FullAdoptionFormData = z.infer<typeof AdoptionFormSchema>
+export type FullFosterFormData = z.infer<typeof FosterFormSchema>
+export type FullCareersFormData = z.infer<typeof CareersFormSchema>
+export type FullReportFormData = z.infer<typeof ReportFormSchema>
 
 // Validation helper
 export function validateFormData<T extends FormType>(

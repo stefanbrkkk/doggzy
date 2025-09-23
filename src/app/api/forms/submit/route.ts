@@ -1,6 +1,174 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { validateFormData, formatValidationErrors, FormType } from '@/lib/form-validation'
 
+// Force Node.js runtime for email sending
+export const runtime = 'nodejs'
+
+// Initialize Resend only when API key is available
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let resend: any = null
+if (process.env.RESEND_API_KEY) {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { Resend } = require('resend')
+    resend = new Resend(process.env.RESEND_API_KEY)
+  } catch (error) {
+    console.warn('Resend not available:', error)
+  }
+}
+
+// Email recipient mapping
+const EMAIL_RECIPIENTS = {
+  contact: 'contact@doggzy.online',
+  adopt: 'adoption@doggzy.online',
+  foster: 'adoption@doggzy.online',
+  careers: 'care@doggzy.online',
+  report: 'reports@doggzy.online',
+} as const
+
+
+// Generate email subject based on form type
+function generateEmailSubject(formType: FormType, data: Record<string, unknown>): string {
+  const name = data.name || data.firstName || 'Anonymous'
+  const location = data.location || data.city || ''
+  
+  switch (formType) {
+    case 'contact':
+      return `CONTACT: New Message – ${name}`
+    case 'adopt':
+      return `ADOPT: New Application – ${name}`
+    case 'foster':
+      return `FOSTER: New Application – ${name}`
+    case 'careers':
+      return `CAREERS: New Application – ${name} (${data.position || 'Position'})`
+    case 'report':
+      const urgency = data.urgency === 'immediate' ? '🚨 URGENT' : data.urgency === 'urgent' ? '⚠️ URGENT' : ''
+      const reporterName = data.anonymous ? 'Anonymous' : name
+      return `REPORT: ${urgency} ${reporterName} – ${location}`.trim()
+    default:
+      return `FORM: New Submission – ${name}`
+  }
+}
+
+// Generate HTML email body
+function generateEmailHTML(formType: FormType, data: Record<string, unknown>, metadata: Record<string, unknown>, submissionId: string): string {
+  const subject = generateEmailSubject(formType, data)
+  
+  // Filter out honeypot and sensitive fields
+  const filteredData = Object.entries(data).filter(([key]) => 
+    !['website', 'formType'].includes(key)
+  )
+  
+  const formTypeLabels = {
+    contact: 'Contact Form',
+    adopt: 'Adoption Application',
+    foster: 'Foster Application', 
+    careers: 'Career Application',
+    report: 'Abuse Report'
+  }
+  
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>${subject}</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
+    .header { background: linear-gradient(135deg, #f97316, #dc2626); color: white; padding: 20px; border-radius: 8px 8px 0 0; }
+    .content { padding: 20px; background: #fff; }
+    .metadata { background: #f8f9fa; padding: 15px; border-radius: 6px; margin-top: 20px; font-size: 0.9em; }
+    table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+    th { background-color: #f8f9fa; font-weight: 600; }
+    .urgent { border-left: 4px solid #dc2626; padding-left: 16px; }
+    .footer { color: #666; font-size: 0.8em; text-align: center; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1 style="margin: 0; font-size: 24px;">🐕 ${formTypeLabels[formType] || 'Form Submission'}</h1>
+    <p style="margin: 5px 0 0 0; opacity: 0.9;">${subject}</p>
+  </div>
+  
+  <div class="content ${formType === 'report' && data.urgency === 'immediate' ? 'urgent' : ''}">
+    ${formType === 'report' && data.urgency === 'immediate' ? '<p><strong>🚨 IMMEDIATE ATTENTION REQUIRED</strong></p>' : ''}
+    
+    <h2>Submission Details</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${filteredData.map(([key, value]) => {
+          const displayKey = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')
+          const displayValue = Array.isArray(value) ? value.join(', ') : 
+                              typeof value === 'boolean' ? (value ? 'Yes' : 'No') :
+                              value || 'Not provided'
+          return `<tr><td><strong>${displayKey}</strong></td><td>${displayValue}</td></tr>`
+        }).join('')}
+      </tbody>
+    </table>
+    
+    <div class="metadata">
+      <h3>Submission Metadata</h3>
+      <p><strong>Submission ID:</strong> ${submissionId}</p>
+      <p><strong>Timestamp:</strong> ${metadata.timestamp}</p>
+      <p><strong>IP Address:</strong> ${metadata.ip}</p>
+      <p><strong>User Agent:</strong> ${metadata.userAgent || 'Not provided'}</p>
+      <p><strong>Referrer:</strong> ${metadata.referrer || 'Direct'}</p>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <p>This email was automatically generated by the Doggzy forms system.</p>
+  </div>
+</body>
+</html>`
+}
+
+// Send email notification
+async function sendEmailNotification(formType: FormType, data: Record<string, unknown>, metadata: Record<string, unknown>, submissionId: string): Promise<boolean> {
+  try {
+    if (!process.env.RESEND_API_KEY) {
+      console.error('RESEND_API_KEY not configured')
+      return false
+    }
+    
+    const recipient = EMAIL_RECIPIENTS[formType] || 'care@doggzy.online'
+    const subject = generateEmailSubject(formType, data)
+    const htmlContent = generateEmailHTML(formType, data, metadata, submissionId)
+    
+    // Set reply-to to user's email if provided
+    const replyTo = data.email && typeof data.email === 'string' && data.email.includes('@') 
+      ? data.email 
+      : undefined
+    
+    const emailResult = await resend.emails.send({
+      from: 'Doggzy Forms <no-reply@doggzy.online>',
+      to: [recipient],
+      replyTo: replyTo,
+      subject: subject,
+      html: htmlContent,
+    })
+    
+    console.log(`[Email Sent] ${submissionId}:`, {
+      to: recipient,
+      replyTo: replyTo,
+      subject: subject,
+      emailId: emailResult.data?.id
+    })
+    
+    return true
+  } catch (error) {
+    console.error(`[Email Error] ${submissionId}:`, error)
+    return false
+  }
+}
+
 // Simple in-memory rate limiting
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
 
@@ -116,6 +284,7 @@ export async function POST(request: NextRequest) {
       formType,
       data: validation.data,
       metadata: {
+        id: submissionId,
         ip,
         userAgent: request.headers.get('user-agent'),
         timestamp: new Date().toISOString(),
@@ -123,7 +292,7 @@ export async function POST(request: NextRequest) {
       }
     }
     
-    // Log submission (in production, you'd save to database and send email)
+    // Log submission
     const logData = validation.data as Record<string, unknown>
     console.log(`[Form Submission] ${submissionId}:`, {
       type: formType,
@@ -133,12 +302,12 @@ export async function POST(request: NextRequest) {
       ip,
     })
     
-    // TODO: In production, implement:
-    // 1. Save to database
-    // 2. Send notification email to team
-    // 3. Send confirmation email to user
-    // 4. Add to CRM/pipeline
-    // 5. Trigger any automation workflows
+    // Send email notification
+    const emailSent = await sendEmailNotification(formType, validation.data as Record<string, unknown>, submissionData.metadata, submissionId)
+    if (!emailSent) {
+      console.warn(`[Email Failed] ${submissionId}: Email notification failed to send`)
+      // Don't fail the entire request if email fails - log and continue
+    }
     
     // Form-specific success messages
     const successMessages = {

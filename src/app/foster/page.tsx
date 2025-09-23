@@ -113,7 +113,7 @@ export default function FosterPage() {
       title: "24/7 Support Line",
       description: "Always available for questions and emergencies",
       icon: Phone,
-      contact: "1-800-FOSTER"
+      contact: "+381 616446767"
     },
     {
       title: "Veterinary Care",

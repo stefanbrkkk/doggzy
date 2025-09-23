@@ -86,7 +86,7 @@ export function useTranslations(namespace: TranslationNamespace, locale: Locale 
   // Stabilize the loadTranslations function to prevent useEffect dependency changes
   const stableLoadTranslations = useCallback(() => {
     loadTranslations()
-  }, [namespace, locale])
+  }, [loadTranslations])
   
   // In a real app, this would use React hooks to manage loading state
   // For now, we'll load synchronously when possible
@@ -176,9 +176,9 @@ export async function findMissingKeys(namespace: TranslationNamespace, sourceLoc
 }
 
 // Find unused translation keys (requires static analysis in real implementation)
-export async function findUnusedKeys(namespace: TranslationNamespace, _locale: Locale = DEFAULT_LOCALE): Promise<string[]> {
+export async function findUnusedKeys(namespace: TranslationNamespace, locale: Locale = DEFAULT_LOCALE): Promise<string[]> {
   // This would require static code analysis to find which keys are actually used
   // For now, return empty array as placeholder
-  console.warn('findUnusedKeys requires static code analysis - not implemented', namespace)
+  console.warn('findUnusedKeys requires static code analysis - not implemented', namespace, locale)
   return []
 }

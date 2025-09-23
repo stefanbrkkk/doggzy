@@ -118,11 +118,11 @@ export function Footer() {
               <div className="space-y-3 mb-6">
                 <div className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-colors duration-200">
                   <Mail className="h-5 w-5 text-orange-500" />
-                  <span>hello@doggzy.org</span>
+                  <a href="mailto:care@doggzy.online" className="hover:text-orange-400 transition-colors duration-200">care@doggzy.online</a>
                 </div>
                 <div className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-colors duration-200">
                   <Phone className="h-5 w-5 text-orange-500" />
-                  <span>1-800-DOGGZY-1</span>
+                  <a href="tel:+381616446767" className="hover:text-orange-400 transition-colors duration-200">+381 616446767</a>
                 </div>
                 <div className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-colors duration-200">
                   <MapPin className="h-5 w-5 text-orange-500" />
