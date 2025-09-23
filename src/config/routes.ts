@@ -40,6 +40,12 @@ export const routes: RouteConfig[] = [
     priority: 0.8
   },
   {
+    path: '/stories',
+    includeInSitemap: true,
+    changeFreq: 'weekly',
+    priority: 0.8
+  },
+  {
     path: '/sponsor',
     includeInSitemap: true,
     changeFreq: 'daily',
