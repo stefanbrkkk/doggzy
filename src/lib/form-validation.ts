@@ -150,8 +150,52 @@ export const ReportFormSchema = BaseFormSchema.extend({
   }),
 })
 
-// Form type mapping
+// Light schemas for Phase 1 - match current form fields
+export const LightContactFormSchema = BaseFormSchema.extend({
+  subject: z.string().min(2, 'Subject is required').max(200, 'Subject too long'),
+  message: z.string().min(10, 'Message must be at least 10 characters').max(2000, 'Message too long'),
+})
+
+export const LightAdoptionFormSchema = BaseFormSchema.extend({
+  location: z.string().optional(),
+  experience: z.string().min(1, 'Experience level is required'),
+  message: z.string().optional(),
+})
+
+export const LightFosterFormSchema = BaseFormSchema.extend({
+  location: z.string().optional(),
+  experience: z.string().min(1, 'Experience level is required'),
+  message: z.string().optional(),
+})
+
+export const LightCareersFormSchema = BaseFormSchema.extend({
+  portfolio: z.string().optional(),
+  location: z.string().optional(),
+  position: z.string().min(1, 'Position is required'),
+  message: z.string().optional(),
+})
+
+export const LightReportFormSchema = BaseFormSchema.extend({
+  anonymous: z.boolean().default(false),
+  location: z.string().min(5, 'Location is required').max(300, 'Location too long'),
+  description: z.string().min(20, 'Please provide more details about the incident').max(2000, 'Description too long'),
+  date: z.string().min(8, 'Date is required'),
+  time: z.string().max(20, 'Time too long').optional(),
+  ongoing: z.boolean().optional(),
+  animals: z.string().max(200, 'Animal description too long').optional(),
+})
+
+// Form type mapping - using light schemas for Phase 1
 export const FormSchemas = {
+  contact: LightContactFormSchema,
+  adopt: LightAdoptionFormSchema,
+  foster: LightFosterFormSchema,
+  careers: LightCareersFormSchema,
+  report: LightReportFormSchema,
+} as const
+
+// Keep full schemas for future use
+export const FullFormSchemas = {
   contact: ContactFormSchema,
   adopt: AdoptionFormSchema,
   foster: FosterFormSchema,
@@ -160,13 +204,20 @@ export const FormSchemas = {
 } as const
 
 export type FormType = keyof typeof FormSchemas
-export type ContactFormData = z.infer<typeof ContactFormSchema>
-export type AdoptionFormData = z.infer<typeof AdoptionFormSchema>
-export type FosterFormData = z.infer<typeof FosterFormSchema>
-export type CareersFormData = z.infer<typeof CareersFormSchema>
-export type ReportFormData = z.infer<typeof ReportFormSchema>
+export type ContactFormData = z.infer<typeof LightContactFormSchema>
+export type AdoptionFormData = z.infer<typeof LightAdoptionFormSchema>
+export type FosterFormData = z.infer<typeof LightFosterFormSchema>
+export type CareersFormData = z.infer<typeof LightCareersFormSchema>
+export type ReportFormData = z.infer<typeof LightReportFormSchema>
 
 export type FormData = ContactFormData | AdoptionFormData | FosterFormData | CareersFormData | ReportFormData
+
+// Full schema types for future use
+export type FullContactFormData = z.infer<typeof ContactFormSchema>
+export type FullAdoptionFormData = z.infer<typeof AdoptionFormSchema>
+export type FullFosterFormData = z.infer<typeof FosterFormSchema>
+export type FullCareersFormData = z.infer<typeof CareersFormSchema>
+export type FullReportFormData = z.infer<typeof ReportFormSchema>
 
 // Validation helper
 export function validateFormData<T extends FormType>(
