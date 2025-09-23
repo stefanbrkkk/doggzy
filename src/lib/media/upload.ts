@@ -19,14 +19,16 @@ export const MediaConfigSchema = z.object({
     'image/jpg', 
     'image/png',
     'image/webp',
-    'image/gif'
+    'image/gif',
+    'image/svg+xml'
   ]),
   allowedExtensions: z.array(z.string()).default([
     '.jpg',
     '.jpeg',
     '.png',
     '.webp',
-    '.gif'
+    '.gif',
+    '.svg'
   ]),
   maxWidth: z.number().default(2048),
   maxHeight: z.number().default(2048),
@@ -43,14 +45,16 @@ export const defaultMediaConfig: MediaConfig = {
     'image/jpg',
     'image/png', 
     'image/webp',
-    'image/gif'
+    'image/gif',
+    'image/svg+xml'
   ],
   allowedExtensions: [
     '.jpg',
     '.jpeg',
     '.png',
     '.webp',
-    '.gif'
+    '.gif',
+    '.svg'
   ],
   maxWidth: 2048,
   maxHeight: 2048,
