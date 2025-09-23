@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { getCurrentUser } from '@/lib/auth'
-import { redirect } from 'next/navigation'
 
 export const metadata: Metadata = {
   title: "Admin Panel - Doggzy",
@@ -11,19 +9,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function AdminLayout({
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Server-side authentication check
-  const user = await getCurrentUser()
-  
-  // If not authenticated and not on login page, this will be handled by middleware
-  // This is just an additional server-side check
-  if (!user && !children?.toString().includes('login')) {
-    redirect('/admin/login')
-  }
+  // Authentication is handled by middleware
+  // No server-side auth check needed here
 
   return (
     <html lang="en" className="scroll-smooth">
