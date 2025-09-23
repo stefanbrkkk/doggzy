@@ -50,6 +50,12 @@ export const seoPages: Record<string, SeoConfig> = {
     keywords: ['dog products', 'pet accessories', 'charity shop', 'eco-friendly pet products', 'custom dog portraits'],
     ogImage: '/og-image.jpg'
   },
+  '/stories': {
+    title: 'Success Stories - Every Dog Deserves a Happy Ending | Doggzy',
+    description: 'Read heartwarming stories of rescued dogs finding their forever homes. Every story shows the impact of your support and donations.',
+    keywords: ['dog rescue stories', 'success stories', 'adopted dogs', 'rescue testimonials', 'happy endings'],
+    ogImage: '/og-image.jpg'
+  },
   '/sponsor': {
     title: 'Sponsor a Rescue Dog - Change a Life | Doggzy',
     description: 'Every dog deserves a second chance. Sponsor a rescue dog and follow their journey from rescue to recovery to their forever home.',

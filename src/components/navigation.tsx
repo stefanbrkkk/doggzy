@@ -59,6 +59,7 @@ export function Navigation() {
     { label: t.nav.home, href: '/' },
     { label: t.nav.donate, href: '/donate' },
     { label: t.nav.shop, href: '/shop' },
+    { label: t.nav.stories, href: '/stories' },
     { label: t.nav.sponsor, href: '/sponsor' },
     { label: t.nav.impact, href: '/impact' },
     { label: t.nav.partners, href: '/partners' },
