@@ -16,8 +16,16 @@ export const ContactFormSchema = BaseFormSchema.extend({
   message: z.string().min(10, 'Message must be at least 10 characters').max(2000, 'Message too long'),
 })
 
-// Adoption form schema
+// Simplified adoption form schema (for initial contact)
 export const AdoptionFormSchema = BaseFormSchema.extend({
+  phone: z.string().optional(),
+  location: z.string().min(2, 'Location is required').max(200, 'Location too long'),
+  experience: z.string().min(1, 'Please select experience level').max(100, 'Experience selection too long'),
+  message: z.string().max(2000, 'Message too long').optional(),
+})
+
+// Full adoption form schema (for detailed applications)
+export const AdoptionFormFullSchema = BaseFormSchema.extend({
   // Personal information
   firstName: z.string().min(2, 'First name is required').max(50, 'First name too long'),
   lastName: z.string().min(2, 'Last name is required').max(50, 'Last name too long'),
@@ -75,8 +83,16 @@ export const AdoptionFormSchema = BaseFormSchema.extend({
   agreeUpdates: z.boolean().refine(val => val === true, 'You must agree to provide updates'),
 })
 
-// Foster form schema
+// Simplified foster form schema (for initial contact)
 export const FosterFormSchema = BaseFormSchema.extend({
+  phone: z.string().optional(),
+  location: z.string().min(2, 'Location is required').max(200, 'Location too long'),
+  experience: z.string().min(1, 'Please select experience level').max(100, 'Experience selection too long'),
+  message: z.string().max(2000, 'Message too long').optional(),
+})
+
+// Full foster form schema (for detailed applications)
+export const FosterFormFullSchema = BaseFormSchema.extend({
   firstName: z.string().min(2, 'First name is required').max(50, 'First name too long'),
   lastName: z.string().min(2, 'Last name is required').max(50, 'Last name too long'),
   phone: z.string().min(10, 'Phone number is required').max(20, 'Phone number too long'),
@@ -123,15 +139,10 @@ export const FosterFormSchema = BaseFormSchema.extend({
 
 // Careers form schema
 export const CareersFormSchema = BaseFormSchema.extend({
-  firstName: z.string().min(2, 'First name is required').max(50, 'First name too long'),
-  lastName: z.string().min(2, 'Last name is required').max(50, 'Last name too long'),
-  phone: z.string().min(10, 'Phone number is required').max(20, 'Phone number too long'),
+  portfolio: z.string().max(200, 'Portfolio URL too long').optional(),
+  location: z.string().max(100, 'Location too long').optional(),
   position: z.string().min(2, 'Position is required').max(100, 'Position too long'),
-  coverLetter: z.string().min(50, 'Cover letter must be at least 50 characters').max(2000, 'Cover letter too long'),
-  availability: z.string().min(5, 'Availability is required').max(100, 'Availability too long'),
-  salary: z.string().max(50, 'Salary expectation too long').optional(),
-  remote: z.boolean(),
-  relocation: z.boolean(),
+  message: z.string().min(10, 'Please tell us about yourself and why you want to join').max(2000, 'Message too long'),
 })
 
 // Report form schema

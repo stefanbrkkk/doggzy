@@ -13,6 +13,75 @@ export default function ReportAbusePage() {
 
   const [step, setStep] = React.useState(1)
   const [anonymous, setAnonymous] = React.useState(false)
+  const [formData, setFormData] = React.useState({
+    // Step 1
+    description: '',
+    // Step 2
+    location: '',
+    date: '',
+    time: '',
+    // Step 3
+    name: '',
+    email: '',
+    phone: '',
+    // Additional fields
+    animals: '',
+    urgency: 'concern' as 'immediate' | 'urgent' | 'concern',
+    ongoing: false,
+    evidence: false,
+    contactAuthorities: false,
+    website: '' // honeypot
+  })
+  const [status, setStatus] = React.useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [errorMessage, setErrorMessage] = React.useState('')
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+    }))
+  }
+
+  const handleSubmit = async () => {
+    setStatus('loading')
+    setErrorMessage('')
+
+    try {
+      const submitData = {
+        ...formData,
+        anonymous,
+        formType: 'report'
+      }
+
+      // If anonymous, clear personal info
+      if (anonymous) {
+        submitData.name = ''
+        submitData.email = ''
+        submitData.phone = ''
+      }
+
+      const response = await fetch('/api/forms/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(submitData),
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        setStatus('success')
+      } else {
+        setStatus('error')
+        setErrorMessage(result.error || 'Something went wrong. Please try again.')
+      }
+    } catch {
+      setStatus('error')
+      setErrorMessage('Network error. Please check your connection and try again.')
+    }
+  }
 
   return (
     <AnimatedPage>
@@ -60,48 +129,209 @@ export default function ReportAbusePage() {
               {step === 1 && (
                 <div className="grid grid-cols-1 gap-4">
                   <div className="text-lg font-semibold">Describe the situation</div>
-                  <textarea className="border rounded-md p-3" rows={5} placeholder="Describe what you saw, including location, time, and any photos/links" />
+                  <textarea 
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    className="border rounded-md p-3" 
+                    rows={5} 
+                    placeholder="Describe what you saw, including location, time, and any photos/links"
+                    required
+                  />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Animals involved</label>
+                      <input 
+                        name="animals"
+                        value={formData.animals}
+                        onChange={handleInputChange}
+                        className="border rounded-md p-3 w-full" 
+                        placeholder="e.g., 2 dogs, 1 cat"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Urgency level</label>
+                      <select 
+                        name="urgency"
+                        value={formData.urgency}
+                        onChange={handleInputChange}
+                        className="border rounded-md p-3 w-full bg-white"
+                        required
+                      >
+                        <option value="concern">General concern</option>
+                        <option value="urgent">Urgent attention needed</option>
+                        <option value="immediate">🚨 Immediate danger</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <label className="flex items-center gap-2">
+                      <input 
+                        type="checkbox" 
+                        name="ongoing"
+                        checked={formData.ongoing}
+                        onChange={handleInputChange}
+                      /> 
+                      This is an ongoing situation
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input 
+                        type="checkbox" 
+                        name="evidence"
+                        checked={formData.evidence}
+                        onChange={handleInputChange}
+                      /> 
+                      I have photo/video evidence
+                    </label>
+                  </div>
                   <div className="flex justify-end">
-                    <Button onClick={() => setStep(2)}>Next</Button>
+                    <Button onClick={() => setStep(2)} disabled={!formData.description.trim() || !formData.animals.trim()}>Next</Button>
                   </div>
                 </div>
               )}
               {step === 2 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <div className="text-lg font-semibold mb-2">Location</div>
-                    <input className="border rounded-md p-3 w-full" placeholder="City, Country" />
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="text-lg font-semibold">Location & Time Details</div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Location *</label>
+                      <input 
+                        name="location"
+                        value={formData.location}
+                        onChange={handleInputChange}
+                        className="border rounded-md p-3 w-full" 
+                        placeholder="City, Country or specific address"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Date *</label>
+                      <input 
+                        name="date"
+                        value={formData.date}
+                        onChange={handleInputChange}
+                        className="border rounded-md p-3 w-full" 
+                        type="date"
+                        required
+                      />
+                    </div>
                   </div>
                   <div>
-                    <div className="text-lg font-semibold mb-2">Date / Time</div>
-                    <input className="border rounded-md p-3 w-full" type="datetime-local" />
+                    <label className="block text-sm font-medium mb-1">Time (optional)</label>
+                    <input 
+                      name="time"
+                      value={formData.time}
+                      onChange={handleInputChange}
+                      className="border rounded-md p-3 w-full" 
+                      type="time"
+                    />
                   </div>
-                  <div className="md:col-span-2 flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <label className="flex items-center gap-2">
+                      <input 
+                        type="checkbox" 
+                        name="contactAuthorities"
+                        checked={formData.contactAuthorities}
+                        onChange={handleInputChange}
+                      /> 
+                      I have already contacted local authorities
+                    </label>
+                  </div>
+                  <div className="flex justify-between items-center">
                     <Button variant="outline" onClick={() => setStep(1)}>Back</Button>
-                    <Button onClick={() => setStep(3)}>Next</Button>
+                    <Button onClick={() => setStep(3)} disabled={!formData.location.trim() || !formData.date}>Next</Button>
                   </div>
                 </div>
               )}
-              {step === 3 && (
+              {step === 3 && status !== 'success' && (
                 <div className="grid grid-cols-1 gap-4">
                   <div className="flex items-center justify-between">
                     <div className="text-lg font-semibold">Your details</div>
-                    <label className="text-sm flex items-center gap-2"><input type="checkbox" checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)} /> Report anonymously</label>
+                    <label className="text-sm flex items-center gap-2">
+                      <input 
+                        type="checkbox" 
+                        checked={anonymous} 
+                        onChange={(e) => setAnonymous(e.target.checked)} 
+                      /> 
+                      Report anonymously
+                    </label>
                   </div>
                   {!anonymous && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <input className="border rounded-md p-3" placeholder="Your Name (optional)" />
-                      <input className="border rounded-md p-3" placeholder="Email (optional)" />
-                      <input className="border rounded-md p-3" placeholder="Phone (optional)" />
+                      <input 
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        className="border rounded-md p-3" 
+                        placeholder="Your Name (optional)" 
+                      />
+                      <input 
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className="border rounded-md p-3" 
+                        placeholder="Email (optional)" 
+                        type="email"
+                      />
+                      <input 
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        className="border rounded-md p-3" 
+                        placeholder="Phone (optional)" 
+                      />
+                    </div>
+                  )}
+                  {/* Honeypot field */}
+                  <input
+                    name="website"
+                    value={formData.website}
+                    onChange={handleInputChange}
+                    type="text"
+                    className="hidden"
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                  {status === 'error' && (
+                    <div className="text-red-600 bg-red-50 p-3 rounded-lg">
+                      {errorMessage}
                     </div>
                   )}
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">{t.report.sections.weFollowUp}</span>
                     <div className="flex gap-2">
                       <Button variant="outline" onClick={() => setStep(2)}>Back</Button>
-                      <Button><Mail className="h-4 w-4 mr-2" />{t.report.sections.submitReport}</Button>
+                      <Button 
+                        onClick={handleSubmit}
+                        disabled={status === 'loading'}
+                      >
+                        {status === 'loading' ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                            Submitting...
+                          </>
+                        ) : (
+                          <>
+                            <Mail className="h-4 w-4 mr-2" />
+                            {t.report.sections.submitReport}
+                          </>
+                        )}
+                      </Button>
                     </div>
                   </div>
+                </div>
+              )}
+              {status === 'success' && (
+                <div className="text-center py-8">
+                  <div className="text-green-600 text-6xl mb-4">✓</div>
+                  <h3 className="text-2xl font-bold mb-2">Report Submitted</h3>
+                  <p className="text-gray-600 mb-4">
+                    Thank you for reporting this situation. We take all reports seriously and will follow up appropriately.
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    If this is an emergency requiring immediate attention, please also contact local authorities directly.
+                  </p>
                 </div>
               )}
             </CardContent>
