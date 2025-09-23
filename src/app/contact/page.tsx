@@ -12,7 +12,15 @@ import { motion } from 'framer-motion'
 export default function ContactPage() {
 
   const [copied, setCopied] = React.useState<string | null>(null)
-  const [sent, setSent] = React.useState(false)
+  const [formData, setFormData] = React.useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: '',
+    website: '' // honeypot
+  })
+  const [status, setStatus] = React.useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [errorMessage, setErrorMessage] = React.useState('')
 
   function copy(text: string) {
     navigator.clipboard.writeText(text).then(() => {
@@ -21,11 +29,56 @@ export default function ContactPage() {
     })
   }
 
-  function submitForm(e: React.FormEvent) {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSent(true)
-    track('contact_submit')
-    setTimeout(() => setSent(false), 3000)
+    
+    // Prevent double submission
+    if (status === 'loading') return
+    
+    setStatus('loading')
+    setErrorMessage('')
+    
+    try {
+      track('contact_submit')
+      
+      const response = await fetch('/api/forms/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          formType: 'contact'
+        }),
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        setStatus('success')
+        setFormData({
+          name: '',
+          email: '',
+          subject: '',
+          message: '',
+          website: ''
+        })
+        setTimeout(() => setStatus('idle'), 5000)
+      } else {
+        setStatus('error')
+        setErrorMessage(result.error || 'Something went wrong. Please try again.')
+      }
+    } catch {
+      setStatus('error')
+      setErrorMessage('Network error. Please check your connection and try again.')
+    }
   }
 
   return (
@@ -149,13 +202,74 @@ export default function ContactPage() {
               <CardContent className="p-8 space-y-5" id="form">
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">Say Hello</h2>
                 <p className="text-gray-700">Tell us how we can help. We typically reply within 1–2 business days.</p>
-                <form onSubmit={submitForm} className="grid grid-cols-1 gap-3">
-                  <input className="border rounded-lg p-3" placeholder="Your name" required />
-                  <input className="border rounded-lg p-3" placeholder="Email" type="email" required />
-                  <textarea className="border rounded-lg p-3" rows={4} placeholder="Your message" required />
-                  <Button type="submit" variant="glow" className="w-full"><Heart className="h-5 w-5 mr-2" />Send message</Button>
+                <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-3">
+                  <input 
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    className="border rounded-lg p-3" 
+                    placeholder="Your name" 
+                    required 
+                  />
+                  <input 
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="border rounded-lg p-3" 
+                    placeholder="Email" 
+                    type="email" 
+                    required 
+                  />
+                  <input 
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleInputChange}
+                    className="border rounded-lg p-3" 
+                    placeholder="Subject" 
+                    required 
+                  />
+                  <textarea 
+                    name="message"
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    className="border rounded-lg p-3" 
+                    rows={4} 
+                    placeholder="Your message" 
+                    required 
+                  />
+                  {/* Honeypot field */}
+                  <input
+                    name="website"
+                    value={formData.website}
+                    onChange={handleInputChange}
+                    type="text"
+                    className="hidden"
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                  {status === 'error' && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: 6 }} 
+                      animate={{ opacity: 1, y: 0 }} 
+                      className="text-red-700 bg-red-50 p-3 rounded-lg font-medium"
+                    >
+                      {errorMessage}
+                    </motion.div>
+                  )}
+                  <Button 
+                    type="submit" 
+                    variant="glow" 
+                    className="w-full" 
+                    disabled={status === 'loading'}
+                  >
+                    {status === 'loading' ? (
+                      <>Loading...</>
+                    ) : (
+                      <><Heart className="h-5 w-5 mr-2" />Send message</>
+                    )}
+                  </Button>
                 </form>
-                {sent && (
+                {status === 'success' && (
                   <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="text-green-700 font-medium">
                     Thanks! Your message has been sent.
                   </motion.div>

@@ -1,5 +1,108 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { validateFormData, formatValidationErrors, FormType } from '@/lib/form-validation'
+import { Resend } from 'resend'
+
+// Force Node.js runtime for Resend
+export const runtime = 'nodejs'
+
+// Initialize Resend
+const resend = new Resend(process.env.RESEND_API_KEY)
+
+// Email recipient mapping
+const EMAIL_RECIPIENTS = {
+  contact: 'contact@doggzy.online',
+  adopt: 'adoption@doggzy.online',
+  foster: 'adoption@doggzy.online',
+  careers: 'care@doggzy.online',
+  report: 'reports@doggzy.online',
+} as const
+
+// Get recipient email with fallback
+function getRecipientEmail(formType: FormType): string {
+  return EMAIL_RECIPIENTS[formType] || 'care@doggzy.online'
+}
+
+// Generate subject line
+function generateSubject(formType: FormType, data: Record<string, unknown>): string {
+  const name = data.name || data.firstName || 'Someone'
+  const subjects = {
+    contact: `CONTACT: ${data.subject || 'New Message'} - ${name}`,
+    adopt: `ADOPT: New Application - ${name}`,
+    foster: `FOSTER: New Application - ${name}`,
+    careers: `CAREERS: ${data.position || 'Application'} - ${name}`,
+    report: `REPORT: ${data.anonymous ? 'Anonymous' : name} - ${data.location}`,
+  }
+  return subjects[formType] || `FORM: ${formType.toUpperCase()} - ${name}`
+}
+
+// Generate HTML email content
+function generateEmailHTML(formType: FormType, data: Record<string, unknown>, metadata: any): string {
+  const formattedData = Object.entries(data)
+    .filter(([key]) => key !== 'website') // Exclude honeypot
+    .map(([key, value]) => {
+      const label = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')
+      return `<tr><td style="padding: 8px; font-weight: bold; border-bottom: 1px solid #eee;">${label}:</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${value || 'Not provided'}</td></tr>`
+    })
+    .join('')
+
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Form Submission - ${formType.toUpperCase()}</title>
+      </head>
+      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto;">
+        <div style="background: linear-gradient(135deg, #f97316, #dc2626); padding: 20px; text-align: center; margin-bottom: 20px;">
+          <h1 style="color: white; margin: 0; font-size: 24px;">New ${formType.toUpperCase()} Form Submission</h1>
+        </div>
+        
+        <div style="background: #f9f9f9; padding: 20px; margin-bottom: 20px; border-radius: 8px;">
+          <h2 style="margin-top: 0; color: #333;">Submission Details</h2>
+          <table style="width: 100%; border-collapse: collapse;">
+            ${formattedData}
+          </table>
+        </div>
+        
+        <div style="background: #f0f0f0; padding: 15px; border-radius: 8px; font-size: 12px; color: #666;">
+          <h3 style="margin-top: 0; color: #333;">Metadata</h3>
+          <p><strong>Submission ID:</strong> ${metadata.id}</p>
+          <p><strong>Timestamp:</strong> ${metadata.timestamp}</p>
+          <p><strong>IP Address:</strong> ${metadata.ip}</p>
+          <p><strong>User Agent:</strong> ${metadata.userAgent || 'Not provided'}</p>
+          <p><strong>Referrer:</strong> ${metadata.referrer || 'Direct'}</p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px; padding: 20px; border-top: 1px solid #eee;">
+          <p style="color: #666; font-size: 12px;">This email was generated automatically from the Doggzy website form submission system.</p>
+        </div>
+      </body>
+    </html>
+  `
+}
+
+// Send email via Resend
+async function sendNotificationEmail(formType: FormType, data: Record<string, unknown>, metadata: any): Promise<void> {
+  const recipientEmail = getRecipientEmail(formType)
+  const subject = generateSubject(formType, data)
+  const htmlContent = generateEmailHTML(formType, data, metadata)
+  const userEmail = data.email as string
+  
+  const emailData = {
+    from: 'Doggzy Forms <no-reply@doggzy.online>',
+    to: recipientEmail,
+    subject,
+    html: htmlContent,
+    ...(userEmail && { replyTo: userEmail }),
+  }
+
+  const { error } = await resend.emails.send(emailData)
+  
+  if (error) {
+    console.error('Email sending failed:', error)
+    throw new Error('Failed to send notification email')
+  }
+}
 
 // Simple in-memory rate limiting
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
@@ -116,6 +219,7 @@ export async function POST(request: NextRequest) {
       formType,
       data: validation.data,
       metadata: {
+        id: submissionId,
         ip,
         userAgent: request.headers.get('user-agent'),
         timestamp: new Date().toISOString(),
@@ -123,7 +227,7 @@ export async function POST(request: NextRequest) {
       }
     }
     
-    // Log submission (in production, you'd save to database and send email)
+    // Log submission
     const logData = validation.data as Record<string, unknown>
     console.log(`[Form Submission] ${submissionId}:`, {
       type: formType,
@@ -133,12 +237,23 @@ export async function POST(request: NextRequest) {
       ip,
     })
     
-    // TODO: In production, implement:
-    // 1. Save to database
-    // 2. Send notification email to team
-    // 3. Send confirmation email to user
-    // 4. Add to CRM/pipeline
-    // 5. Trigger any automation workflows
+    // Send notification email
+    try {
+      await sendNotificationEmail(formType, logData, submissionData.metadata)
+      console.log(`[Email Sent] ${submissionId}: Notification sent to ${getRecipientEmail(formType)}`)
+    } catch (emailError) {
+      console.error(`[Email Failed] ${submissionId}:`, emailError)
+      
+      // Return error response if email fails
+      return NextResponse.json(
+        { 
+          success: false,
+          error: 'Unable to process your submission at this time. Please try again later.',
+          code: 'EMAIL_DELIVERY_FAILED'
+        },
+        { status: 500 }
+      )
+    }
     
     // Form-specific success messages
     const successMessages = {
