@@ -1,99 +1,116 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: 0 0% 100%;
-  --foreground: 0 0% 3.9%;
-  --card: 0 0% 100%;
-  --card-foreground: 0 0% 3.9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 3.9%;
-  --primary: 24 9.8% 10%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 0 0% 96.1%;
-  --secondary-foreground: 0 0% 9%;
-  --muted: 0 0% 96.1%;
-  --muted-foreground: 0 0% 45.1%;
-  --accent: 0 0% 96.1%;
-  --accent-foreground: 0 0% 9%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 0 0% 89.8%;
-  --input: 0 0% 89.8%;
-  --ring: 0 0% 3.9%;
-  --chart-1: 12 76% 61%;
-  --chart-2: 173 58% 39%;
-  --chart-3: 197 37% 24%;
-  --chart-4: 43 74% 66%;
-  --chart-5: 27 87% 67%;
-  --radius: 0.5rem;
+  /* Light mode - Minimal monochrome palette */
+  --background: 0 0% 100%;           /* Pure white */
+  --foreground: 0 0% 0%;             /* Pure black */
+  --card: 0 0% 100%;                 /* Pure white */
+  --card-foreground: 0 0% 0%;        /* Pure black */
+  --popover: 0 0% 100%;              /* Pure white */
+  --popover-foreground: 0 0% 0%;     /* Pure black */
+  --primary: 0 0% 0%;                /* Pure black */
+  --primary-foreground: 0 0% 100%;   /* Pure white */
+  --secondary: 0 0% 96%;             /* Light gray */
+  --secondary-foreground: 0 0% 0%;   /* Pure black */
+  --muted: 0 0% 96%;                 /* Light gray */
+  --muted-foreground: 0 0% 45%;      /* Medium gray */
+  --accent: 0 0% 96%;                /* Light gray */
+  --accent-foreground: 0 0% 0%;      /* Pure black */
+  --destructive: 0 84% 60%;          /* Red for errors */
+  --destructive-foreground: 0 0% 100%; /* Pure white */
+  --border: 0 0% 90%;                /* Light gray border */
+  --input: 0 0% 96%;                 /* Light gray input bg */
+  --ring: 195 100% 50%;              /* Neon blue focus ring */
+  
+  /* Neon underglow accents */
+  --neon-primary: #00d9ff;           /* Electric blue */
+  --neon-primary-glow: rgba(0, 217, 255, 0.4);
+  --neon-primary-dim: rgba(0, 217, 255, 0.1);
+  --neon-secondary: #39ff14;         /* Electric green */
+  --neon-secondary-glow: rgba(57, 255, 20, 0.4);
+  --neon-secondary-dim: rgba(57, 255, 20, 0.1);
+  --neon-accent: #bf00ff;            /* Electric purple */
+  --neon-accent-glow: rgba(191, 0, 255, 0.4);
+  --neon-accent-dim: rgba(191, 0, 255, 0.1);
+  
+  /* Animation durations */
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  
+  /* Easing functions */
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-@theme inline {
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
-  --color-chart-1: hsl(var(--chart-1));
-  --color-chart-2: hsl(var(--chart-2));
-  --color-chart-3: hsl(var(--chart-3));
-  --color-chart-4: hsl(var(--chart-4));
-  --color-chart-5: hsl(var(--chart-5));
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-display: 'Space Grotesk', system-ui, sans-serif;
-  --radius: var(--radius);
-  
-  --animate-fade-in: fadeIn 0.5s ease-in-out;
-  --animate-slide-up: slideUp 0.5s ease-out;
-  --animate-slide-in-left: slideInLeft 0.5s ease-out;
-  --animate-slide-in-right: slideInRight 0.5s ease-out;
-  --animate-bounce-in: bounceIn 0.6s ease-out;
-  --animate-pulse-glow: pulseGlow 2s ease-in-out infinite;
-  --animate-float: float 3s ease-in-out infinite;
-  --animate-wiggle: wiggle 1s ease-in-out infinite;
+/* Typography scale classes */
+.text-display {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.text-body {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 400;
+}
+
+.text-mono {
+  font-family: 'JetBrains Mono', Monaco, Consolas, monospace;
+  font-weight: 400;
+}
+
+/* Spacing utilities for consistent rhythm */
+.section-padding {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+}
+
+.container-padding {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-padding {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-padding {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: 0 0% 6%;
-    --foreground: 0 0% 95%;
-    --card: 0 0% 8%;
-    --card-foreground: 0 0% 95%;
-    --popover: 0 0% 8%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 24 9.8% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 12%;
-    --secondary-foreground: 0 0% 95%;
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 70%;
-    --accent: 0 0% 12%;
-    --accent-foreground: 0 0% 95%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 15%;
-    --input: 0 0% 12%;
-    --ring: 24 9.8% 10%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    /* Dark mode - Inverted monochrome palette */
+    --background: 0 0% 4%;             /* Near black */
+    --foreground: 0 0% 98%;            /* Near white */
+    --card: 0 0% 6%;                   /* Dark gray */
+    --card-foreground: 0 0% 98%;       /* Near white */
+    --popover: 0 0% 6%;                /* Dark gray */
+    --popover-foreground: 0 0% 98%;    /* Near white */
+    --primary: 0 0% 98%;               /* Near white */
+    --primary-foreground: 0 0% 4%;     /* Near black */
+    --secondary: 0 0% 10%;             /* Dark gray */
+    --secondary-foreground: 0 0% 98%;  /* Near white */
+    --muted: 0 0% 10%;                 /* Dark gray */
+    --muted-foreground: 0 0% 65%;      /* Medium gray */
+    --accent: 0 0% 10%;                /* Dark gray */
+    --accent-foreground: 0 0% 98%;     /* Near white */
+    --destructive: 0 84% 60%;          /* Red for errors */
+    --destructive-foreground: 0 0% 98%; /* Near white */
+    --border: 0 0% 15%;                /* Dark border */
+    --input: 0 0% 10%;                 /* Dark input bg */
+    --ring: 195 100% 50%;              /* Neon blue focus ring */
+    
+    /* Neon colors remain the same in dark mode */
   }
 }
 
@@ -101,37 +118,71 @@
   border-color: hsl(var(--border));
 }
 
+/* Base reset for consistent styling */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Remove default margins */
+h1, h2, h3, h4, h5, h6, p, figure, blockquote {
+  margin: 0;
+}
+
+/* List reset */
+ul, ol {
+  margin: 0;
+  padding: 0;
+}
+
+/* Button reset */
+button {
+  background: none;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Link reset */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
 body {
   background: hsl(var(--background));
   color: hsl(var(--foreground));
-  font-family: var(--font-sans);
+  font-family: 'Inter', system-ui, sans-serif;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - minimal design */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: hsl(var(--muted));
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--primary));
-  border-radius: 4px;
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 3px;
+  transition: background var(--duration-fast) var(--ease-out);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--primary) / 0.8);
+  background: hsl(var(--muted-foreground) / 0.5);
 }
 
-/* Selection */
+/* Selection - neon accent */
 ::selection {
-  background: hsl(var(--primary) / 0.2);
-  color: hsl(var(--primary-foreground));
+  background: var(--neon-primary-dim);
+  color: hsl(var(--foreground));
 }
 
 /* Smooth scrolling */
@@ -139,203 +190,161 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Focus styles */
+/* Focus styles - neon ring */
 *:focus-visible {
-  outline: 2px solid hsl(var(--ring));
+  outline: 2px solid var(--neon-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Utility classes for neon effects */
+.glow-primary {
+  box-shadow: 0 0 20px var(--neon-primary-dim);
+  transition: box-shadow var(--duration-normal) var(--ease-out);
+}
+
+.glow-primary:hover {
+  box-shadow: 0 0 40px var(--neon-primary-glow);
+}
+
+.glow-secondary {
+  box-shadow: 0 0 20px var(--neon-secondary-dim);
+  transition: box-shadow var(--duration-normal) var(--ease-out);
+}
+
+.glow-secondary:hover {
+  box-shadow: 0 0 40px var(--neon-secondary-glow);
+}
+
+.glow-accent {
+  box-shadow: 0 0 20px var(--neon-accent-dim);
+  transition: box-shadow var(--duration-normal) var(--ease-out);
+}
+
+.glow-accent:hover {
+  box-shadow: 0 0 40px var(--neon-accent-glow);
+}
+
+/* Text glow effects */
+.text-glow-primary {
+  text-shadow: 0 0 10px var(--neon-primary-glow);
+}
+
+.text-glow-secondary {
+  text-shadow: 0 0 10px var(--neon-secondary-glow);
+}
+
+.text-glow-accent {
+  text-shadow: 0 0 10px var(--neon-accent-glow);
+}
+
+/* Minimal card styling */
+.card {
+  background-color: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 12px;
+  transition: all var(--duration-normal) var(--ease-out);
+}
+
+.card:hover {
+  border-color: hsl(var(--muted-foreground) / 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px hsl(var(--foreground) / 0.1);
+}
+
+/* Button base styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all var(--duration-fast) var(--ease-out);
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--neon-primary);
   outline-offset: 2px;
 }
 
-/* Dark mode specific improvements */
-@media (prefers-color-scheme: dark) {
-  /* Better gradient handling for dark mode */
-  .bg-gradient-to-br {
-    background-image: linear-gradient(to bottom right, hsl(0 0% 6%), hsl(0 0% 8%));
-  }
-  
-  .bg-gradient-to-r {
-    background-image: linear-gradient(to right, hsl(0 0% 6%), hsl(0 0% 8%));
-  }
-  
-  /* Improved text gradients for dark mode */
-  .bg-clip-text {
-    -webkit-background-clip: text;
-    background-clip: text;
-  }
-  
-  /* Better shadow handling for dark mode */
-  .shadow-lg {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
-  }
-  
-  .shadow-xl {
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
-  }
-  
-  .shadow-2xl {
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  }
-  
-  /* Better backdrop blur for dark mode */
-  .backdrop-blur-sm {
-    backdrop-filter: blur(4px);
-    background-color: rgba(0, 0, 0, 0.2);
-  }
-  
-  .backdrop-blur-md {
-    backdrop-filter: blur(8px);
-    background-color: rgba(0, 0, 0, 0.2);
-  }
-  
-  /* Improved card styling for dark mode */
-  .card {
-    background-color: hsl(var(--card));
-    border: 1px solid hsl(var(--border));
-  }
-  
-  /* Better text visibility in dark mode */
-  .text-gray-900 {
-    color: hsl(0 0% 95%) !important;
-  }
-  
-  .text-gray-800 {
-    color: hsl(0 0% 90%) !important;
-  }
-  
-  .text-gray-700 {
-    color: hsl(0 0% 85%) !important;
-  }
-  
-  .text-gray-600 {
-    color: hsl(0 0% 80%) !important;
-  }
-  
-  .text-gray-500 {
-    color: hsl(0 0% 70%) !important;
-  }
-  
-  .text-gray-400 {
-    color: hsl(0 0% 60%) !important;
-  }
-  
-  .text-gray-300 {
-    color: hsl(0 0% 85%) !important;
-  }
-  
-  .text-black {
-    color: hsl(0 0% 95%) !important;
-  }
-  
-  /* Fix all text elements */
-  h1, h2, h3, h4, h5, h6 {
-    color: hsl(0 0% 95%) !important;
-  }
-  
-  p, span, div {
-    color: inherit;
-  }
-  
-  /* Ensure all text is visible */
-  .text-foreground {
-    color: hsl(var(--foreground)) !important;
-  }
-  
-  /* Better button hover states for dark mode */
-  .hover\:scale-105:hover {
-    transform: scale(1.05);
-  }
-  
-  .hover\:scale-110:hover {
-    transform: scale(1.1);
-  }
-  
-  /* Better card hover effects for dark mode */
-  .card:hover {
-    box-shadow: 0 20px 25px -5px rgba(255, 255, 255, 0.1), 0 10px 10px -5px rgba(255, 255, 255, 0.05);
-  }
-  
-  .hover\:shadow-2xl:hover {
-    box-shadow: 0 25px 50px -12px rgba(255, 255, 255, 0.15);
-  }
-  
-  .hover\:shadow-xl:hover {
-    box-shadow: 0 20px 25px -5px rgba(255, 255, 255, 0.1), 0 10px 10px -5px rgba(255, 255, 255, 0.05);
-  }
-  
-  /* Better group hover effects */
-  .group:hover .group-hover\:shadow-white\/10 {
-    box-shadow: 0 20px 25px -5px rgba(255, 255, 255, 0.1), 0 10px 10px -5px rgba(255, 255, 255, 0.05);
-  }
-  
-  /* Improved form elements for dark mode */
-  input, select, textarea {
-    background-color: hsl(var(--input)) !important;
-    border-color: hsl(var(--border)) !important;
-    color: hsl(var(--foreground)) !important;
-  }
-  
-  input::placeholder, textarea::placeholder {
-    color: hsl(0 0% 60%) !important;
-  }
-  
-  /* Better card backgrounds for dark mode */
-  .bg-white {
-    background-color: hsl(var(--card)) !important;
-  }
-  
-  .bg-white\/80 {
-    background-color: hsl(0 0% 8% / 0.8) !important;
-  }
-  
-  .bg-white\/95 {
-    background-color: hsl(0 0% 8% / 0.95) !important;
-  }
-  
-  .bg-white\/90 {
-    background-color: hsl(0 0% 8% / 0.9) !important;
-  }
-  
-  /* Better section backgrounds */
-  .bg-white\/50 {
-    background-color: hsl(0 0% 8% / 0.5) !important;
-  }
-  
-  /* Fix all card text colors */
-  .card h1, .card h2, .card h3, .card h4, .card h5, .card h6 {
-    color: hsl(0 0% 95%) !important;
-  }
-  
-  .card p, .card span, .card div {
-    color: hsl(0 0% 85%) !important;
-  }
-  
-  /* Better border colors for dark mode */
-  .border-gray-200 {
-    border-color: hsl(var(--border)) !important;
-  }
-  
-  .border-gray-300 {
-    border-color: hsl(var(--border)) !important;
-  }
-  
-  /* Better background colors for sections */
-  .bg-orange-50 {
-    background-color: hsl(0 0% 8%) !important;
-  }
-  
-  .bg-red-50 {
-    background-color: hsl(0 0% 8%) !important;
-  }
-  
-  /* Better gradient backgrounds for dark mode */
-  .from-orange-50 {
-    --tw-gradient-from: hsl(0 0% 8%) !important;
-  }
-  
-  .via-white {
-    --tw-gradient-via: hsl(0 0% 6%) !important;
-  }
-  
-  .to-red-50 {
-    --tw-gradient-to: hsl(0 0% 8%) !important;
-  }
+/* Primary button - black with neon glow on hover */
+.btn-primary {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  padding: 0.75rem 1.5rem;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 0 20px var(--neon-primary-glow);
+  transform: translateY(-1px);
+}
+
+/* Secondary button - minimal outline */
+.btn-secondary {
+  background-color: transparent;
+  color: hsl(var(--foreground));
+  border: 1px solid hsl(var(--border));
+  padding: 0.75rem 1.5rem;
+}
+
+.btn-secondary:hover {
+  background-color: hsl(var(--muted));
+  border-color: hsl(var(--muted-foreground) / 0.3);
+}
+
+/* Ghost button - text only with neon underline */
+.btn-ghost {
+  background-color: transparent;
+  color: hsl(var(--foreground));
+  padding: 0.5rem 1rem;
+  position: relative;
+}
+
+.btn-ghost::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--neon-primary), var(--neon-secondary));
+  transition: all var(--duration-normal) var(--ease-out);
+  transform: translateX(-50%);
+}
+
+.btn-ghost:hover::after {
+  width: 100%;
+}
+
+/* Form elements */
+input, select, textarea {
+  background-color: hsl(var(--input));
+  border: 1px solid hsl(var(--border));
+  color: hsl(var(--foreground));
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--neon-primary);
+  box-shadow: 0 0 0 2px var(--neon-primary-dim);
+}
+
+input::placeholder, textarea::placeholder {
+  color: hsl(var(--muted-foreground));
 }

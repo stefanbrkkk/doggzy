@@ -18,7 +18,7 @@ export default function AdminLayout({
   // No server-side auth check needed here
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-orange-50">
+    <div className="min-h-screen bg-background">
       {children}
     </div>
   );

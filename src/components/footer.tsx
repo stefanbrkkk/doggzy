@@ -4,21 +4,10 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
 import { 
-  Heart, 
   Mail, 
-  Phone, 
-  MapPin, 
-  Facebook, 
-  Twitter, 
-  Instagram, 
-  Youtube,
   PawPrint,
-  ArrowRight,
-  Shield,
-  Award,
-  Users
+  ArrowRight
 } from 'lucide-react'
 import React from 'react'
 
@@ -33,258 +22,129 @@ export function Footer() {
     }
   }
 
-  const socialLinks = [
-    { icon: Facebook, href: 'https://facebook.com/doggzy', label: 'Facebook' },
-    { icon: Twitter, href: 'https://twitter.com/doggzy', label: 'Twitter' },
-    { icon: Instagram, href: 'https://instagram.com/doggzy', label: 'Instagram' },
-    { icon: Youtube, href: 'https://youtube.com/doggzy', label: 'YouTube' },
+  const primaryActions = [
+    { label: 'Donate', href: '/donate' },
+    { label: 'Adopt', href: '/adopt' },
+    { label: 'Shop', href: '/shop' },
   ]
 
   const quickLinks = [
-    { label: 'About Us', href: '/about' },
-    { label: 'Our Impact', href: '/impact' },
+    { label: 'About', href: '/about' },
+    { label: 'Impact', href: '/impact' },
+    { label: 'Stories', href: '/stories' },
     { label: 'Partners', href: '/partners' },
-    { label: 'Success Stories', href: '/success-stories' },
-    { label: 'Volunteer', href: '/volunteer' },
-    { label: 'Careers', href: '/careers' },
-  ]
-
-  const supportLinks = [
-    { label: 'Donate', href: '/donate' },
-    { label: 'Shop', href: '/shop' },
-    { label: 'Sponsor a Pet', href: '/sponsor' },
-    { label: 'Adopt', href: '/adopt' },
-    { label: 'Foster', href: '/foster' },
-    { label: 'Report Abuse', href: '/report' },
   ]
 
   const legalLinks = [
-    { label: 'Privacy Policy', href: '/privacy' },
-    { label: 'Terms of Service', href: '/terms' },
-    { label: 'Cookie Policy', href: '/cookies' },
-    { label: 'Refund Policy', href: '/refunds' },
-    { label: 'Accessibility', href: '/accessibility' },
-    { label: 'Contact Us', href: '/contact' },
-  ]
-
-  const features = [
-    {
-      icon: Shield,
-      title: "Secure Donations",
-      description: "Your donations are protected with bank-level security"
-    },
-    {
-      icon: Award,
-      title: "Tax Deductible",
-      description: "501(c)(3) certified - all donations are tax deductible"
-    },
-    {
-      icon: Users,
-      title: "Transparent Impact",
-      description: "See exactly how your donations are making a difference"
-    }
+    { label: 'Privacy', href: '/privacy' },
+    { label: 'Terms', href: '/terms' },
+    { label: 'Contact', href: '/contact' },
   ]
 
   return (
-    <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-10 left-10 w-32 h-32 bg-orange-500/10 rounded-full blur-2xl animate-pulse" />
-        <div className="absolute bottom-10 right-10 w-40 h-40 bg-red-500/10 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-yellow-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
-      </div>
-
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <footer className="bg-background border-t border-border relative">
+      <div className="container mx-auto container-padding">
         {/* Main Footer Content */}
-        <div className="py-16">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
+        <div className="py-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Brand Section */}
-            <div className="lg:col-span-1">
-              <Link href="/" className="flex items-center space-x-2 group mb-6">
-                <div className="relative hover:scale-110 transition-transform duration-200">
-                  <PawPrint className="h-8 w-8 text-orange-500 group-hover:text-red-500 transition-colors duration-200" />
-                </div>
-                <span className="font-display text-2xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+            <div className="md:col-span-2">
+              <Link href="/" className="flex items-center space-x-2 group mb-4">
+                <PawPrint className="h-6 w-6 text-foreground group-hover:text-neon-primary transition-colors duration-300" />
+                <span className="font-display text-xl font-bold text-foreground">
                   Doggzy
                 </span>
               </Link>
               
-              <p className="text-gray-300 mb-6 leading-relaxed">
-                Dedicated to rescuing, rehabilitating, and rehoming dogs in need. 
-                Every donation and purchase directly saves lives and creates miracles.
+              <p className="text-muted-foreground text-sm mb-6 max-w-md">
+                Rescuing, rehabilitating, and rehoming dogs in need. Every action saves lives.
               </p>
 
-              {/* Contact Info */}
-              <div className="space-y-3 mb-6">
-                <div className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-colors duration-200">
-                  <Mail className="h-5 w-5 text-orange-500" />
-                  <a href="mailto:care@doggzy.online" className="hover:text-orange-400 transition-colors duration-200">care@doggzy.online</a>
-                </div>
-                <div className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-colors duration-200">
-                  <Phone className="h-5 w-5 text-orange-500" />
-                  <a href="tel:+381616446767" className="hover:text-orange-400 transition-colors duration-200">+381 616446767</a>
-                </div>
-                <div className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-colors duration-200">
-                  <MapPin className="h-5 w-5 text-orange-500" />
-                  <span>San Francisco, CA</span>
-                </div>
+              {/* Newsletter */}
+              <div className="mb-6">
+                <form onSubmit={handleNewsletterSubmit} className="flex space-x-2 max-w-sm">
+                  <Input
+                    type="email"
+                    placeholder="Email for updates"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="text-sm flex-1"
+                    required
+                  />
+                  <Button type="submit" size="sm" className="glow-primary">
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </form>
               </div>
 
-              {/* Social Links */}
-              <div className="flex space-x-4">
-                {socialLinks.map((social) => (
-                  <Link
-                    key={social.label}
-                    href={social.href}
-                    className="p-2 bg-gray-800 rounded-lg hover:bg-orange-500 hover:scale-110 transition-all duration-200"
-                    aria-label={social.label}
-                  >
-                    {React.createElement(social.icon, { className: "h-5 w-5" })}
-                  </Link>
-                ))}
+              {/* Contact */}
+              <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                <a href="mailto:care@doggzy.online" className="hover:text-foreground transition-colors duration-200 flex items-center space-x-1">
+                  <Mail className="h-4 w-4" />
+                  <span>care@doggzy.online</span>
+                </a>
               </div>
+            </div>
+
+            {/* Primary Actions */}
+            <div>
+              <h3 className="text-sm font-semibold mb-4 text-foreground">Actions</h3>
+              <ul className="space-y-2">
+                {primaryActions.map((link) => (
+                  <li key={link.href}>
+                    <Link 
+                      href={link.href}
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 btn-ghost inline-block"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
 
             {/* Quick Links */}
             <div>
-              <h3 className="text-lg font-semibold mb-6 text-orange-400">Quick Links</h3>
-              <ul className="space-y-3">
+              <h3 className="text-sm font-semibold mb-4 text-foreground">Explore</h3>
+              <ul className="space-y-2">
                 {quickLinks.map((link) => (
                   <li key={link.href}>
                     <Link 
                       href={link.href}
-                      className="text-gray-300 hover:text-orange-400 transition-colors duration-200 hover:translate-x-1 transform inline-block"
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
                     >
                       {link.label}
                     </Link>
                   </li>
                 ))}
               </ul>
-            </div>
-
-            {/* Support Links */}
-            <div>
-              <h3 className="text-lg font-semibold mb-6 text-orange-400">Get Involved</h3>
-              <ul className="space-y-3">
-                {supportLinks.map((link) => (
-                  <li key={link.href}>
-                    <Link 
-                      href={link.href}
-                      className="text-gray-300 hover:text-orange-400 transition-colors duration-200 hover:translate-x-1 transform inline-block"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Newsletter & Legal */}
-            <div>
-              <h3 className="text-lg font-semibold mb-6 text-orange-400">Stay Connected</h3>
-              
-              {/* Newsletter */}
-              <form onSubmit={handleNewsletterSubmit} className="mb-6">
-                <div className="flex space-x-2">
-                  <Input
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500"
-                    required
-                  />
-                  <Button type="submit" variant="glow" size="sm" className="hover:scale-105 transition-transform duration-200">
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </div>
-                <p className="text-sm text-gray-400 mt-2">
-                  Get updates on our rescue efforts and success stories
-                </p>
-              </form>
-
-              {/* Legal Links */}
-              <div className="space-y-3">
-                {legalLinks.map((link) => (
-                  <div key={link.href}>
-                    <Link 
-                      href={link.href}
-                      className="text-sm text-gray-400 hover:text-orange-400 transition-colors duration-200 hover:translate-x-1 transform inline-block"
-                    >
-                      {link.label}
-                    </Link>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Features Section */}
-        <div className="py-12 border-t border-gray-700">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {features.map((feature) => (
-              <div key={feature.title} className="text-center hover:scale-105 transition-transform duration-200">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white mb-4 hover:scale-110 transition-transform duration-200">
-                  {React.createElement(feature.icon, { className: "h-8 w-8" })}
-                </div>
-                <h4 className="text-lg font-semibold mb-2 text-orange-400">
-                  {feature.title}
-                </h4>
-                <p className="text-gray-300 text-sm">
-                  {feature.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* CTA Section */}
-        <div className="py-12 border-t border-gray-700">
-          <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-8 text-center relative overflow-hidden hover:scale-105 transition-transform duration-300">
-            <div className="absolute inset-0 bg-gradient-to-r from-orange-600/20 to-red-600/20" />
-            <div className="relative z-10">
-              <h3 className="text-2xl md:text-3xl font-bold mb-4">
-                Help Create More Happy Endings
-              </h3>
-              <p className="text-orange-100 mb-6 max-w-2xl mx-auto">
-                Every donation and purchase directly supports rescue operations, medical care, 
-                and finding loving homes for dogs in need.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/donate">
-                  <Button size="lg" variant="secondary" className="hover:scale-105 transition-transform duration-200">
-                    <Heart className="h-5 w-5 mr-2" />
-                    Donate Now
-                  </Button>
-                </Link>
-                <Link href="/shop">
-                  <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-orange-600 hover:scale-105 transition-all duration-200">
-                    <ArrowRight className="h-5 w-5 mr-2" />
-                    Shop for a Cause
-                  </Button>
-                </Link>
-              </div>
             </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="py-6 border-t border-gray-700">
-          <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-            <div className="flex items-center space-x-4">
-              <p className="text-gray-400 text-sm">
-                © 2024 Doggzy. All rights reserved.
-              </p>
-              <Badge variant="secondary" className="bg-green-100 text-green-800 hover:scale-105 transition-transform duration-200">
-                501(c)(3) Non-Profit
-              </Badge>
+        <div className="py-6 border-t border-border">
+          <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+            <div className="flex items-center space-x-4 text-xs text-muted-foreground">
+              <span>© 2024 Doggzy</span>
+              <span className="px-2 py-1 bg-muted rounded text-xs">501(c)(3)</span>
             </div>
             
-            <div className="flex items-center space-x-6">
-              <p className="text-gray-400 text-sm">
-                Made with <Heart className="h-4 w-4 text-red-500 inline mx-1" /> for dogs everywhere
-              </p>
+            {/* Legal Links - Subtle and dimmed */}
+            <div className="flex items-center space-x-4">
+              {legalLinks.map((link, index) => (
+                <React.Fragment key={link.href}>
+                  <Link 
+                    href={link.href}
+                    className="text-xs text-muted-foreground/70 hover:text-muted-foreground transition-colors duration-200"
+                  >
+                    {link.label}
+                  </Link>
+                  {index < legalLinks.length - 1 && (
+                    <span className="text-muted-foreground/50">·</span>
+                  )}
+                </React.Fragment>
+              ))}
             </div>
           </div>
         </div>

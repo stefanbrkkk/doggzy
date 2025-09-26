@@ -60,32 +60,30 @@ export default function AdminDashboard() {
             transition={{ delay: index * 0.1, duration: 0.5 }}
             whileHover={{ y: -5 }}
           >
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/90 backdrop-blur-sm">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">{stat.label}</p>
-                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                  </div>
-                  <div className={`p-3 rounded-full bg-gray-100 ${stat.color}`}>
-                    <stat.icon className="h-6 w-6" />
-                  </div>
+            <div className="card p-6 hover:-translate-y-1 transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+                  <p className="text-2xl font-bold text-foreground">{stat.value}</p>
                 </div>
-              </CardContent>
-            </Card>
+                <div className="p-3 rounded-full bg-muted">
+                  <stat.icon className="h-6 w-6 text-foreground" />
+                </div>
+              </div>
+            </div>
           </motion.div>
         ))}
       </div>
 
       {/* Recent Activity */}
-      <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+      <div className="card">
+        <div className="p-6 border-b border-border">
+          <h3 className="flex items-center gap-2 text-lg font-semibold text-foreground">
             <Calendar className="h-5 w-5" />
             Recent Activity
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+          </h3>
+        </div>
+        <div className="p-6">
           <div className="space-y-4">
             {recentActivities.map((activity, index) => (
               <motion.div
@@ -93,27 +91,27 @@ export default function AdminDashboard() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                className="flex items-center justify-between p-4 bg-muted rounded-lg"
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-3 h-3 rounded-full ${
-                    activity.type === 'donation' ? 'bg-green-500' :
-                    activity.type === 'rescue' ? 'bg-blue-500' :
-                    activity.type === 'purchase' ? 'bg-orange-500' : 'bg-purple-500'
+                    activity.type === 'donation' ? 'bg-neon-secondary' :
+                    activity.type === 'rescue' ? 'bg-neon-primary' :
+                    activity.type === 'purchase' ? 'bg-neon-accent' : 'bg-foreground'
                   }`} />
                   <div>
-                    <p className="font-medium text-gray-900">{activity.message}</p>
-                    <p className="text-sm text-gray-500">{activity.time}</p>
+                    <p className="font-medium text-foreground">{activity.message}</p>
+                    <p className="text-sm text-muted-foreground">{activity.time}</p>
                   </div>
                 </div>
                 {activity.amount && (
-                  <span className="font-semibold text-green-600">{activity.amount}</span>
+                  <span className="font-semibold text-neon-secondary">{activity.amount}</span>
                 )}
               </motion.div>
             ))}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Quick Actions */}
       <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
@@ -286,21 +284,21 @@ export default function AdminDashboard() {
   )
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-orange-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="bg-card border-b border-border">
+        <div className="container mx-auto container-padding py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-              <p className="text-gray-600">Manage your Doggzy content and operations</p>
+              <h1 className="text-display text-3xl font-bold text-foreground">Admin Dashboard</h1>
+              <p className="text-body text-muted-foreground">Manage your Doggzy content and operations</p>
             </div>
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">Admin User</p>
-                <p className="text-sm text-gray-500">admin@doggzy.org</p>
+                <p className="text-sm font-medium text-foreground">Admin User</p>
+                <p className="text-sm text-muted-foreground">admin@doggzy.org</p>
               </div>
-              <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white font-semibold">
+              <div className="w-10 h-10 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-semibold">
                 A
               </div>
             </div>
@@ -308,30 +306,28 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="container mx-auto container-padding py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
           <div className="lg:w-64">
-            <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
-              <CardContent className="p-6">
-                <nav className="space-y-2">
-                  {tabs.map((tab) => (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors duration-200 ${
-                        activeTab === tab.id
-                          ? 'bg-orange-500 text-white'
-                          : 'text-gray-700 hover:bg-gray-100'
-                      }`}
-                    >
-                      <tab.icon className="h-5 w-5" />
-                      {tab.label}
-                    </button>
-                  ))}
-                </nav>
-              </CardContent>
-            </Card>
+            <div className="card p-6">
+              <nav className="space-y-2">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors duration-200 ${
+                      activeTab === tab.id
+                        ? 'bg-primary text-primary-foreground glow-primary'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                    }`}
+                  >
+                    <tab.icon className="h-5 w-5" />
+                    {tab.label}
+                  </button>
+                ))}
+              </nav>
+            </div>
           </div>
 
           {/* Main Content */}
