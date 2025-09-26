@@ -276,7 +276,7 @@ html {
 }
 
 .btn:focus-visible {
-  outline: 2px solid var(--neon-primary);
+  outline: 2px solid hsl(var(--neon-primary));
   outline-offset: 2px;
 }
 
@@ -288,7 +288,7 @@ html {
 }
 
 .btn-primary:hover {
-  box-shadow: 0 0 20px var(--neon-primary-glow);
+  box-shadow: 0 0 20px hsl(var(--neon-primary-glow));
   transform: translateY(-1px);
 }
 
