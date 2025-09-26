@@ -119,39 +119,24 @@ function ImpactStats() {
   ]
 
   return (
-    <section ref={ref} className="py-20 bg-gradient-to-br from-gray-50 via-white to-orange-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
+    <section ref={ref} className="section-padding bg-background relative overflow-hidden">
+      {/* Minimal background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
-          className="absolute top-20 left-10 w-32 h-32 bg-orange-100/50 rounded-full blur-3xl"
+          className="absolute top-20 left-10 w-32 h-32 bg-neon-primary-dim rounded-full blur-3xl opacity-20"
           animate={{
-            x: [0, 100, 0],
-            y: [0, -50, 0],
-            scale: [1, 1.2, 1],
+            x: [0, 50, 0],
+            y: [0, -25, 0],
           }}
           transition={{
-            duration: 10,
+            duration: 8,
             repeat: Infinity,
             ease: "easeInOut",
-          }}
-        />
-        <motion.div
-          className="absolute bottom-20 right-10 w-40 h-40 bg-red-100/40 rounded-full blur-3xl"
-          animate={{
-            x: [0, -80, 0],
-            y: [0, 60, 0],
-            scale: [1, 0.8, 1],
-          }}
-          transition={{
-            duration: 12,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 3,
           }}
         />
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="container mx-auto container-padding relative z-10">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -163,19 +148,17 @@ function ImpactStats() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-100 to-red-100 text-orange-800 px-4 py-2 rounded-full text-sm font-medium mb-6"
+            className="inline-flex items-center gap-2 bg-muted text-muted-foreground px-4 py-2 rounded-full text-sm font-medium mb-6"
           >
-            <Heart className="h-4 w-4 fill-orange-500 text-orange-500" />
-            {t.home.impact.title}
+            <Heart className="h-4 w-4 text-neon-primary" />
+            Our Impact
           </motion.div>
           
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mb-6">
-            <span className="bg-gradient-to-r from-gray-900 to-orange-600 bg-clip-text text-transparent">
-              {t.home.impact.title}
-            </span>
+          <h2 className="text-display text-4xl font-bold mb-6 text-foreground">
+            {t.home.impact.title}
           </h2>
           
-          <p className="text-lg text-gray-600 dark:text-gray-200 max-w-3xl mx-auto">
+          <p className="text-body text-lg text-muted-foreground max-w-3xl mx-auto">
             {t.home.impact.subtitle}
           </p>
         </motion.div>
@@ -194,55 +177,42 @@ function ImpactStats() {
                 stiffness: 100
               }}
               whileHover={{ 
-                scale: 1.05, 
-                y: -10,
+                y: -5,
                 transition: { duration: 0.2 }
               }}
               className="group relative"
             >
-              {/* Card */}
-              <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-white/20 dark:border-slate-700/50 hover:shadow-2xl dark:hover:shadow-white/10 transition-all duration-300 relative overflow-hidden group">
-                {/* Background Gradient */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-5 group-hover:opacity-10 transition-opacity duration-300`} />
-                
+              {/* Minimal Card */}
+              <div className="card p-8 text-center group-hover:border-neon-primary/30 transition-all duration-300">
                 {/* Icon */}
                 <motion.div
-                  className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${stat.color} text-white mb-6 relative z-10`}
-                  whileHover={{ rotate: 360, scale: 1.1 }}
-                  transition={{ duration: 0.6 }}
+                  className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-muted text-foreground mb-6"
+                  whileHover={{ scale: 1.1 }}
+                  transition={{ duration: 0.3 }}
                 >
-                  {React.createElement(stat.icon, { className: "h-8 w-8" })}
+                  {React.createElement(stat.icon, { className: "h-6 w-6" })}
                 </motion.div>
 
                 {/* Number */}
                 <motion.div
-                  className="text-4xl lg:text-5xl font-bold mb-2 relative z-10"
+                  className="text-4xl font-bold mb-2 text-foreground"
                   initial={{ opacity: 0 }}
                   animate={isInView ? { opacity: 1 } : {}}
                   transition={{ delay: 0.5 + index * 0.1 }}
                 >
-                  <span className={`bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>
-                    {isInView ? <AnimatedCounter end={stat.value} suffix={stat.suffix} /> : '0'}
-                  </span>
+                  {isInView ? <AnimatedCounter end={stat.value} suffix={stat.suffix} /> : '0'}
                 </motion.div>
 
                 {/* Label */}
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 relative z-10">
+                <h3 className="text-sm font-semibold text-foreground mb-2">
                   {stat.label}
                 </h3>
 
                 {/* Description */}
-                <p className="text-sm text-gray-600 dark:text-gray-300 relative z-10">
+                <p className="text-xs text-muted-foreground">
                   {stat.description}
                 </p>
-
-                {/* Hover Effect */}
-                <motion.div
-                  className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-2xl`}
-                  whileHover={{ scale: 1.05 }}
-                />
               </div>
-
             </motion.div>
           ))}
         </div>
@@ -254,20 +224,20 @@ function ImpactStats() {
           transition={{ delay: 0.8, duration: 0.6 }}
           className="text-center mt-16"
         >
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center gap-4 bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+          <motion.button
+            whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.98 }}
+            className="btn-primary glow-primary inline-flex items-center gap-4 px-8 py-4 rounded-lg text-lg font-semibold"
           >
-            <Heart className="h-6 w-6" />
-            <span className="text-lg font-semibold">Be Part of the Impact</span>
+            <Heart className="h-5 w-5" />
+            <span>Be Part of the Impact</span>
             <motion.div
-              animate={{ x: [0, 5, 0] }}
+              animate={{ x: [0, 3, 0] }}
               transition={{ duration: 1.5, repeat: Infinity }}
             >
               →
             </motion.div>
-          </motion.div>
+          </motion.button>
         </motion.div>
       </div>
     </section>
