@@ -87,9 +87,15 @@ export default function AdminStories() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="flex items-center gap-3">
-          <div className="w-6 h-6 border-2 border-muted-foreground/30 border-t-neon-primary rounded-full animate-spin" />
-          <span className="text-muted-foreground">Loading stories...</span>
+        <div className="flex flex-col items-center gap-6">
+          <div className="relative">
+            <div className="w-10 h-10 border-2 border-muted-foreground/20 border-t-neon-primary rounded-full animate-spin" />
+            <div className="absolute inset-0 w-10 h-10 border-2 border-transparent border-r-neon-primary/50 rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '2s' }} />
+          </div>
+          <div className="text-center">
+            <div className="text-lg font-semibold text-foreground mb-1">Loading Stories</div>
+            <div className="text-sm text-muted-foreground">Fetching your content...</div>
+          </div>
         </div>
       </div>
     )
@@ -107,8 +113,8 @@ export default function AdminStories() {
                 <p className="text-body text-muted-foreground">Create and edit blog stories</p>
               </div>
               <Link href="/admin/stories/new">
-                <Button variant="glow" className="glow-primary">
-                  <Plus className="h-4 w-4 mr-2" />
+                <Button variant="glow" className="glow-primary group">
+                  <Plus className="h-4 w-4 mr-2 group-hover:rotate-90 transition-transform duration-300" />
                   New Story
                 </Button>
               </Link>
@@ -226,21 +232,31 @@ export default function AdminStories() {
                 </motion.div>
               ))
             ) : (
-              <div className="card p-12 text-center">
-                <FileText className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-foreground mb-2">No stories found</h3>
-                <p className="text-muted-foreground mb-6">
-                  {searchTerm || statusFilter !== 'all' 
-                    ? 'Try adjusting your search or filters'
-                    : 'Create your first story to get started'
-                  }
-                </p>
-                <Link href="/admin/stories/new">
-                  <Button variant="glow">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create First Story
-                  </Button>
-                </Link>
+              <div className="card p-12 text-center relative overflow-hidden">
+                {/* Subtle background pattern */}
+                <div className="absolute inset-0 opacity-[0.02]" style={{
+                  backgroundImage: 'radial-gradient(circle at 2px 2px, hsl(var(--foreground)) 1px, transparent 0)',
+                  backgroundSize: '24px 24px'
+                }} />
+                <div className="relative z-10">
+                  <div className="relative inline-block mb-6">
+                    <FileText className="h-20 w-20 text-muted-foreground mx-auto" />
+                    <div className="absolute inset-0 bg-neon-primary-dim rounded-full opacity-0 animate-pulse" style={{ animationDelay: '1s' }} />
+                  </div>
+                  <h3 className="text-display text-xl font-semibold text-foreground mb-3">No stories found</h3>
+                  <p className="text-body text-muted-foreground mb-8 max-w-sm mx-auto leading-relaxed">
+                    {searchTerm || statusFilter !== 'all' 
+                      ? 'Try adjusting your search or filters to find what you\'re looking for'
+                      : 'Create your first story to start building your content library'
+                    }
+                  </p>
+                  <Link href="/admin/stories/new">
+                    <Button variant="glow" className="glow-primary group">
+                      <Plus className="h-4 w-4 mr-2 group-hover:rotate-90 transition-transform duration-300" />
+                      Create First Story
+                    </Button>
+                  </Link>
+                </div>
               </div>
             )}
           </div>

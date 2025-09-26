@@ -1,0 +1,82 @@
+
+> doggzy@0.1.0 build
+> next build --turbopack
+
+   ▲ Next.js 15.5.3 (Turbopack)
+
+   Creating an optimized production build ...
+ ✓ Finished writing to disk in 51ms
+ ✓ Compiled successfully in 5.4s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/46) ...
+   Generating static pages (11/46) 
+   Generating static pages (22/46) 
+   Generating static pages (34/46) 
+ ✓ Generating static pages (46/46)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                         Size  First Load JS
+┌ ○ /                            4.68 kB         198 kB
+├ ○ /_not-found                      0 B         193 kB
+├ ○ /about                       3.84 kB         197 kB
+├ ○ /accessibility                 933 B         194 kB
+├ ○ /admin                       3.79 kB         197 kB
+├ ○ /admin/dashboard             3.59 kB         197 kB
+├ ○ /admin/dogs                   2.8 kB         196 kB
+├ ○ /admin/login                 59.3 kB         253 kB
+├ ○ /admin/media                 3.15 kB         197 kB
+├ ○ /admin/stories               2.73 kB         196 kB
+├ ○ /adopt                       5.52 kB         209 kB
+├ ○ /adopt/apply                 2.27 kB         196 kB
+├ ƒ /api/admin/dogs                  0 B            0 B
+├ ƒ /api/admin/dogs/[id]             0 B            0 B
+├ ƒ /api/admin/login                 0 B            0 B
+├ ƒ /api/admin/logout                0 B            0 B
+├ ƒ /api/admin/me                    0 B            0 B
+├ ƒ /api/admin/media/delete          0 B            0 B
+├ ƒ /api/admin/media/list            0 B            0 B
+├ ƒ /api/admin/media/upload          0 B            0 B
+├ ƒ /api/admin/stories               0 B            0 B
+├ ƒ /api/admin/stories/[id]          0 B            0 B
+├ ƒ /api/forms/submit                0 B            0 B
+├ ƒ /api/health                      0 B            0 B
+├ ƒ /api/placeholder/[...slug]       0 B            0 B
+├ ○ /basket                      3.46 kB         197 kB
+├ ○ /careers                     7.03 kB         211 kB
+├ ○ /careers/apply               2.28 kB         196 kB
+├ ○ /contact                     8.85 kB         202 kB
+├ ○ /cookies                       916 B         194 kB
+├ ○ /donate                      2.93 kB         196 kB
+├ ○ /favorites                   3.48 kB         197 kB
+├ ○ /foster                      6.12 kB         210 kB
+├ ○ /foster/apply                2.28 kB         196 kB
+├ ○ /impact                      7.67 kB         201 kB
+├ ○ /partners                    3.31 kB         197 kB
+├ ○ /privacy                     3.98 kB         197 kB
+├ ○ /refunds                       910 B         194 kB
+├ ○ /report                      3.57 kB         197 kB
+├ ○ /robots.txt                      0 B            0 B
+├ ○ /shop                        7.26 kB         201 kB
+├ ○ /sitemap.xml                     0 B            0 B
+├ ○ /sponsor                     10.7 kB         204 kB
+├ ○ /stories                     5.75 kB         199 kB
+├ ƒ /stories/[slug]              5.54 kB         199 kB
+├ ○ /terms                       1.02 kB         194 kB
+└ ○ /test-lang                   1.18 kB         195 kB
++ First Load JS shared by all     209 kB
+  ├ chunks/2008ffcf9e5b170c.js     13 kB
+  ├ chunks/727336160d5415ae.js   17.2 kB
+  ├ chunks/7880f8283a6f3daf.js   59.2 kB
+  ├ chunks/85e45c62953990ed.js   38.2 kB
+  ├ chunks/8d95f176b6cf15a7.js   20.9 kB
+  ├ chunks/f90913adfcc58358.css  15.2 kB
+  └ other shared chunks (total)    45 kB
+
+
+ƒ Middleware                      102 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

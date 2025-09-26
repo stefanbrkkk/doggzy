@@ -182,9 +182,15 @@ export default function AdminDashboard() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="flex items-center gap-3">
-          <div className="w-6 h-6 border-2 border-muted-foreground/30 border-t-neon-primary rounded-full animate-spin" />
-          <span className="text-muted-foreground">Loading dashboard...</span>
+        <div className="flex flex-col items-center gap-6">
+          <div className="relative">
+            <div className="w-12 h-12 border-2 border-muted-foreground/20 border-t-neon-primary rounded-full animate-spin" />
+            <div className="absolute inset-0 w-12 h-12 border-2 border-transparent border-r-neon-secondary rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
+          </div>
+          <div className="text-center">
+            <div className="text-lg font-semibold text-foreground mb-2">Loading Dashboard</div>
+            <div className="text-sm text-muted-foreground">Preparing your admin experience...</div>
+          </div>
         </div>
       </div>
     )
@@ -198,15 +204,16 @@ export default function AdminDashboard() {
           <div className="container mx-auto container-padding py-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <Link href="/admin/dashboard" className="flex items-center gap-2 group">
-                  <div className="p-2 bg-primary text-primary-foreground rounded-xl glow-primary">
-                    <PawPrint className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <h1 className="text-display text-2xl font-bold text-foreground">Admin Dashboard</h1>
-                    <p className="text-sm text-muted-foreground">Manage your Doggzy content</p>
-                  </div>
-                </Link>
+              <Link href="/admin/dashboard" className="flex items-center gap-3 group">
+                <div className="relative p-3 bg-primary text-primary-foreground rounded-xl glow-primary group-hover:glow-lg transition-all duration-300">
+                  <PawPrint className="h-6 w-6 group-hover:scale-110 transition-transform duration-300" />
+                  <div className="absolute inset-0 bg-neon-primary-dim rounded-xl opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
+                </div>
+                <div>
+                  <h1 className="text-display text-2xl font-bold text-foreground tracking-tight">Admin Dashboard</h1>
+                  <p className="text-sm text-muted-foreground">Manage your Doggzy content</p>
+                </div>
+              </Link>
               </div>
               
               <div className="flex items-center gap-4">

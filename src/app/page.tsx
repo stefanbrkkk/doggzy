@@ -12,18 +12,35 @@ const GlobalPartners = lazy(() => import('@/components/global-partners').then(m 
 const ShopPreview = lazy(() => import('@/components/home/shop-preview').then(m => ({ default: m.ShopPreview })))
 const LargeStoryCard = lazy(() => import('@/components/shared/large-story-card').then(m => ({ default: m.LargeStoryCard })))
 
-// Enhanced loading component with skeleton
+// Premium loading component with sophisticated skeleton
 const SectionLoader = ({ showSkeleton = true }: { showSkeleton?: boolean }) => (
   <div className="section-padding flex items-center justify-center">
     {showSkeleton ? (
-      <div className="w-full max-w-4xl animate-pulse">
-        <div className="h-8 bg-muted rounded mb-4"></div>
-        <div className="h-4 bg-muted rounded mb-2 w-3/4"></div>
-        <div className="h-4 bg-muted rounded mb-2 w-1/2"></div>
-        <div className="h-4 bg-muted rounded w-2/3"></div>
+      <div className="w-full max-w-4xl">
+        <div className="animate-pulse space-y-6">
+          {/* Header skeleton */}
+          <div className="text-center space-y-4">
+            <div className="h-3 bg-muted rounded-full w-32 mx-auto"></div>
+            <div className="h-8 bg-muted rounded-lg w-64 mx-auto"></div>
+            <div className="h-4 bg-muted rounded w-96 mx-auto"></div>
+          </div>
+          {/* Content skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="space-y-3">
+                <div className="h-32 bg-muted rounded-lg"></div>
+                <div className="h-4 bg-muted rounded w-3/4"></div>
+                <div className="h-3 bg-muted rounded w-1/2"></div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     ) : (
-      <div className="animate-pulse text-muted-foreground">Loading...</div>
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-8 h-8 border-2 border-muted-foreground/20 border-t-neon-primary rounded-full animate-spin" />
+        <div className="text-muted-foreground font-medium">Loading...</div>
+      </div>
     )}
   </div>
 )
@@ -81,8 +98,16 @@ export default function Home() {
                 quote="She was shy for an hour, then decided the couch was hers."
                 badges={["Adopted", "Family"]}
                 media={{ type: 'image', src: '/api/placeholder/800/600', caption: 'Bella - A happy rescued dog in her new home' }}
-                primaryCta={{ label: 'Read full story', onClick: () => { window.location.href = '/sponsor' } }}
-                secondaryCta={{ label: 'Meet similar dogs', onClick: () => { window.location.href = '/sponsor' } }}
+                primaryCta={{ label: 'Read full story', onClick: () => { 
+                  if (typeof window !== 'undefined') {
+                    window.location.href = '/sponsor'
+                  }
+                } }}
+                secondaryCta={{ label: 'Meet similar dogs', onClick: () => { 
+                  if (typeof window !== 'undefined') {
+                    window.location.href = '/sponsor'
+                  }
+                } }}
               />
             </div>
           </section>

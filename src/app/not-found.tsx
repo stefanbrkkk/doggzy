@@ -59,7 +59,11 @@ export default function NotFound() {
                 <Button 
                   size="lg" 
                   variant="outline" 
-                  onClick={() => window.history.back()}
+                  onClick={() => {
+                    if (typeof window !== 'undefined') {
+                      window.history.back()
+                    }
+                  }}
                   className="group"
                 >
                   <ArrowLeft className="h-5 w-5 mr-2 group-hover:-translate-x-1 transition-transform" />

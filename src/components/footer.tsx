@@ -42,16 +42,21 @@ export function Footer() {
   ]
 
   return (
-    <footer className="bg-background border-t border-border relative">
-      <div className="container mx-auto container-padding">
+    <footer className="bg-background border-t border-border relative overflow-hidden">
+      {/* Subtle footer background enhancement */}
+      <div className="absolute inset-0 bg-gradient-to-t from-muted/20 via-transparent to-transparent pointer-events-none" />
+      <div className="container mx-auto container-padding relative z-10">
         {/* Main Footer Content */}
         <div className="py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Brand Section */}
             <div className="md:col-span-2">
               <Link href="/" className="flex items-center space-x-2 group mb-4">
-                <PawPrint className="h-6 w-6 text-foreground group-hover:text-neon-primary transition-colors duration-300" />
-                <span className="font-display text-xl font-bold text-foreground">
+                <div className="relative">
+                  <PawPrint className="h-6 w-6 text-foreground group-hover:text-neon-primary transition-all duration-300 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-neon-primary-dim rounded-full opacity-0 group-hover:opacity-10 blur-sm transition-all duration-300" />
+                </div>
+                <span className="font-display text-xl font-bold text-foreground tracking-tight">
                   Doggzy
                 </span>
               </Link>
@@ -71,8 +76,8 @@ export function Footer() {
                     className="text-sm flex-1"
                     required
                   />
-                  <Button type="submit" size="sm" className="glow-primary">
-                    <ArrowRight className="h-4 w-4" />
+                  <Button type="submit" size="sm" className="glow-primary group">
+                    <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform duration-200" />
                   </Button>
                 </form>
               </div>

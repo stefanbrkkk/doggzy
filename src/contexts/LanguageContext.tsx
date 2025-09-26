@@ -23,16 +23,20 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   // Load language from localStorage on mount
   useEffect(() => {
-    const savedLanguage = localStorage.getItem('doggzy-language') as Language
-    if (savedLanguage && translations[savedLanguage]) {
-      setLanguageState(savedLanguage)
+    if (typeof window !== 'undefined') {
+      const savedLanguage = localStorage.getItem('doggzy-language') as Language
+      if (savedLanguage && translations[savedLanguage]) {
+        setLanguageState(savedLanguage)
+      }
     }
   }, [])
 
   // Save language to localStorage when it changes
   const setLanguage = (lang: Language) => {
     setLanguageState(lang)
-    localStorage.setItem('doggzy-language', lang)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('doggzy-language', lang)
+    }
   }
 
   const t = translations[language]

@@ -202,7 +202,12 @@ export const getMotionVariants = (prefersReducedMotion: boolean) => {
 // Hook to check for reduced motion preference
 export const useReducedMotion = () => {
   if (typeof window === 'undefined') return false
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  try {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  } catch {
+    // Fallback for browsers that don't support matchMedia
+    return false
+  }
 }
 
 // Utility function for consistent stagger animations

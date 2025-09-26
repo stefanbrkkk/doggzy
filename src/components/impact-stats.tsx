@@ -182,34 +182,37 @@ function ImpactStats() {
               }}
               className="group relative"
             >
-              {/* Minimal Card */}
-              <div className="card p-8 text-center group-hover:border-neon-primary/30 transition-all duration-300">
-                {/* Icon */}
+              {/* Premium Card with sophisticated interactions */}
+              <div className="card p-8 text-center group-hover:border-neon-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-neon-primary/10">
+                {/* Enhanced Icon with glow effect */}
                 <motion.div
-                  className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-muted text-foreground mb-6"
-                  whileHover={{ scale: 1.1 }}
-                  transition={{ duration: 0.3 }}
+                  className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-muted to-muted/80 text-foreground mb-6 relative overflow-hidden"
+                  whileHover={{ scale: 1.1, rotateY: 5 }}
+                  transition={{ duration: 0.3, type: 'spring', stiffness: 200 }}
                 >
-                  {React.createElement(stat.icon, { className: "h-6 w-6" })}
+                  <div className="absolute inset-0 bg-neon-primary-dim opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
+                  {React.createElement(stat.icon, { className: "h-7 w-7 relative z-10" })}
                 </motion.div>
 
-                {/* Number */}
+                {/* Enhanced Number with premium typography */}
                 <motion.div
-                  className="text-4xl font-bold mb-2 text-foreground"
-                  initial={{ opacity: 0 }}
-                  animate={isInView ? { opacity: 1 } : {}}
-                  transition={{ delay: 0.5 + index * 0.1 }}
+                  className="text-4xl font-bold mb-2 text-foreground tracking-tight"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={isInView ? { opacity: 1, scale: 1 } : {}}
+                  transition={{ delay: 0.5 + index * 0.1, type: 'spring', stiffness: 150 }}
                 >
-                  {isInView ? <AnimatedCounter end={stat.value} suffix={stat.suffix} /> : '0'}
+                  <span className="bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+                    {isInView ? <AnimatedCounter end={stat.value} suffix={stat.suffix} /> : '0'}
+                  </span>
                 </motion.div>
 
-                {/* Label */}
-                <h3 className="text-sm font-semibold text-foreground mb-2">
+                {/* Enhanced Label */}
+                <h3 className="text-sm font-semibold text-foreground mb-2 tracking-wide">
                   {stat.label}
                 </h3>
 
-                {/* Description */}
-                <p className="text-xs text-muted-foreground">
+                {/* Enhanced Description */}
+                <p className="text-xs text-muted-foreground leading-relaxed">
                   {stat.description}
                 </p>
               </div>

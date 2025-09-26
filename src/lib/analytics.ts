@@ -30,9 +30,14 @@ export function trackWithConsent(event: string, props?: Record<string, unknown>)
   
   // Basic consent check (can be enhanced with consent management)
   if (typeof window !== 'undefined') {
-    const consent = localStorage.getItem('doggzy-analytics-consent')
-    if (consent !== 'true') {
-      console.log('Analytics tracking skipped (no consent)', event)
+    try {
+      const consent = localStorage.getItem('doggzy-analytics-consent')
+      if (consent !== 'true') {
+        console.log('Analytics tracking skipped (no consent)', event)
+        return
+      }
+    } catch {
+      // localStorage not available, skip tracking
       return
     }
   }
@@ -66,14 +71,23 @@ export const analytics = {
 // Simple consent management
 export function setAnalyticsConsent(consent: boolean) {
   if (typeof window !== 'undefined') {
-    localStorage.setItem('doggzy-analytics-consent', consent.toString())
+    try {
+      localStorage.setItem('doggzy-analytics-consent', consent.toString())
+    } catch {
+      // localStorage not available, fail silently
+    }
   }
 }
 
 export function getAnalyticsConsent(): boolean | null {
   if (typeof window === 'undefined') return null
   
-  const consent = localStorage.getItem('doggzy-analytics-consent')
-  if (consent === null) return null
-  return consent === 'true'
+  try {
+    const consent = localStorage.getItem('doggzy-analytics-consent')
+    if (consent === null) return null
+    return consent === 'true'
+  } catch {
+    // localStorage not available
+    return null
+  }
 }

@@ -18,10 +18,15 @@ export function Navigation() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
+      if (typeof window !== 'undefined') {
+        setIsScrolled(window.scrollY > 50)
+      }
     }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    
+    if (typeof window !== 'undefined') {
+      window.addEventListener('scroll', handleScroll)
+      return () => window.removeEventListener('scroll', handleScroll)
+    }
   }, [])
 
   // Close More dropdown on outside click
@@ -34,7 +39,7 @@ export function Navigation() {
       }
     }
 
-    if (isMoreOpen) {
+    if (isMoreOpen && typeof document !== 'undefined') {
       document.addEventListener('mousedown', onClickOutside)
       return () => document.removeEventListener('mousedown', onClickOutside)
     }
@@ -49,7 +54,7 @@ export function Navigation() {
       }
     }
 
-    if (isMoreOpen || isMobileMenuOpen) {
+    if ((isMoreOpen || isMobileMenuOpen) && typeof document !== 'undefined') {
       document.addEventListener('keydown', onKeyDown)
       return () => document.removeEventListener('keydown', onKeyDown)
     }
@@ -87,7 +92,7 @@ export function Navigation() {
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
           isScrolled 
-            ? "bg-background/95 backdrop-blur-md border-b border-border" 
+            ? "bg-background/95 backdrop-blur-md border-b border-border shadow-lg shadow-foreground/5" 
             : "bg-transparent"
         )}
         role="navigation"
@@ -95,10 +100,13 @@ export function Navigation() {
       >
       <div className="container mx-auto container-padding">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+          {/* Premium logo with enhanced interactions */}
           <Link href="/" className="flex items-center space-x-2 group">
-            <PawPrint className="h-6 w-6 text-foreground group-hover:text-neon-primary transition-colors duration-300" />
-            <span className="font-display text-xl font-bold text-foreground">
+            <div className="relative">
+              <PawPrint className="h-6 w-6 text-foreground group-hover:text-neon-primary transition-all duration-300 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-neon-primary-dim rounded-full opacity-0 group-hover:opacity-20 blur-sm transition-all duration-300" />
+            </div>
+            <span className="font-display text-xl font-bold text-foreground tracking-tight">
               Doggzy
             </span>
           </Link>

@@ -204,12 +204,19 @@ export default function AdminMedia() {
                 />
                 <Button
                   variant="glow"
-                  className="glow-accent"
+                  className="glow-accent group"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isUploading}
                 >
-                  <Upload className="h-4 w-4 mr-2" />
-                  {isUploading ? `Uploading... ${uploadProgress}%` : 'Upload Image'}
+                  <Upload className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform duration-300" />
+                  {isUploading ? (
+                    <span className="flex items-center gap-2">
+                      <div className="w-3 h-3 border border-white/30 border-t-white rounded-full animate-spin" />
+                      Uploading... {uploadProgress}%
+                    </span>
+                  ) : (
+                    'Upload Image'
+                  )}
                 </Button>
               </div>
             </div>

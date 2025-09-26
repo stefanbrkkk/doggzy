@@ -115,8 +115,8 @@ export default function AdminDogs() {
                 <p className="text-body text-muted-foreground">Create and edit dog profiles</p>
               </div>
               <Link href="/admin/dogs/new">
-                <Button variant="glow" className="glow-secondary">
-                  <Plus className="h-4 w-4 mr-2" />
+                <Button variant="glow" className="glow-secondary group">
+                  <Plus className="h-4 w-4 mr-2 group-hover:rotate-90 transition-transform duration-300" />
                   New Dog Profile
                 </Button>
               </Link>

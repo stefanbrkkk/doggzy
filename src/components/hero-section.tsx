@@ -17,27 +17,36 @@ export function HeroSection() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
-      {/* Subtle background elements */}
-      <div className="absolute inset-0 overflow-hidden">
+      {/* Sophisticated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-32 h-32 bg-neon-primary-dim rounded-full blur-3xl opacity-30 animate-float" />
         <div className="absolute bottom-20 right-10 w-24 h-24 bg-neon-secondary-dim rounded-full blur-2xl opacity-20 animate-float" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-neon-accent-dim rounded-full blur-xl opacity-15 animate-float" style={{ animationDelay: '4s' }} />
+        {/* Subtle grid pattern */}
+        <div className="absolute inset-0 opacity-[0.02]" style={{
+          backgroundImage: 'radial-gradient(circle at 1px 1px, hsl(var(--foreground)) 1px, transparent 0)',
+          backgroundSize: '32px 32px'
+        }} />
       </div>
 
       <div className="container mx-auto container-padding relative z-10">
         <div className="max-w-4xl mx-auto text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-muted text-muted-foreground px-4 py-2 rounded-full text-sm font-medium mb-8">
-            <Star className="h-4 w-4 text-neon-primary" />
+          {/* Premium badge with subtle glow */}
+          <div className="inline-flex items-center gap-2 bg-muted/80 backdrop-blur-sm text-muted-foreground px-6 py-3 rounded-full text-sm font-medium mb-8 border border-border/50 hover:border-neon-primary/30 transition-all duration-300">
+            <Star className="h-4 w-4 text-neon-primary animate-pulse" />
             {t.home.hero.badge}
           </div>
 
-          {/* Main Headline */}
+          {/* Premium headline with enhanced typography */}
           <h1 className="text-display text-5xl sm:text-6xl font-bold leading-tight mb-8">
-            <span className="text-foreground">
+            <span className="text-foreground tracking-tight">
               {t.home.hero.title}
             </span>
             <br />
-            <span className="text-glow-primary" style={{ color: 'hsl(var(--neon-primary))' }}>
+            <span className="text-glow-primary tracking-tight" style={{ 
+              color: 'hsl(var(--neon-primary))',
+              textShadow: '0 0 30px hsl(var(--neon-primary-glow))'
+            }}>
               {t.home.hero.titleHighlight}
             </span>
           </h1>

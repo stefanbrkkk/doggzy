@@ -45,27 +45,42 @@
   --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-/* Typography scale classes */
+/* Premium typography with enhanced readability */
 .text-display {
   font-family: 'Space Grotesk', system-ui, sans-serif;
   font-weight: 700;
   letter-spacing: -0.02em;
+  line-height: 1.1;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
 }
 
 .text-body {
   font-family: 'Inter', system-ui, sans-serif;
   font-weight: 400;
+  line-height: 1.6;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
 }
 
 .text-mono {
   font-family: 'JetBrains Mono', Monaco, Consolas, monospace;
   font-weight: 400;
+  font-feature-settings: 'cv02', 'cv14';
 }
 
-/* Spacing utilities for consistent rhythm */
+/* Premium spacing with sophisticated rhythm */
 .section-padding {
   padding-top: 6rem;
   padding-bottom: 6rem;
+}
+
+.section-padding-sm {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+.section-padding-lg {
+  padding-top: 8rem;
+  padding-bottom: 8rem;
 }
 
 .container-padding {
@@ -207,32 +222,35 @@ html {
   }
 }
 
-/* Utility classes for neon effects */
+/* Enhanced neon effects for premium feel */
 .glow-primary {
-  box-shadow: 0 0 20px hsl(var(--neon-primary-dim));
-  transition: box-shadow var(--duration-normal) var(--ease-out);
+  box-shadow: 0 0 20px hsl(var(--neon-primary-dim)), 0 2px 8px hsl(var(--foreground) / 0.1);
+  transition: all var(--duration-normal) var(--ease-out);
 }
 
 .glow-primary:hover {
-  box-shadow: 0 0 40px hsl(var(--neon-primary-glow));
+  box-shadow: 0 0 40px hsl(var(--neon-primary-glow)), 0 8px 24px hsl(var(--foreground) / 0.15);
+  transform: translateY(-2px);
 }
 
 .glow-secondary {
-  box-shadow: 0 0 20px hsl(var(--neon-secondary-dim));
-  transition: box-shadow var(--duration-normal) var(--ease-out);
+  box-shadow: 0 0 20px hsl(var(--neon-secondary-dim)), 0 2px 8px hsl(var(--foreground) / 0.1);
+  transition: all var(--duration-normal) var(--ease-out);
 }
 
 .glow-secondary:hover {
-  box-shadow: 0 0 40px hsl(var(--neon-secondary-glow));
+  box-shadow: 0 0 40px hsl(var(--neon-secondary-glow)), 0 8px 24px hsl(var(--foreground) / 0.15);
+  transform: translateY(-2px);
 }
 
 .glow-accent {
-  box-shadow: 0 0 20px hsl(var(--neon-accent-dim));
-  transition: box-shadow var(--duration-normal) var(--ease-out);
+  box-shadow: 0 0 20px hsl(var(--neon-accent-dim)), 0 2px 8px hsl(var(--foreground) / 0.1);
+  transition: all var(--duration-normal) var(--ease-out);
 }
 
 .glow-accent:hover {
-  box-shadow: 0 0 40px hsl(var(--neon-accent-glow));
+  box-shadow: 0 0 40px hsl(var(--neon-accent-glow)), 0 8px 24px hsl(var(--foreground) / 0.15);
+  transform: translateY(-2px);
 }
 
 /* Text glow effects */
@@ -248,21 +266,22 @@ html {
   text-shadow: 0 0 10px hsl(var(--neon-accent-glow));
 }
 
-/* Minimal card styling */
+/* Premium card styling with sophisticated shadows */
 .card {
   background-color: hsl(var(--card));
   border: 1px solid hsl(var(--border));
   border-radius: 12px;
   transition: all var(--duration-normal) var(--ease-out);
+  box-shadow: 0 1px 3px hsl(var(--foreground) / 0.05);
 }
 
 .card:hover {
   border-color: hsl(var(--muted-foreground) / 0.2);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px hsl(var(--foreground) / 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px hsl(var(--foreground) / 0.12), 0 2px 8px hsl(var(--foreground) / 0.08);
 }
 
-/* Button base styles */
+/* Premium button base styles */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -273,6 +292,13 @@ html {
   cursor: pointer;
   border: none;
   text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle button press feedback */
+.btn:active {
+  transform: scale(0.98);
 }
 
 .btn:focus-visible {

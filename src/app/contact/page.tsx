@@ -14,10 +14,22 @@ export default function ContactPage() {
   const [copied, setCopied] = React.useState<string | null>(null)
 
   function copy(text: string) {
-    navigator.clipboard.writeText(text).then(() => {
-      setCopied(text)
-      setTimeout(() => setCopied(null), 1500)
-    })
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => {
+        setCopied(text)
+        setTimeout(() => setCopied(null), 1500)
+      }).catch(() => {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea')
+        textArea.value = text
+        document.body.appendChild(textArea)
+        textArea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textArea)
+        setCopied(text)
+        setTimeout(() => setCopied(null), 1500)
+      })
+    }
   }
 
   const [formData, setFormData] = React.useState({
