@@ -35,7 +35,7 @@ export function LanguageSwitcher() {
           />
           
           {/* Dropdown */}
-          <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden">
+          <div className="absolute right-0 top-full mt-2 w-48 bg-card rounded-lg shadow-lg border border-border z-50 overflow-hidden">
             {availableLanguages.map((lang) => (
               <button
                 key={lang.code}
@@ -43,8 +43,8 @@ export function LanguageSwitcher() {
                   setLanguage(lang.code)
                   setIsOpen(false)
                 }}
-                className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors duration-200 flex items-center justify-between ${
-                  language === lang.code ? 'bg-orange-50 text-orange-600' : 'text-gray-700'
+                className={`w-full px-4 py-3 text-left hover:bg-muted transition-colors duration-200 flex items-center justify-between ${
+                  language === lang.code ? 'bg-neon-primary/10 text-neon-primary' : 'text-foreground'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -52,7 +52,7 @@ export function LanguageSwitcher() {
                   <span className="font-medium">{lang.name}</span>
                 </div>
                 {language === lang.code && (
-                  <Check className="h-4 w-4 text-orange-600" />
+                  <Check className="h-4 w-4 text-neon-primary" />
                 )}
               </button>
             ))}

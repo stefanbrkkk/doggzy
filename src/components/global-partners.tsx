@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Heart, Users, Globe, Shield, Award, Star } from 'lucide-react'
 import React from 'react'
@@ -138,8 +137,7 @@ export function GlobalPartners() {
         {/* Partners Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
           {partners.map((partner) => (
-            <Card key={partner.name} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm hover:scale-105 group">
-              <CardContent className="p-6">
+            <div key={partner.name} className="card p-6 hover:scale-105 group transition-all duration-300">
                 <div className="flex items-start justify-between mb-4">
                   <div className="text-4xl">{partner.logo}</div>
                   <div className="flex items-center space-x-1">
@@ -170,8 +168,7 @@ export function GlobalPartners() {
                     {t.partners.verified}
                   </Badge>
                 </div>
-              </CardContent>
-            </Card>
+            </div>
           ))}
         </div>
 

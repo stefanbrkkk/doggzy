@@ -16,7 +16,6 @@ import {
   Image as ImageIcon
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AnimatedPage } from '@/components/animated-page'
 import Link from 'next/link'
 
@@ -182,10 +181,10 @@ export default function AdminDashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-orange-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex items-center gap-3">
-          <div className="w-6 h-6 border-2 border-orange-500/30 border-t-orange-500 rounded-full animate-spin" />
-          <span className="text-gray-600">Loading dashboard...</span>
+          <div className="w-6 h-6 border-2 border-muted-foreground/30 border-t-neon-primary rounded-full animate-spin" />
+          <span className="text-muted-foreground">Loading dashboard...</span>
         </div>
       </div>
     )
@@ -193,19 +192,19 @@ export default function AdminDashboard() {
 
   return (
     <AnimatedPage>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-orange-50">
+      <div className="min-h-screen bg-background">
         {/* Header */}
-        <div className="bg-white shadow-sm border-b border-gray-200">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="bg-card border-b border-border">
+          <div className="container mx-auto container-padding py-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <Link href="/admin/dashboard" className="flex items-center gap-2 group">
-                  <div className="p-2 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl">
-                    <PawPrint className="h-6 w-6 text-white" />
+                  <div className="p-2 bg-primary text-primary-foreground rounded-xl glow-primary">
+                    <PawPrint className="h-6 w-6" />
                   </div>
                   <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-                    <p className="text-sm text-gray-600">Manage your Doggzy content</p>
+                    <h1 className="text-display text-2xl font-bold text-foreground">Admin Dashboard</h1>
+                    <p className="text-sm text-muted-foreground">Manage your Doggzy content</p>
                   </div>
                 </Link>
               </div>
@@ -213,8 +212,8 @@ export default function AdminDashboard() {
               <div className="flex items-center gap-4">
                 {user && (
                   <div className="text-right hidden sm:block">
-                    <p className="text-sm font-medium text-gray-900">{user.email}</p>
-                    <p className="text-xs text-gray-500 capitalize">{user.role}</p>
+                    <p className="text-sm font-medium text-foreground">{user.email}</p>
+                    <p className="text-xs text-muted-foreground capitalize">{user.role}</p>
                   </div>
                 )}
                 <Button
@@ -231,7 +230,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="container mx-auto container-padding py-8">
           <div className="space-y-8">
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -243,20 +242,18 @@ export default function AdminDashboard() {
                   transition={{ delay: index * 0.1, duration: 0.5 }}
                   whileHover={{ y: -2 }}
                 >
-                  <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/90 backdrop-blur-sm">
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
-                          <p className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</p>
-                          <p className="text-xs text-gray-500">{stat.subtitle}</p>
-                        </div>
-                        <div className={`p-3 rounded-xl ${stat.bgColor} ${stat.color}`}>
-                          <stat.icon className="h-6 w-6" />
-                        </div>
+                  <div className="card p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-muted-foreground mb-1">{stat.title}</p>
+                        <p className="text-3xl font-bold text-foreground mb-1">{stat.value}</p>
+                        <p className="text-xs text-muted-foreground">{stat.subtitle}</p>
                       </div>
-                    </CardContent>
-                  </Card>
+                      <div className="p-3 rounded-xl bg-muted">
+                        <stat.icon className="h-6 w-6 text-foreground" />
+                      </div>
+                    </div>
+                  </div>
                 </motion.div>
               ))}
             </div>
@@ -264,14 +261,14 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Quick Actions */}
               <div className="lg:col-span-2">
-                <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                <div className="card">
+                  <div className="p-6 border-b border-border">
+                    <h3 className="flex items-center gap-2 text-lg font-semibold text-foreground">
                       <Plus className="h-5 w-5" />
                       Quick Actions
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
+                    </h3>
+                  </div>
+                  <div className="p-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {quickActions.map((action, index) => (
                         <motion.div
@@ -286,17 +283,17 @@ export default function AdminDashboard() {
                             href={action.href}
                             target={action.external ? '_blank' : undefined}
                             rel={action.external ? 'noopener noreferrer' : undefined}
-                            className="block p-4 rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50/50 transition-all duration-200 group"
+                            className="block p-4 rounded-lg border border-border hover:border-neon-primary/30 hover:bg-muted/50 transition-all duration-200 group"
                           >
                             <div className="flex items-start gap-3">
-                              <div className="p-2 bg-gray-100 group-hover:bg-orange-100 rounded-lg transition-colors">
-                                <action.icon className="h-5 w-5 text-gray-600 group-hover:text-orange-600" />
+                              <div className="p-2 bg-muted group-hover:bg-muted/80 rounded-lg transition-colors">
+                                <action.icon className="h-5 w-5 text-muted-foreground group-hover:text-foreground" />
                               </div>
                               <div>
-                                <h3 className="font-medium text-gray-900 group-hover:text-orange-900">
+                                <h3 className="font-medium text-foreground">
                                   {action.label}
                                 </h3>
-                                <p className="text-sm text-gray-600 group-hover:text-orange-700">
+                                <p className="text-sm text-muted-foreground">
                                   {action.description}
                                 </p>
                               </div>
@@ -305,20 +302,20 @@ export default function AdminDashboard() {
                         </motion.div>
                       ))}
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               </div>
 
               {/* Recent Activity */}
               <div>
-                <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                <div className="card">
+                  <div className="p-6 border-b border-border">
+                    <h3 className="flex items-center gap-2 text-lg font-semibold text-foreground">
                       <Calendar className="h-5 w-5" />
                       Recent Activity
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
+                    </h3>
+                  </div>
+                  <div className="p-6">
                     <div className="space-y-4">
                       {stats.recentActivity.length > 0 ? (
                         stats.recentActivity.map((activity, index) => (
@@ -327,30 +324,30 @@ export default function AdminDashboard() {
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.5 + index * 0.1 }}
-                            className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg"
+                            className="flex items-start gap-3 p-3 bg-muted rounded-lg"
                           >
                             <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
-                              activity.type === 'story' ? 'bg-blue-500' :
-                              activity.type === 'dog' ? 'bg-red-500' : 'bg-green-500'
+                              activity.type === 'story' ? 'bg-neon-primary' :
+                              activity.type === 'dog' ? 'bg-neon-secondary' : 'bg-neon-accent'
                             }`} />
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-gray-900 leading-tight">
+                              <p className="text-sm font-medium text-foreground leading-tight">
                                 {activity.message}
                               </p>
-                              <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
+                              <p className="text-xs text-muted-foreground mt-1">{activity.time}</p>
                             </div>
                           </motion.div>
                         ))
                       ) : (
                         <div className="text-center py-8">
-                          <Calendar className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                          <p className="text-sm text-gray-500">No recent activity</p>
-                          <p className="text-xs text-gray-400">Create some content to see updates here</p>
+                          <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+                          <p className="text-sm text-muted-foreground">No recent activity</p>
+                          <p className="text-xs text-muted-foreground/70">Create some content to see updates here</p>
                         </div>
                       )}
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -363,17 +360,15 @@ export default function AdminDashboard() {
                 whileHover={{ y: -4 }}
               >
                 <Link href="/admin/stories">
-                  <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/90 backdrop-blur-sm cursor-pointer group">
-                    <CardContent className="p-8 text-center">
-                      <FileText className="h-16 w-16 text-blue-500 mx-auto mb-4 group-hover:scale-110 transition-transform" />
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Manage Stories</h3>
-                      <p className="text-gray-600 mb-4">Create and edit blog stories</p>
-                      <div className="flex justify-center gap-4 text-sm text-gray-500">
+                  <div className="card p-8 text-center group cursor-pointer hover:border-neon-primary/30 transition-all duration-300">
+                      <FileText className="h-16 w-16 text-neon-primary mx-auto mb-4 group-hover:scale-110 transition-transform" />
+                      <h3 className="text-xl font-semibold text-foreground mb-2">Manage Stories</h3>
+                      <p className="text-muted-foreground mb-4">Create and edit blog stories</p>
+                      <div className="flex justify-center gap-4 text-sm text-muted-foreground">
                         <span>{stats.totalStories} total</span>
                         <span>{stats.publishedStories} published</span>
                       </div>
-                    </CardContent>
-                  </Card>
+                  </div>
                 </Link>
               </motion.div>
 
@@ -384,17 +379,15 @@ export default function AdminDashboard() {
                 whileHover={{ y: -4 }}
               >
                 <Link href="/admin/dogs">
-                  <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/90 backdrop-blur-sm cursor-pointer group">
-                    <CardContent className="p-8 text-center">
-                      <Heart className="h-16 w-16 text-red-500 mx-auto mb-4 group-hover:scale-110 transition-transform" />
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Manage Dogs</h3>
-                      <p className="text-gray-600 mb-4">Create and edit dog profiles</p>
-                      <div className="flex justify-center gap-4 text-sm text-gray-500">
-                        <span>{stats.totalDogs} total</span>
-                        <span>{stats.availableDogs} available</span>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <div className="card p-8 text-center group cursor-pointer hover:border-neon-secondary/30 transition-all duration-300">
+                    <Heart className="h-16 w-16 text-neon-secondary mx-auto mb-4 group-hover:scale-110 transition-transform" />
+                    <h3 className="text-xl font-semibold text-foreground mb-2">Manage Dogs</h3>
+                    <p className="text-muted-foreground mb-4">Create and edit dog profiles</p>
+                    <div className="flex justify-center gap-4 text-sm text-muted-foreground">
+                      <span>{stats.totalDogs} total</span>
+                      <span>{stats.availableDogs} available</span>
+                    </div>
+                  </div>
                 </Link>
               </motion.div>
 
@@ -405,16 +398,14 @@ export default function AdminDashboard() {
                 whileHover={{ y: -4 }}
               >
                 <Link href="/admin/media">
-                  <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/90 backdrop-blur-sm cursor-pointer group">
-                    <CardContent className="p-8 text-center">
-                      <ImageIcon className="h-16 w-16 text-green-500 mx-auto mb-4 group-hover:scale-110 transition-transform" />
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Media Library</h3>
-                      <p className="text-gray-600 mb-4">Upload and manage images</p>
-                      <div className="flex justify-center gap-4 text-sm text-gray-500">
-                        <span>Images & files</span>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <div className="card p-8 text-center group cursor-pointer hover:border-neon-accent/30 transition-all duration-300">
+                    <ImageIcon className="h-16 w-16 text-neon-accent mx-auto mb-4 group-hover:scale-110 transition-transform" />
+                    <h3 className="text-xl font-semibold text-foreground mb-2">Media Library</h3>
+                    <p className="text-muted-foreground mb-4">Upload and manage images</p>
+                    <div className="flex justify-center gap-4 text-sm text-muted-foreground">
+                      <span>Images & files</span>
+                    </div>
+                  </div>
                 </Link>
               </motion.div>
             </div>

@@ -6,16 +6,25 @@ import { HeroSection } from '@/components/hero-section'
 import { ImpactStats } from '@/components/impact-stats'
 import { motionTokens } from '@/lib/motion-tokens'
 
-// Lazy load below-the-fold components
+// Optimized lazy loading for below-the-fold components
 const SuccessStories = lazy(() => import('@/components/success-stories').then(m => ({ default: m.SuccessStories })))
 const GlobalPartners = lazy(() => import('@/components/global-partners').then(m => ({ default: m.GlobalPartners })))
 const ShopPreview = lazy(() => import('@/components/home/shop-preview').then(m => ({ default: m.ShopPreview })))
 const LargeStoryCard = lazy(() => import('@/components/shared/large-story-card').then(m => ({ default: m.LargeStoryCard })))
 
-// Loading component
-const SectionLoader = () => (
+// Enhanced loading component with skeleton
+const SectionLoader = ({ showSkeleton = true }: { showSkeleton?: boolean }) => (
   <div className="section-padding flex items-center justify-center">
-    <div className="animate-pulse text-muted-foreground">Loading...</div>
+    {showSkeleton ? (
+      <div className="w-full max-w-4xl animate-pulse">
+        <div className="h-8 bg-muted rounded mb-4"></div>
+        <div className="h-4 bg-muted rounded mb-2 w-3/4"></div>
+        <div className="h-4 bg-muted rounded mb-2 w-1/2"></div>
+        <div className="h-4 bg-muted rounded w-2/3"></div>
+      </div>
+    ) : (
+      <div className="animate-pulse text-muted-foreground">Loading...</div>
+    )}
   </div>
 )
 
@@ -42,8 +51,8 @@ export default function Home() {
         <ImpactStats />
       </motion.div>
       
-      {/* Below-the-fold content - lazy loaded */}
-      <Suspense fallback={<SectionLoader />}>
+      {/* Below-the-fold content - lazy loaded with enhanced skeleton */}
+      <Suspense fallback={<SectionLoader showSkeleton={true} />}>
         <motion.div
           variants={motionTokens.variants.slideUp}
           initial="initial"
@@ -55,7 +64,7 @@ export default function Home() {
         </motion.div>
       </Suspense>
       
-      <Suspense fallback={<SectionLoader />}>
+      <Suspense fallback={<SectionLoader showSkeleton={true} />}>
         <motion.div
           variants={motionTokens.variants.slideUp}
           initial="initial"
@@ -80,7 +89,7 @@ export default function Home() {
         </motion.div>
       </Suspense>
 
-      <Suspense fallback={<SectionLoader />}>
+      <Suspense fallback={<SectionLoader showSkeleton={true} />}>
         <motion.div
           variants={motionTokens.variants.slideUp}
           initial="initial"
@@ -92,7 +101,7 @@ export default function Home() {
         </motion.div>
       </Suspense>
 
-      <Suspense fallback={<SectionLoader />}>
+      <Suspense fallback={<SectionLoader showSkeleton={true} />}>
         <motion.div
           variants={motionTokens.variants.slideUp}
           initial="initial"
