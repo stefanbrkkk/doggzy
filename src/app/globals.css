@@ -24,15 +24,15 @@
   --ring: 195 100% 50%;              /* Neon blue focus ring */
   
   /* Neon underglow accents */
-  --neon-primary: #00d9ff;           /* Electric blue */
-  --neon-primary-glow: rgba(0, 217, 255, 0.4);
-  --neon-primary-dim: rgba(0, 217, 255, 0.1);
-  --neon-secondary: #39ff14;         /* Electric green */
-  --neon-secondary-glow: rgba(57, 255, 20, 0.4);
-  --neon-secondary-dim: rgba(57, 255, 20, 0.1);
-  --neon-accent: #bf00ff;            /* Electric purple */
-  --neon-accent-glow: rgba(191, 0, 255, 0.4);
-  --neon-accent-dim: rgba(191, 0, 255, 0.1);
+  --neon-primary: 195 100% 50%;      /* Electric blue in HSL */
+  --neon-primary-glow: 195 100% 50% / 0.4;
+  --neon-primary-dim: 195 100% 50% / 0.1;
+  --neon-secondary: 105 100% 54%;    /* Electric green in HSL */
+  --neon-secondary-glow: 105 100% 54% / 0.4;
+  --neon-secondary-dim: 105 100% 54% / 0.1;
+  --neon-accent: 285 100% 50%;       /* Electric purple in HSL */
+  --neon-accent-glow: 285 100% 50% / 0.4;
+  --neon-accent-dim: 285 100% 50% / 0.1;
   
   /* Animation durations */
   --duration-fast: 150ms;
@@ -181,7 +181,7 @@ body {
 
 /* Selection - neon accent */
 ::selection {
-  background: var(--neon-primary-dim);
+  background: hsl(var(--neon-primary-dim));
   color: hsl(var(--foreground));
 }
 
@@ -192,7 +192,7 @@ html {
 
 /* Focus styles - neon ring */
 *:focus-visible {
-  outline: 2px solid var(--neon-primary);
+  outline: 2px solid hsl(var(--neon-primary));
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -209,43 +209,43 @@ html {
 
 /* Utility classes for neon effects */
 .glow-primary {
-  box-shadow: 0 0 20px var(--neon-primary-dim);
+  box-shadow: 0 0 20px hsl(var(--neon-primary-dim));
   transition: box-shadow var(--duration-normal) var(--ease-out);
 }
 
 .glow-primary:hover {
-  box-shadow: 0 0 40px var(--neon-primary-glow);
+  box-shadow: 0 0 40px hsl(var(--neon-primary-glow));
 }
 
 .glow-secondary {
-  box-shadow: 0 0 20px var(--neon-secondary-dim);
+  box-shadow: 0 0 20px hsl(var(--neon-secondary-dim));
   transition: box-shadow var(--duration-normal) var(--ease-out);
 }
 
 .glow-secondary:hover {
-  box-shadow: 0 0 40px var(--neon-secondary-glow);
+  box-shadow: 0 0 40px hsl(var(--neon-secondary-glow));
 }
 
 .glow-accent {
-  box-shadow: 0 0 20px var(--neon-accent-dim);
+  box-shadow: 0 0 20px hsl(var(--neon-accent-dim));
   transition: box-shadow var(--duration-normal) var(--ease-out);
 }
 
 .glow-accent:hover {
-  box-shadow: 0 0 40px var(--neon-accent-glow);
+  box-shadow: 0 0 40px hsl(var(--neon-accent-glow));
 }
 
 /* Text glow effects */
 .text-glow-primary {
-  text-shadow: 0 0 10px var(--neon-primary-glow);
+  text-shadow: 0 0 10px hsl(var(--neon-primary-glow));
 }
 
 .text-glow-secondary {
-  text-shadow: 0 0 10px var(--neon-secondary-glow);
+  text-shadow: 0 0 10px hsl(var(--neon-secondary-glow));
 }
 
 .text-glow-accent {
-  text-shadow: 0 0 10px var(--neon-accent-glow);
+  text-shadow: 0 0 10px hsl(var(--neon-accent-glow));
 }
 
 /* Minimal card styling */
@@ -320,7 +320,7 @@ html {
   left: 50%;
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, var(--neon-primary), var(--neon-secondary));
+  background: linear-gradient(90deg, hsl(var(--neon-primary)), hsl(var(--neon-secondary)));
   transition: all var(--duration-normal) var(--ease-out);
   transform: translateX(-50%);
 }
@@ -341,8 +341,8 @@ input, select, textarea {
 
 input:focus, select:focus, textarea:focus {
   outline: none;
-  border-color: var(--neon-primary);
-  box-shadow: 0 0 0 2px var(--neon-primary-dim);
+  border-color: hsl(var(--neon-primary));
+  box-shadow: 0 0 0 2px hsl(var(--neon-primary-dim));
 }
 
 input::placeholder, textarea::placeholder {

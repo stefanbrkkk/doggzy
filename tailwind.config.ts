@@ -46,15 +46,15 @@ const config: Config = {
         
         // Neon underglow accents (limited use)
         neon: {
-          primary: "var(--neon-primary)",
-          "primary-glow": "var(--neon-primary-glow)",
-          "primary-dim": "var(--neon-primary-dim)",
-          secondary: "var(--neon-secondary)",
-          "secondary-glow": "var(--neon-secondary-glow)",
-          "secondary-dim": "var(--neon-secondary-dim)",
-          accent: "var(--neon-accent)",
-          "accent-glow": "var(--neon-accent-glow)",
-          "accent-dim": "var(--neon-accent-dim)",
+          primary: "hsl(var(--neon-primary))",
+          "primary-glow": "hsl(var(--neon-primary-glow))",
+          "primary-dim": "hsl(var(--neon-primary-dim))",
+          secondary: "hsl(var(--neon-secondary))",
+          "secondary-glow": "hsl(var(--neon-secondary-glow))",
+          "secondary-dim": "hsl(var(--neon-secondary-dim))",
+          accent: "hsl(var(--neon-accent))",
+          "accent-glow": "hsl(var(--neon-accent-glow))",
+          "accent-dim": "hsl(var(--neon-accent-dim))",
         },
       },
       fontFamily: {
@@ -97,8 +97,8 @@ const config: Config = {
       },
       keyframes: {
         'glow-pulse': {
-          '0%, 100%': { boxShadow: '0 0 20px var(--neon-primary-dim)' },
-          '50%': { boxShadow: '0 0 40px var(--neon-primary-glow)' },
+          '0%, 100%': { boxShadow: '0 0 20px hsl(var(--neon-primary-dim))' },
+          '50%': { boxShadow: '0 0 40px hsl(var(--neon-primary-glow))' },
         },
         'float': {
           '0%, 100%': { transform: 'translateY(0px)' },
@@ -130,10 +130,10 @@ const config: Config = {
         'bounce': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
       },
       boxShadow: {
-        'glow-sm': '0 0 10px var(--neon-primary-dim)',
-        'glow': '0 0 20px var(--neon-primary-glow)',
-        'glow-lg': '0 0 40px var(--neon-primary-glow)',
-        'inner-glow': 'inset 0 0 10px var(--neon-primary-dim)',
+        'glow-sm': '0 0 10px hsl(var(--neon-primary-dim))',
+        'glow': '0 0 20px hsl(var(--neon-primary-glow))',
+        'glow-lg': '0 0 40px hsl(var(--neon-primary-glow))',
+        'inner-glow': 'inset 0 0 10px hsl(var(--neon-primary-dim))',
       },
     },
   },

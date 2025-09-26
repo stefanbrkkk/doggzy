@@ -98,7 +98,7 @@ export const motionTokens = {
     },
 
     glow: {
-      boxShadow: '0 0 20px var(--neon-primary-glow)',
+      boxShadow: '0 0 20px hsl(var(--neon-primary-glow))',
       transition: { duration: 0.3, ease: 'easeOut' },
     },
   },
@@ -199,6 +199,12 @@ export const getMotionVariants = (prefersReducedMotion: boolean) => {
   return prefersReducedMotion ? motionTokens.reducedMotion : motionTokens.variants
 }
 
+// Hook to check for reduced motion preference
+export const useReducedMotion = () => {
+  if (typeof window === 'undefined') return false
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+}
+
 // Utility function for consistent stagger animations
 export const createStaggerVariants = (staggerDelay: number = 0.1) => ({
   container: {
@@ -252,9 +258,9 @@ export const animations = {
   // Glow pulse for neon effects
   glowPulse: {
     boxShadow: [
-      '0 0 20px var(--neon-primary-dim)',
-      '0 0 40px var(--neon-primary-glow)',
-      '0 0 20px var(--neon-primary-dim)',
+      '0 0 20px hsl(var(--neon-primary-dim))',
+      '0 0 40px hsl(var(--neon-primary-glow))',
+      '0 0 20px hsl(var(--neon-primary-dim))',
     ],
     transition: {
       duration: 2,

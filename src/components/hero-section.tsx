@@ -37,7 +37,7 @@ export function HeroSection() {
               {t.home.hero.title}
             </span>
             <br />
-            <span className="text-glow-primary" style={{ color: 'var(--neon-primary)' }}>
+            <span className="text-glow-primary" style={{ color: 'hsl(var(--neon-primary))' }}>
               {t.home.hero.titleHighlight}
             </span>
           </h1>
