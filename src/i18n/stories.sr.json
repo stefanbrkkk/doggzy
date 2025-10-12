@@ -1,0 +1,23 @@
+{
+  "title": "Priče o uspehu",
+  "subtitle": "Svaki pas ima svoju priču. Evo nekih koje su nas posebno dirnule.",
+  "readStory": "Čitaj priču",
+  "shareStory": "Podeli priču",
+  "moreStories": "Više priča",
+  "categories": {
+    "rescue": "Spašavanje",
+    "adoption": "Usvajanje",
+    "medical": "Medicinska nega",
+    "rehabilitation": "Rehabilitacija",
+    "happy": "Srećan završetak"
+  },
+  "filters": {
+    "all": "Sve priče",
+    "recent": "Najnovije",
+    "popular": "Najpopularnije",
+    "featured": "Izdvojene"
+  },
+  "noStories": "Trenutno nema priča za prikaz",
+  "loadMore": "Učitaj više priča",
+  "backToStories": "Nazad na priče"
+}

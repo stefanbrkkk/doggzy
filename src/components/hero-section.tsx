@@ -13,16 +13,16 @@ export function HeroSection() {
   const { t } = useLanguage()
 
   const stats = [
-    { number: "2,847", label: t.home.impact.stats.dogsSaved, icon: Heart },
-    { number: "156", label: t.home.impact.stats.partnerShelters, icon: Users },
-    { number: "47", label: t.home.impact.stats.countries, icon: Globe },
+    { number: "Uskoro", label: "Spašenih pasa", icon: Heart },
+    { number: "Uskoro", label: "Partner skloništa", icon: Users },
+    { number: "Uskoro", label: "Zemlje", icon: Globe },
   ]
 
   const impactNumbers = [
-    { value: 2847, suffix: "+", label: t.home.impact.stats.dogsSaved },
-    { value: 156, suffix: "", label: t.home.impact.stats.partnerShelters },
-    { value: 47, suffix: "", label: t.home.impact.stats.countries },
-    { value: 98, suffix: "%", label: t.home.impact.stats.successRate },
+    { value: 0, suffix: "", label: "Spašenih pasa" },
+    { value: 0, suffix: "", label: "Partner skloništa" },
+    { value: 1, suffix: "", label: "Zemlje" },
+    { value: 0, suffix: "%", label: "Stopa uspeha" },
   ]
 
   useEffect(() => {

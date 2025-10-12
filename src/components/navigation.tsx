@@ -59,18 +59,14 @@ export function Navigation() {
     { label: t.nav.home, href: '/' },
     { label: t.nav.donate, href: '/donate' },
     { label: t.nav.shop, href: '/shop' },
-    { label: t.nav.stories, href: '/stories' },
-    { label: t.nav.sponsor, href: '/sponsor' },
-    { label: t.nav.impact, href: '/impact' },
-    { label: t.nav.partners, href: '/partners' },
     { label: t.nav.about, href: '/about' },
+    { label: t.nav.contact, href: '/contact' },
   ]
 
   const moreItems = [
-    { label: t.nav.adopt, href: '/adopt' },
-    { label: t.nav.foster, href: '/foster' },
-    { label: t.nav.careers, href: '/careers' },
-    { label: t.nav.report, href: '/report' },
+    { label: 'Privatnost', href: '/privacy' },
+    { label: 'Uslovi korišćenja', href: '/terms' },
+    { label: 'Pristupačnost', href: '/accessibility' },
   ]
 
   return (
@@ -87,7 +83,7 @@ export function Navigation() {
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-200",
           isScrolled 
-            ? "bg-background/95 backdrop-blur-md border-b border-border shadow-lg" 
+            ? "glass backdrop-blur-md border-b border-white/20 shadow-lg" 
             : "bg-transparent"
         )}
         role="navigation"
@@ -97,7 +93,7 @@ export function Navigation() {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2 group">
-            <div className="relative hover:scale-110 transition-transform duration-200">
+            <div className="relative micro-bounce micro-glow">
               <PawPrint className="h-8 w-8 text-orange-500 group-hover:text-red-500 transition-colors duration-200" />
             </div>
             <span className="font-display text-2xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
@@ -111,7 +107,7 @@ export function Navigation() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="relative group font-medium text-foreground/80 hover:text-orange-500 transition-colors duration-200 text-xs xl:text-sm 2xl:text-base whitespace-nowrap px-1"
+                className="relative group font-medium text-foreground/80 hover:text-orange-500 transition-colors duration-200 text-xs xl:text-sm 2xl:text-base whitespace-nowrap px-1 micro-float focus-ring"
               >
                 {item.label}
                 <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 group-hover:w-full transition-all duration-200" />
@@ -126,7 +122,7 @@ export function Navigation() {
             {/* Subtle hamburger dropdown moved to actions area */}
             <div className="relative hidden lg:block" ref={moreRef}>
               <button
-                className="flex items-center justify-center h-8 w-8 rounded-md hover:bg-accent/60 text-foreground/70 hover:text-foreground transition-colors"
+                className="flex items-center justify-center h-8 w-8 rounded-md hover:bg-accent/60 text-foreground/70 hover:text-foreground transition-colors micro-bounce focus-ring"
                 aria-label="More navigation options"
                 aria-expanded={isMoreOpen}
                 aria-haspopup="true"
@@ -142,7 +138,7 @@ export function Navigation() {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -6, scale: 0.98 }}
                     transition={{ duration: 0.15, ease: 'easeOut' }}
-                    className="absolute right-0 mt-2 w-56 rounded-lg border border-border bg-background/95 backdrop-blur-md shadow-xl p-2 z-50 origin-top-right"
+                    className="absolute right-0 mt-2 w-56 rounded-lg glass-card shadow-xl p-2 z-50 origin-top-right"
                   >
                     {moreItems.map((item, idx) => (
                       <motion.div

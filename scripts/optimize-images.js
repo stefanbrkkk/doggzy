@@ -1,243 +1,226 @@
 #!/usr/bin/env node
-/* eslint-disable @typescript-eslint/no-require-imports */
 
-/**
- * Image Optimization Script
- * 
- * This script optimizes images for web use:
- * - Converts JPG/PNG to WebP format
- * - Generates responsive image variants
- * - Compresses images to target file sizes
- * - Creates thumbnails
- * 
- * Usage:
- *   node scripts/optimize-images.js [source-dir] [output-dir]
- * 
- * Requirements:
- *   npm install sharp
- */
-
-const fs = require('fs').promises
+const fs = require('fs')
 const path = require('path')
+const sharp = require('sharp')
 
 // Configuration
 const config = {
-  // Image sizes to generate
+  inputDir: 'public/images',
+  outputDir: 'public/images/optimized',
+  formats: ['webp', 'avif'],
   sizes: [400, 800, 1200, 1600, 2000],
-  
-  // Quality settings
   quality: {
     webp: 85,
+    avif: 80,
     jpeg: 85,
-    png: 95
+    png: 90
   },
-  
-  // Supported input formats
-  inputFormats: ['.jpg', '.jpeg', '.png', '.tiff', '.bmp'],
-  
-  // Output formats to generate
-  outputFormats: ['webp', 'jpg'], // WebP first for modern browsers
-  
-  // Thumbnail size
-  thumbnailSize: 300
+  // Skip files that are already optimized
+  skipOptimized: true
 }
 
-async function optimizeImages(sourceDir = 'public/images', outputDir = 'public/images/optimized') {
-  console.log('🖼️  Starting image optimization...')
-  console.log(`Source: ${sourceDir}`)
-  console.log(`Output: ${outputDir}`)
+// Ensure output directory exists
+function ensureDir(dir) {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true })
+  }
+}
+
+// Get all image files recursively
+function getImageFiles(dir, fileList = []) {
+  const files = fs.readdirSync(dir)
+  
+  files.forEach(file => {
+    const filePath = path.join(dir, file)
+    const stat = fs.statSync(filePath)
+    
+    if (stat.isDirectory()) {
+      getImageFiles(filePath, fileList)
+    } else if (/\.(jpg|jpeg|png|gif|bmp|tiff)$/i.test(file)) {
+      fileList.push(filePath)
+    }
+  })
+  
+  return fileList
+}
+
+// Generate responsive images
+async function generateResponsiveImages(inputPath, outputDir) {
+  const fileName = path.basename(inputPath, path.extname(inputPath))
+  const relativePath = path.relative(config.inputDir, path.dirname(inputPath))
+  const outputSubDir = path.join(outputDir, relativePath)
+  
+  ensureDir(outputSubDir)
   
   try {
-    // Check if sharp is installed
-    const sharp = require('sharp')
+    const image = sharp(inputPath)
+    const metadata = await image.metadata()
     
-    // Ensure output directory exists
-    await fs.mkdir(outputDir, { recursive: true })
+    console.log(`Processing: ${inputPath}`)
+    console.log(`  Original: ${metadata.width}x${metadata.height}, ${metadata.format}`)
     
-    // Find all images in source directory
-    const images = await findImages(sourceDir)
-    console.log(`Found ${images.length} images to optimize`)
+    // Generate different sizes and formats
+    const promises = []
     
-    let processed = 0
-    let errors = 0
-    
-    // Process each image
-    for (const imagePath of images) {
-      try {
-        await processImage(imagePath, sourceDir, outputDir, sharp)
-        processed++
-        console.log(`✅ Processed: ${path.basename(imagePath)} (${processed}/${images.length})`)
-      } catch (error) {
-        errors++
-        console.error(`❌ Error processing ${imagePath}:`, error.message)
-      }
-    }
-    
-    console.log('\n🎉 Optimization complete!')
-    console.log(`✅ Successfully processed: ${processed} images`)
-    if (errors > 0) {
-      console.log(`❌ Errors: ${errors} images`)
-    }
-    
-    // Generate optimization report
-    await generateReport(outputDir, processed, errors)
-    
-  } catch (error) {
-    if (error.code === 'MODULE_NOT_FOUND' && error.message.includes('sharp')) {
-      console.error('❌ Sharp is not installed. Please run: npm install sharp')
-      console.error('   Sharp is required for image optimization.')
-      process.exit(1)
-    }
-    
-    console.error('❌ Optimization failed:', error.message)
-    process.exit(1)
-  }
-}
-
-async function findImages(dir) {
-  const images = []
-  
-  async function scanDir(currentDir) {
-    const entries = await fs.readdir(currentDir, { withFileTypes: true })
-    
-    for (const entry of entries) {
-      const fullPath = path.join(currentDir, entry.name)
-      
-      if (entry.isDirectory()) {
-        await scanDir(fullPath)
-      } else if (entry.isFile()) {
-        const ext = path.extname(entry.name).toLowerCase()
-        if (config.inputFormats.includes(ext)) {
-          images.push(fullPath)
-        }
-      }
-    }
-  }
-  
-  await scanDir(dir)
-  return images
-}
-
-async function processImage(imagePath, sourceDir, outputDir, sharp) {
-  const relativePath = path.relative(sourceDir, imagePath)
-  const parsedPath = path.parse(relativePath)
-  const baseName = parsedPath.name
-  const outputSubDir = path.join(outputDir, parsedPath.dir)
-  
-  // Ensure output subdirectory exists
-  await fs.mkdir(outputSubDir, { recursive: true })
-  
-  // Load image and get metadata
-  const image = sharp(imagePath)
-  const metadata = await image.metadata()
-  
-  console.log(`  Processing: ${baseName} (${metadata.width}×${metadata.height})`)
-  
-  // Generate responsive variants for each format
-  for (const format of config.outputFormats) {
     for (const size of config.sizes) {
-      // Skip if source image is smaller than target size
+      // Skip if original is smaller than target size
       if (metadata.width && metadata.width < size) continue
       
-      const outputPath = path.join(outputSubDir, `${baseName}-${size}w.${format}`)
-      
-      await image
-        .clone()
-        .resize(size, null, { 
-          withoutEnlargement: true,
-          fit: 'inside'
-        })
-        .toFormat(format, { 
-          quality: config.quality[format] || config.quality.webp 
-        })
-        .toFile(outputPath)
+      for (const format of config.formats) {
+        const outputFileName = `${fileName}-${size}w.${format}`
+        const outputPath = path.join(outputSubDir, outputFileName)
+        
+        // Skip if file already exists and skipOptimized is true
+        if (config.skipOptimized && fs.existsSync(outputPath)) {
+          console.log(`  Skipping existing: ${outputFileName}`)
+          continue
+        }
+        
+        const promise = image
+          .clone()
+          .resize(size, null, {
+            withoutEnlargement: true,
+            fit: 'inside'
+          })
+          .toFormat(format, {
+            quality: config.quality[format] || 85,
+            progressive: true,
+            mozjpeg: format === 'jpeg'
+          })
+          .toFile(outputPath)
+          .then(() => {
+            const stats = fs.statSync(outputPath)
+            console.log(`  Generated: ${outputFileName} (${Math.round(stats.size / 1024)}KB)`)
+          })
+          .catch(err => {
+            console.error(`  Error generating ${outputFileName}:`, err.message)
+          })
+        
+        promises.push(promise)
+      }
     }
     
-    // Generate thumbnail
-    const thumbnailPath = path.join(outputSubDir, `${baseName}-thumb.${format}`)
-    await image
-      .clone()
-      .resize(config.thumbnailSize, config.thumbnailSize, {
-        fit: 'cover',
-        position: 'center'
-      })
-      .toFormat(format, { 
-        quality: config.quality[format] || config.quality.webp 
-      })
-      .toFile(thumbnailPath)
-  }
-  
-  // Also create an optimized version in original format
-  const originalFormat = metadata.format
-  if (originalFormat && ['jpeg', 'png', 'webp'].includes(originalFormat)) {
-    const optimizedPath = path.join(outputSubDir, `${baseName}-optimized.${originalFormat === 'jpeg' ? 'jpg' : originalFormat}`)
+    // Also create optimized version of original
+    const originalFormat = metadata.format === 'jpeg' ? 'jpg' : metadata.format
+    const optimizedOriginal = path.join(outputSubDir, `${fileName}-original.${originalFormat}`)
     
-    await image
-      .clone()
-      .toFormat(originalFormat, { 
-        quality: config.quality[originalFormat] || 85
-      })
-      .toFile(optimizedPath)
+    if (!config.skipOptimized || !fs.existsSync(optimizedOriginal)) {
+      const originalPromise = image
+        .clone()
+        .toFormat(metadata.format, {
+          quality: config.quality[metadata.format] || 85,
+          progressive: true,
+          mozjpeg: metadata.format === 'jpeg'
+        })
+        .toFile(optimizedOriginal)
+        .then(() => {
+          const stats = fs.statSync(optimizedOriginal)
+          console.log(`  Optimized original: ${Math.round(stats.size / 1024)}KB`)
+        })
+        .catch(err => {
+          console.error(`  Error optimizing original:`, err.message)
+        })
+      
+      promises.push(originalPromise)
+    }
+    
+    await Promise.all(promises)
+    console.log(`  Completed: ${inputPath}\n`)
+    
+  } catch (error) {
+    console.error(`Error processing ${inputPath}:`, error.message)
   }
 }
 
-async function generateReport(outputDir, processed, errors) {
-  const report = {
-    timestamp: new Date().toISOString(),
-    processed,
-    errors,
-    config,
-    files: []
+// Generate srcSet helper
+function generateSrcSetHelper() {
+  const helperContent = `// Auto-generated image optimization helpers
+// Run 'npm run optimize-images' to regenerate
+
+export function generateSrcSet(baseName: string, sizes: number[] = [400, 800, 1200, 1600]): string {
+  return sizes
+    .map(size => \`/images/optimized/\${baseName}-\${size}w.webp \${size}w\`)
+    .join(', ')
+}
+
+export function generateAvifSrcSet(baseName: string, sizes: number[] = [400, 800, 1200, 1600]): string {
+  return sizes
+    .map(size => \`/images/optimized/\${baseName}-\${size}w.avif \${size}w\`)
+    .join(', ')
+}
+
+export function getOptimizedImageUrl(baseName: string, size: number, format: 'webp' | 'avif' = 'webp'): string {
+  return \`/images/optimized/\${baseName}-\${size}w.\${format}\`
+}
+
+// Common responsive sizes
+export const responsiveSizes = {
+  mobile: '(max-width: 640px) 100vw',
+  tablet: '(max-width: 1024px) 50vw', 
+  desktop: '33vw'
+}
+
+export function generateSizes(breakpoints: Record<string, string> = responsiveSizes): string {
+  const entries = Object.entries(breakpoints)
+  const mediaQueries = entries.slice(0, -1).map(([query, size]) => \`\${query} \${size}\`)
+  const defaultSize = entries[entries.length - 1][1]
+  return [...mediaQueries, defaultSize].join(', ')
+}
+`
+
+  fs.writeFileSync('src/lib/image-helpers.ts', helperContent)
+  console.log('Generated image helper utilities at src/lib/image-helpers.ts')
+}
+
+// Main function
+async function main() {
+  console.log('🖼️  Starting image optimization...\n')
+  
+  if (!fs.existsSync(config.inputDir)) {
+    console.error(`Input directory ${config.inputDir} does not exist`)
+    process.exit(1)
   }
   
-  // Scan output directory for file sizes
-  async function scanOutput(dir, prefix = '') {
-    const entries = await fs.readdir(dir, { withFileTypes: true })
-    
-    for (const entry of entries) {
-      const fullPath = path.join(dir, entry.name)
-      const relativePath = path.join(prefix, entry.name)
-      
-      if (entry.isDirectory()) {
-        await scanOutput(fullPath, relativePath)
-      } else if (entry.isFile()) {
-        const stats = await fs.stat(fullPath)
-        report.files.push({
-          path: relativePath,
-          size: stats.size,
-          sizeKB: Math.round(stats.size / 1024)
-        })
-      }
-    }
+  ensureDir(config.outputDir)
+  
+  const imageFiles = getImageFiles(config.inputDir)
+  
+  if (imageFiles.length === 0) {
+    console.log('No images found to optimize')
+    return
   }
   
-  try {
-    await scanOutput(outputDir)
-    
-    // Sort by size (largest first)
-    report.files.sort((a, b) => b.size - a.size)
-    
-    const reportPath = path.join(outputDir, 'optimization-report.json')
-    await fs.writeFile(reportPath, JSON.stringify(report, null, 2))
-    
-    console.log(`📊 Report generated: ${reportPath}`)
-    
-    // Show summary
-    const totalSize = report.files.reduce((sum, file) => sum + file.size, 0)
-    const totalSizeMB = Math.round(totalSize / 1024 / 1024 * 100) / 100
-    
-    console.log(`📈 Total optimized files: ${report.files.length}`)
-    console.log(`📦 Total size: ${totalSizeMB} MB`)
-    
-  } catch (error) {
-    console.warn('⚠️  Could not generate report:', error.message)
+  console.log(`Found ${imageFiles.length} images to process\n`)
+  
+  // Process images in batches to avoid overwhelming the system
+  const batchSize = 5
+  for (let i = 0; i < imageFiles.length; i += batchSize) {
+    const batch = imageFiles.slice(i, i + batchSize)
+    await Promise.all(
+      batch.map(file => generateResponsiveImages(file, config.outputDir))
+    )
   }
+  
+  // Generate helper utilities
+  generateSrcSetHelper()
+  
+  console.log('✅ Image optimization complete!')
+  console.log(`Processed ${imageFiles.length} images`)
+  console.log(`Output directory: ${config.outputDir}`)
+}
+
+// Check if sharp is installed
+try {
+  require.resolve('sharp')
+} catch (e) {
+  console.error('Sharp is not installed. Please run: npm install sharp --save-dev')
+  process.exit(1)
 }
 
 // Run if called directly
 if (require.main === module) {
-  const [,, sourceDir, outputDir] = process.argv
-  optimizeImages(sourceDir, outputDir)
+  main().catch(console.error)
 }
 
-module.exports = { optimizeImages }
+module.exports = { main, config }

@@ -6,8 +6,13 @@ import { Button } from '@/components/ui/button'
 import { useLanguage } from '@/contexts/LanguageContext'
 
 export function LanguageSwitcher() {
-  const { language, setLanguage, availableLanguages } = useLanguage()
+  const { availableLanguages, language, setLanguage } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
+
+  // Hide language switcher when only one language is available
+  if (availableLanguages.length <= 1) {
+    return null
+  }
 
   return (
     <div className="relative">

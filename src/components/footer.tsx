@@ -41,47 +41,36 @@ export function Footer() {
   ]
 
   const quickLinks = [
-    { label: 'About Us', href: '/about' },
-    { label: 'Our Impact', href: '/impact' },
-    { label: 'Partners', href: '/partners' },
-    { label: 'Success Stories', href: '/success-stories' },
-    { label: 'Volunteer', href: '/volunteer' },
-    { label: 'Careers', href: '/careers' },
+    { label: 'O nama', href: '/about' },
+    { label: 'Kontakt', href: '/contact' },
   ]
 
   const supportLinks = [
-    { label: 'Donate', href: '/donate' },
-    { label: 'Shop', href: '/shop' },
-    { label: 'Sponsor a Pet', href: '/sponsor' },
-    { label: 'Adopt', href: '/adopt' },
-    { label: 'Foster', href: '/foster' },
-    { label: 'Report Abuse', href: '/report' },
+    { label: 'Doniraj', href: '/donate' },
+    { label: 'Prodavnica', href: '/shop' },
   ]
 
   const legalLinks = [
-    { label: 'Privacy Policy', href: '/privacy' },
-    { label: 'Terms of Service', href: '/terms' },
-    { label: 'Cookie Policy', href: '/cookies' },
-    { label: 'Refund Policy', href: '/refunds' },
-    { label: 'Accessibility', href: '/accessibility' },
-    { label: 'Contact Us', href: '/contact' },
+    { label: 'Privatnost', href: '/privacy' },
+    { label: 'Uslovi korišćenja', href: '/terms' },
+    { label: 'Pristupačnost', href: '/accessibility' },
   ]
 
   const features = [
     {
       icon: Shield,
-      title: "Secure Donations",
-      description: "Your donations are protected with bank-level security"
+      title: "Sigurne donacije",
+      description: "Vaše donacije su zaštićene bankarskim nivoom bezbednosti"
     },
     {
       icon: Award,
-      title: "Tax Deductible",
-      description: "501(c)(3) certified - all donations are tax deductible"
+      title: "Poresko oslobođenje",
+      description: "Registrovana organizacija - sve donacije su poresko oslobođene"
     },
     {
       icon: Users,
-      title: "Transparent Impact",
-      description: "See exactly how your donations are making a difference"
+      title: "Transparentan uticaj",
+      description: "Vidite tačno kako vaše donacije prave razliku"
     }
   ]
 
@@ -110,23 +99,23 @@ export function Footer() {
               </Link>
               
               <p className="text-gray-300 mb-6 leading-relaxed">
-                Dedicated to rescuing, rehabilitating, and rehoming dogs in need. 
-                Every donation and purchase directly saves lives and creates miracles.
+                Posvećeni spašavanju, rehabilitaciji i pronalaženju novih domova za pse u nuždi. 
+                Svaka donacija i kupovina direktno spašava živote i stvara čuda.
               </p>
 
               {/* Contact Info */}
               <div className="space-y-3 mb-6">
                 <div className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-colors duration-200">
                   <Mail className="h-5 w-5 text-orange-500" />
-                  <a href="mailto:care@doggzy.online" className="hover:text-orange-400 transition-colors duration-200">care@doggzy.online</a>
+                  <a href="mailto:info@doggzy.rs" className="hover:text-orange-400 transition-colors duration-200">info@doggzy.rs</a>
                 </div>
                 <div className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-colors duration-200">
                   <Phone className="h-5 w-5 text-orange-500" />
-                  <a href="tel:+381616446767" className="hover:text-orange-400 transition-colors duration-200">+381 616446767</a>
+                  <a href="tel:+381111234567" className="hover:text-orange-400 transition-colors duration-200">+381 11 123 4567</a>
                 </div>
                 <div className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-colors duration-200">
                   <MapPin className="h-5 w-5 text-orange-500" />
-                  <span>San Francisco, CA</span>
+                  <span>Beograd, Srbija</span>
                 </div>
               </div>
 
@@ -147,7 +136,7 @@ export function Footer() {
 
             {/* Quick Links */}
             <div>
-              <h3 className="text-lg font-semibold mb-6 text-orange-400">Quick Links</h3>
+              <h3 className="text-lg font-semibold mb-6 text-orange-400">Brzi linkovi</h3>
               <ul className="space-y-3">
                 {quickLinks.map((link) => (
                   <li key={link.href}>
@@ -164,7 +153,7 @@ export function Footer() {
 
             {/* Support Links */}
             <div>
-              <h3 className="text-lg font-semibold mb-6 text-orange-400">Get Involved</h3>
+              <h3 className="text-lg font-semibold mb-6 text-orange-400">Uključite se</h3>
               <ul className="space-y-3">
                 {supportLinks.map((link) => (
                   <li key={link.href}>
@@ -181,14 +170,14 @@ export function Footer() {
 
             {/* Newsletter & Legal */}
             <div>
-              <h3 className="text-lg font-semibold mb-6 text-orange-400">Stay Connected</h3>
+              <h3 className="text-lg font-semibold mb-6 text-orange-400">Ostanite povezani</h3>
               
               {/* Newsletter */}
               <form onSubmit={handleNewsletterSubmit} className="mb-6">
                 <div className="flex space-x-2">
                   <Input
                     type="email"
-                    placeholder="Enter your email"
+                    placeholder="Unesite vaš email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500"
@@ -199,7 +188,7 @@ export function Footer() {
                   </Button>
                 </div>
                 <p className="text-sm text-gray-400 mt-2">
-                  Get updates on our rescue efforts and success stories
+                  Dobijajte vesti o našim akcijama spašavanja i pričama o uspehu
                 </p>
               </form>
 
@@ -245,23 +234,23 @@ export function Footer() {
             <div className="absolute inset-0 bg-gradient-to-r from-orange-600/20 to-red-600/20" />
             <div className="relative z-10">
               <h3 className="text-2xl md:text-3xl font-bold mb-4">
-                Help Create More Happy Endings
+                Pomozite u stvaranju više srećnih završetaka
               </h3>
               <p className="text-orange-100 mb-6 max-w-2xl mx-auto">
-                Every donation and purchase directly supports rescue operations, medical care, 
-                and finding loving homes for dogs in need.
+                Svaka donacija i kupovina direktno podržava operacije spašavanja, medicinsku negu 
+                i pronalaženje ljubavnih domova za pse u nuždi.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/donate">
                   <Button size="lg" variant="secondary" className="hover:scale-105 transition-transform duration-200">
                     <Heart className="h-5 w-5 mr-2" />
-                    Donate Now
+                    Doniraj sada
                   </Button>
                 </Link>
                 <Link href="/shop">
                   <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-orange-600 hover:scale-105 transition-all duration-200">
                     <ArrowRight className="h-5 w-5 mr-2" />
-                    Shop for a Cause
+                    Kupuj za dobru stvar
                   </Button>
                 </Link>
               </div>
@@ -274,16 +263,16 @@ export function Footer() {
           <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
             <div className="flex items-center space-x-4">
               <p className="text-gray-400 text-sm">
-                © 2024 Doggzy. All rights reserved.
+                © 2024 Doggzy. Sva prava zadržana.
               </p>
               <Badge variant="secondary" className="bg-green-100 text-green-800 hover:scale-105 transition-transform duration-200">
-                501(c)(3) Non-Profit
+                Registrovana organizacija
               </Badge>
             </div>
             
             <div className="flex items-center space-x-6">
               <p className="text-gray-400 text-sm">
-                Made with <Heart className="h-4 w-4 text-red-500 inline mx-1" /> for dogs everywhere
+                Napravljeno sa <Heart className="h-4 w-4 text-red-500 inline mx-1" /> za pse svugde
               </p>
             </div>
           </div>

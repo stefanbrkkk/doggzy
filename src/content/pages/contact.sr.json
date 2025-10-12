@@ -1,0 +1,65 @@
+{
+  "hero": {
+    "title": "Hajde da pričamo o spašavanju pasa",
+    "subtitle": "Volimo da čujemo od ljubitelja pasa. Javite nam se bilo kada!",
+    "emailUs": "Pošaljite email",
+    "bookCall": "Zakažite poziv",
+    "responseTime": "Odgovaramo ~2h"
+  },
+  "info": {
+    "title": "Kontakt informacije",
+    "description": "Svaka poruka može spasiti život. Bilo da usvajate, hranite, partnerirate ili prijavljujete zlostavljanje - vaša poruka pokreće spašavanje.",
+    "email": {
+      "title": "Email",
+      "value": "info@doggzy.rs"
+    },
+    "phone": {
+      "title": "Telefon",
+      "value": "+381 11 123 4567"
+    },
+    "address": {
+      "title": "Adresa",
+      "value": "Beograd, Srbija"
+    },
+    "hours": {
+      "title": "Radno vreme",
+      "value": "Pon-Pet: 9:00-17:00"
+    }
+  },
+  "form": {
+    "title": "Pozdravite se",
+    "subtitle": "Recite nam kako možemo da pomognemo. Obično odgovaramo u roku od 1-2 radna dana.",
+    "name": "Vaše ime",
+    "email": "Email adresa",
+    "subject": "Naslov",
+    "message": "Vaša poruka",
+    "send": "Pošaljite poruku",
+    "sending": "Šalje se...",
+    "success": "Hvala! Vaša poruka je poslata. Javićemo vam se u roku od 24 sata.",
+    "error": "Došlo je do greške. Molimo pokušajte ponovo."
+  },
+  "departments": {
+    "title": "Odeljenja",
+    "general": {
+      "title": "Opšti upiti",
+      "description": "Za sva pitanja i informacije"
+    },
+    "rescue": {
+      "title": "Hitno spašavanje",
+      "description": "Za hitne slučajeve i prijave"
+    },
+    "adoption": {
+      "title": "Usvajanje",
+      "description": "Informacije o dostupnim psima"
+    },
+    "volunteer": {
+      "title": "Volontiranje",
+      "description": "Pridružite se našem timu"
+    }
+  },
+  "cta": {
+    "title": "Spremni da pomognete?",
+    "subtitle": "Kontaktirajte nas danas i saznajte kako možete biti deo našeg pokreta za spašavanje pasa",
+    "button": "Pošaljite poruku"
+  }
+}

@@ -13,13 +13,11 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
 const availableLanguages = [
-  { code: 'en' as Language, name: 'English', flag: '🇺🇸' },
-  { code: 'es' as Language, name: 'Español', flag: '🇪🇸' },
-  { code: 'fr' as Language, name: 'Français', flag: '🇫🇷' }
+  { code: 'sr' as Language, name: 'Srpski', flag: '🇷🇸' }
 ]
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>('en')
+  const [language, setLanguageState] = useState<Language>('sr')
 
   // Load language from localStorage on mount
   useEffect(() => {

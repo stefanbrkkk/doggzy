@@ -1,0 +1,52 @@
+{
+  "hero": {
+    "badge": "Spašavamo živote",
+    "title": "Vaša donacija",
+    "titleHighlight": "Menja živote",
+    "subtitle": "Svaki dinar koji donirate direktno ide u spašavanje, lečenje i pronalaženje novih domova za pse u nuždi. Budite deo čuda koje stvaramo svaki dan."
+  },
+  "features": {
+    "secure": {
+      "title": "Sigurne donacije",
+      "description": "Vaše donacije su zaštićene bankarskim nivoom bezbednosti"
+    },
+    "global": {
+      "title": "Globalni uticaj",
+      "description": "Pomažemo psima širom sveta kroz našu mrežu partnera"
+    },
+    "transparent": {
+      "title": "Transparentnost",
+      "description": "Vidite tačno kako se vaše donacije koriste za spašavanje života"
+    }
+  },
+  "form": {
+    "title": "Donirajte danas",
+    "subtitle": "Izaberite iznos koji želite da donirate",
+    "customAmount": "Prilagođeni iznos",
+    "donateButton": "Doniraj",
+    "processing": "Obrađuje se...",
+    "amountDescriptions": {
+      "feedWeek": "Hrani psa nedelju dana",
+      "medicalCheckup": "Medicinski pregled",
+      "emergencyTreatment": "Hitno lečenje",
+      "completeRehabilitation": "Kompletna rehabilitacija",
+      "saveLife": "Spasi jedan život",
+      "transformLife": "Transformiši život"
+    }
+  },
+  "impact": {
+    "title": "Vaš uticaj u brojkama",
+    "subtitle": "Pogledajte kako vaše donacije menjaju živote pasa širom sveta",
+    "stats": {
+      "dogsRescued": "Spašenih pasa",
+      "partnerShelters": "Partner skloništa",
+      "countries": "Zemlje",
+      "successRate": "Stopa uspeha"
+    }
+  },
+  "cta": {
+    "title": "Spremni da napravite razliku?",
+    "subtitle": "Pridružite se hiljadama saosećajnih ljudi koji već pomažu psima u nuždi",
+    "button": "Doniraj sada"
+  }
+}
