@@ -1,320 +1,249 @@
-// Comprehensive error handling system with Serbian messages
-/* eslint-disable @typescript-eslint/no-explicit-any */
+// Enhanced error handling and monitoring
 
-export interface AppError {
-  code: string
+export interface ErrorInfo {
   message: string
-  details?: any
+  stack?: string
+  componentStack?: string
+  errorBoundary?: string
   timestamp: number
+  url: string
+  userAgent: string
   userId?: string
-  context?: Record<string, any>
 }
 
-export class DoggzyError extends Error {
-  public code: string
-  public details?: any
-  public timestamp: number
-  public userId?: string
-  public context?: Record<string, any>
+export class ErrorLogger {
+  private static instance: ErrorLogger
+  private errors: ErrorInfo[] = []
 
-  constructor(
-    code: string,
-    message: string,
-    details?: any,
-    context?: Record<string, any>
-  ) {
-    super(message)
-    this.name = 'DoggzyError'
-    this.code = code
-    this.details = details
-    this.timestamp = Date.now()
-    this.context = context
+  static getInstance(): ErrorLogger {
+    if (!ErrorLogger.instance) {
+      ErrorLogger.instance = new ErrorLogger()
+    }
+    return ErrorLogger.instance
   }
 
-  toJSON(): AppError {
-    return {
-      code: this.code,
-      message: this.message,
-      details: this.details,
-      timestamp: this.timestamp,
-      userId: this.userId,
-      context: this.context
-    }
-  }
-}
-
-// Serbian error messages
-export const errorMessages = {
-  // Network errors
-  NETWORK_ERROR: 'Greška sa mrežom. Proverite internetsku konekciju.',
-  TIMEOUT_ERROR: 'Zahtev je istekao. Molimo pokušajte ponovo.',
-  SERVER_ERROR: 'Greška na serveru. Molimo pokušajte kasnije.',
-  
-  // Authentication errors
-  AUTH_REQUIRED: 'Potrebna je prijava za pristup ovoj stranici.',
-  AUTH_INVALID: 'Neispravni podaci za prijavu.',
-  AUTH_EXPIRED: 'Sesija je istekla. Molimo prijavite se ponovo.',
-  AUTH_FORBIDDEN: 'Nemate dozvolu za ovu akciju.',
-  
-  // Form validation errors
-  VALIDATION_ERROR: 'Molimo proverite unete podatke.',
-  REQUIRED_FIELD: 'Ovo polje je obavezno.',
-  INVALID_EMAIL: 'Molimo unesite validnu email adresu.',
-  INVALID_PHONE: 'Molimo unesite valjan broj telefona.',
-  PASSWORD_TOO_SHORT: 'Lozinka mora imati najmanje 8 karaktera.',
-  PASSWORDS_DONT_MATCH: 'Lozinke se ne poklapaju.',
-  
-  // File upload errors
-  FILE_TOO_LARGE: 'Fajl je prevelik. Maksimalna veličina je {maxSize}MB.',
-  INVALID_FILE_TYPE: 'Nepodržan tip fajla. Dozvoljeni tipovi: {allowedTypes}.',
-  UPLOAD_FAILED: 'Otpremanje fajla nije uspelo. Molimo pokušajte ponovo.',
-  
-  // Content errors
-  CONTENT_NOT_FOUND: 'Traženi sadržaj nije pronađen.',
-  CONTENT_UNAVAILABLE: 'Sadržaj trenutno nije dostupan.',
-  
-  // Payment errors
-  PAYMENT_FAILED: 'Plaćanje nije uspelo. Molimo pokušajte ponovo.',
-  PAYMENT_DECLINED: 'Plaćanje je odbačeno. Proverite podatke kartice.',
-  PAYMENT_PROCESSING: 'Plaćanje se obrađuje...',
-  
-  // Product errors
-  PRODUCT_NOT_FOUND: 'Proizvod nije pronađen.',
-  OUT_OF_STOCK: 'Proizvod trenutno nije na stanju.',
-  INVALID_QUANTITY: 'Neispravna količina.',
-  
-  // Contact form errors
-  CONTACT_SEND_FAILED: 'Slanje poruke nije uspelo. Molimo pokušajte ponovo.',
-  SPAM_DETECTED: 'Poruka je označena kao spam. Molimo kontaktirajte nas direktno.',
-  
-  // Admin errors
-  ADMIN_ACCESS_REQUIRED: 'Potreban je administratorski pristup.',
-  ADMIN_ACTION_FAILED: 'Administratorska akcija nije uspela.',
-  
-  // Generic errors
-  UNKNOWN_ERROR: 'Došlo je do neočekivane greške.',
-  TRY_AGAIN_LATER: 'Molimo pokušajte kasnije.',
-  CONTACT_SUPPORT: 'Ako se problem nastavi, kontaktirajte podršku.'
-} as const
-
-export type ErrorCode = keyof typeof errorMessages
-
-// Error severity levels
-export enum ErrorSeverity {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  CRITICAL = 'critical'
-}
-
-// Error categories for better organization
-export enum ErrorCategory {
-  NETWORK = 'network',
-  AUTH = 'auth',
-  VALIDATION = 'validation',
-  UPLOAD = 'upload',
-  CONTENT = 'content',
-  PAYMENT = 'payment',
-  ADMIN = 'admin',
-  SYSTEM = 'system'
-}
-
-// Error handler class
-export class ErrorHandler {
-  private static instance: ErrorHandler
-  private errorLog: AppError[] = []
-  private maxLogSize = 100
-
-  static getInstance(): ErrorHandler {
-    if (!ErrorHandler.instance) {
-      ErrorHandler.instance = new ErrorHandler()
-    }
-    return ErrorHandler.instance
-  }
-
-  // Handle different types of errors
-  handle(error: unknown, context?: Record<string, any>): DoggzyError {
-    let appError: DoggzyError
-
-    if (error instanceof DoggzyError) {
-      appError = error
-    } else if (error instanceof Error) {
-      appError = new DoggzyError(
-        'UNKNOWN_ERROR',
-        error.message || errorMessages.UNKNOWN_ERROR,
-        error,
-        context
-      )
-    } else {
-      appError = new DoggzyError(
-        'UNKNOWN_ERROR',
-        errorMessages.UNKNOWN_ERROR,
-        error,
-        context
-      )
+  logError(error: Error, errorInfo?: any): void {
+    const errorData: ErrorInfo = {
+      message: error.message,
+      stack: error.stack,
+      componentStack: errorInfo?.componentStack,
+      errorBoundary: errorInfo?.errorBoundary,
+      timestamp: Date.now(),
+      url: typeof window !== 'undefined' ? window.location.href : '',
+      userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : '',
     }
 
-    // Log the error
-    this.log(appError)
-
-    // Report critical errors
-    if (this.isCritical(appError)) {
-      this.reportError(appError)
-    }
-
-    return appError
-  }
-
-  // Log error to internal storage
-  private log(error: DoggzyError): void {
-    this.errorLog.push(error.toJSON())
-
-    // Keep log size manageable
-    if (this.errorLog.length > this.maxLogSize) {
-      this.errorLog.shift()
-    }
+    this.errors.push(errorData)
 
     // Log to console in development
     if (process.env.NODE_ENV === 'development') {
-      console.error('DoggzyError:', error.toJSON())
+      console.error('Error logged:', errorData)
+    }
+
+    // Send to monitoring service in production
+    if (process.env.NODE_ENV === 'production') {
+      this.sendToMonitoringService(errorData)
     }
   }
 
-  // Check if error is critical
-  private isCritical(error: DoggzyError): boolean {
-    const criticalCodes = [
-      'SERVER_ERROR',
-      'PAYMENT_FAILED',
-      'ADMIN_ACTION_FAILED'
-    ]
-    return criticalCodes.includes(error.code)
-  }
-
-  // Report error to external service (implement as needed)
-  private reportError(error: DoggzyError): void {
-    // In production, you might send to Sentry, LogRocket, etc.
-    console.error('Critical error reported:', error.toJSON())
-  }
-
-  // Get user-friendly error message
-  getUserMessage(error: DoggzyError): string {
-    const message = errorMessages[error.code as ErrorCode]
-    
-    if (!message) {
-      return errorMessages.UNKNOWN_ERROR
-    }
-
-    // Replace placeholders if any
-    if (error.details && typeof message === 'string') {
-      return message.replace(/\{(\w+)\}/g, (match, key) => {
-        return error.details[key] || match
-      })
-    }
-
-    return message
-  }
-
-  // Get error logs (for admin panel)
-  getErrorLogs(): AppError[] {
-    return [...this.errorLog]
-  }
-
-  // Clear error logs
-  clearLogs(): void {
-    this.errorLog = []
-  }
-}
-
-// Global error handler instance
-export const errorHandler = ErrorHandler.getInstance()
-
-// Utility functions for common error scenarios
-export function createValidationError(field: string, message?: string): DoggzyError {
-  return new DoggzyError(
-    'VALIDATION_ERROR',
-    message || errorMessages.VALIDATION_ERROR,
-    { field },
-    { type: 'validation' }
-  )
-}
-
-export function createNetworkError(url: string, status?: number): DoggzyError {
-  return new DoggzyError(
-    status && status >= 500 ? 'SERVER_ERROR' : 'NETWORK_ERROR',
-    status && status >= 500 ? errorMessages.SERVER_ERROR : errorMessages.NETWORK_ERROR,
-    { url, status },
-    { type: 'network' }
-  )
-}
-
-export function createAuthError(type: 'required' | 'invalid' | 'expired' | 'forbidden'): DoggzyError {
-  const codes = {
-    required: 'AUTH_REQUIRED',
-    invalid: 'AUTH_INVALID',
-    expired: 'AUTH_EXPIRED',
-    forbidden: 'AUTH_FORBIDDEN'
-  }
-  
-  const code = codes[type] as ErrorCode
-  return new DoggzyError(code, errorMessages[code], { type }, { type: 'auth' })
-}
-
-export function createUploadError(type: 'size' | 'type' | 'failed', details?: any): DoggzyError {
-  const codes = {
-    size: 'FILE_TOO_LARGE',
-    type: 'INVALID_FILE_TYPE', 
-    failed: 'UPLOAD_FAILED'
-  }
-  
-  const code = codes[type] as ErrorCode
-  return new DoggzyError(code, errorMessages[code], details, { type: 'upload' })
-}
-
-// Error boundary helper for React components
-export function handleComponentError(error: Error, errorInfo: any): void {
-  const appError = new DoggzyError(
-    'COMPONENT_ERROR',
-    'Greška u komponenti',
-    { error: error.message, errorInfo },
-    { type: 'component' }
-  )
-  
-  errorHandler.handle(appError)
-}
-
-// Async error wrapper
-export function withErrorHandling<T extends any[], R>(
-  fn: (...args: T) => Promise<R>
-) {
-  return async (...args: T): Promise<R> => {
+  private async sendToMonitoringService(errorData: ErrorInfo): Promise<void> {
     try {
-      return await fn(...args)
-    } catch (error) {
-      throw errorHandler.handle(error, { function: fn.name, args })
+      // Example: Send to Sentry, LogRocket, or custom endpoint
+      await fetch('/api/errors', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(errorData),
+      })
+    } catch (err) {
+      console.error('Failed to send error to monitoring service:', err)
     }
+  }
+
+  getErrors(): ErrorInfo[] {
+    return [...this.errors]
+  }
+
+  clearErrors(): void {
+    this.errors = []
   }
 }
 
-// Form error helper
-export function getFieldError(errors: Record<string, any>, field: string): string | undefined {
-  const error = errors[field]
-  if (!error) return undefined
-  
-  if (typeof error === 'string') return error
-  if (error.message) return error.message
-  
-  return errorMessages.VALIDATION_ERROR
+// React Error Boundary Component
+export class ErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback?: React.ComponentType<{ error: Error }> },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: any) {
+    super(props)
+    this.state = { hasError: false, error: null }
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error }
+  }
+
+  componentDidCatch(error: Error, errorInfo: any) {
+    const logger = ErrorLogger.getInstance()
+    logger.logError(error, {
+      ...errorInfo,
+      errorBoundary: this.constructor.name,
+    })
+  }
+
+  render() {
+    if (this.state.hasError) {
+      const FallbackComponent = this.props.fallback || DefaultErrorFallback
+      return <FallbackComponent error={this.state.error!} />
+    }
+
+    return this.props.children
+  }
 }
 
-// Initialize error handling
-if (typeof window !== 'undefined') {
-  // Global error handler for unhandled errors
-  window.addEventListener('error', (event) => {
-    errorHandler.handle(event.error, { type: 'global', filename: event.filename, lineno: event.lineno })
-  })
+// Default error fallback component
+function DefaultErrorFallback({ error }: { error: Error }) {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20">
+      <div className="max-w-md mx-auto text-center p-8">
+        <div className="mb-6">
+          <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            Oops! Something went wrong
+          </h1>
+          <p className="text-gray-600 dark:text-gray-300 mb-6">
+            We're sorry for the inconvenience. Please try refreshing the page or contact support if the problem persists.
+          </p>
+        </div>
+        
+        <div className="space-y-3">
+          <button
+            onClick={() => window.location.reload()}
+            className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-lg font-semibold hover:from-orange-600 hover:to-red-600 transition-all duration-300"
+          >
+            Refresh Page
+          </button>
+          <button
+            onClick={() => window.location.href = '/'}
+            className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300"
+          >
+            Go Home
+          </button>
+        </div>
+        
+        {process.env.NODE_ENV === 'development' && (
+          <details className="mt-6 text-left">
+            <summary className="cursor-pointer text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+              Error Details (Development)
+            </summary>
+            <pre className="mt-2 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-xs text-gray-800 dark:text-gray-200 overflow-auto">
+              {error.stack}
+            </pre>
+          </details>
+        )}
+      </div>
+    </div>
+  )
+}
 
-  // Global handler for unhandled promise rejections
+// Form validation helpers
+export function validateEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
+}
+
+export function validatePhone(phone: string): boolean {
+  const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/
+  return phoneRegex.test(phone.replace(/\s/g, ''))
+}
+
+export function validateRequired(value: string): boolean {
+  return value.trim().length > 0
+}
+
+// API error handling
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public status: number,
+    public code?: string
+  ) {
+    super(message)
+    this.name = 'ApiError'
+  }
+}
+
+export async function handleApiResponse<T>(response: Response): Promise<T> {
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}))
+    throw new ApiError(
+      errorData.message || `HTTP ${response.status}: ${response.statusText}`,
+      response.status,
+      errorData.code
+    )
+  }
+  
+  return response.json()
+}
+
+// Retry mechanism for failed requests
+export async function retryAsync<T>(
+  fn: () => Promise<T>,
+  maxRetries = 3,
+  delay = 1000
+): Promise<T> {
+  let lastError: Error
+  
+  for (let i = 0; i <= maxRetries; i++) {
+    try {
+      return await fn()
+    } catch (error) {
+      lastError = error as Error
+      
+      if (i === maxRetries) {
+        throw lastError
+      }
+      
+      // Exponential backoff
+      await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)))
+    }
+  }
+  
+  throw lastError!
+}
+
+// Global error handler setup
+export function setupGlobalErrorHandling(): void {
+  if (typeof window === 'undefined') return
+  
+  const logger = ErrorLogger.getInstance()
+  
+  // Handle unhandled promise rejections
   window.addEventListener('unhandledrejection', (event) => {
-    errorHandler.handle(event.reason, { type: 'promise' })
+    logger.logError(new Error(`Unhandled Promise Rejection: ${event.reason}`))
+    event.preventDefault()
   })
+  
+  // Handle JavaScript errors
+  window.addEventListener('error', (event) => {
+    logger.logError(new Error(event.message), {
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+    })
+  })
+  
+  // Handle resource loading errors
+  window.addEventListener('error', (event) => {
+    if (event.target !== window) {
+      logger.logError(new Error(`Resource loading error: ${(event.target as any)?.src || 'Unknown resource'}`))
+    }
+  }, true)
 }
+
+import React from 'react'

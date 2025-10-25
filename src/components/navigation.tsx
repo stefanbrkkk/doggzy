@@ -81,9 +81,9 @@ export function Navigation() {
       
       <nav
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-200",
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
           isScrolled 
-            ? "glass backdrop-blur-md border-b border-white/20 shadow-lg" 
+            ? "glass-intense backdrop-blur-2xl border-b border-white/10 shadow-glass-xl" 
             : "bg-transparent"
         )}
         role="navigation"
@@ -92,11 +92,12 @@ export function Navigation() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2 group">
-            <div className="relative micro-bounce micro-glow">
-              <PawPrint className="h-8 w-8 text-orange-500 group-hover:text-red-500 transition-colors duration-200" />
+          <Link href="/" className="flex items-center space-x-3 group">
+            <div className="relative micro-bounce micro-glow animate-float">
+              <PawPrint className="h-9 w-9 text-orange-500 group-hover:text-red-500 transition-all duration-300 drop-shadow-lg" />
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-full blur-lg group-hover:blur-xl transition-all duration-300"></div>
             </div>
-            <span className="font-display text-2xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+            <span className="font-display text-2xl lg:text-3xl font-bold bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 bg-clip-text text-transparent animate-gradient-shift">
               Doggzy
             </span>
           </Link>
@@ -107,10 +108,11 @@ export function Navigation() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="relative group font-medium text-foreground/80 hover:text-orange-500 transition-colors duration-200 text-xs xl:text-sm 2xl:text-base whitespace-nowrap px-1 micro-float focus-ring"
+                className="relative group font-medium text-foreground/80 hover:text-orange-500 transition-all duration-300 text-sm xl:text-base whitespace-nowrap px-3 py-2 rounded-xl micro-float focus-ring backdrop-blur-sm hover:bg-white/5"
               >
                 {item.label}
-                <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 group-hover:w-full transition-all duration-200" />
+                <div className="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 group-hover:w-3/4 group-hover:left-1/8 transition-all duration-300 rounded-full" />
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-500/0 via-red-500/0 to-pink-500/0 group-hover:from-orange-500/10 group-hover:via-red-500/10 group-hover:to-pink-500/10 rounded-xl transition-all duration-300" />
               </Link>
             ))}
           </div>
@@ -163,14 +165,14 @@ export function Navigation() {
             
             <Link href="/favorites">
               <Button 
-                variant="ghost" 
+                variant="glass" 
                 size="icon" 
-                className="relative hover:scale-110 transition-transform duration-200"
+                className="relative hover:scale-110 transition-all duration-300 micro-glow"
                 aria-label="Favorites (3 items)"
               >
-                <Heart className="h-4 w-4 xl:h-5 xl:w-5" />
+                <Heart className="h-5 w-5 xl:h-6 xl:w-6" />
                 <div 
-                  className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 xl:h-5 xl:w-5 flex items-center justify-center animate-pulse"
+                  className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs rounded-full h-5 w-5 xl:h-6 xl:w-6 flex items-center justify-center animate-pulse-glow shadow-glow"
                   aria-hidden="true"
                 >
                   3
@@ -180,14 +182,14 @@ export function Navigation() {
 
             <Link href="/basket">
               <Button 
-                variant="ghost" 
+                variant="glass" 
                 size="icon" 
-                className="relative hover:scale-110 transition-transform duration-200"
+                className="relative hover:scale-110 transition-all duration-300 micro-glow"
                 aria-label="Shopping basket (2 items)"
               >
-                <ShoppingBag className="h-4 w-4 xl:h-5 xl:w-5" />
+                <ShoppingBag className="h-5 w-5 xl:h-6 xl:w-6" />
                 <div 
-                  className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full h-4 w-4 xl:h-5 xl:w-5 flex items-center justify-center animate-pulse" 
+                  className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs rounded-full h-5 w-5 xl:h-6 xl:w-6 flex items-center justify-center animate-pulse-glow shadow-glow" 
                   style={{ animationDelay: '0.5s' }}
                   aria-hidden="true"
                 >
@@ -197,8 +199,8 @@ export function Navigation() {
             </Link>
 
             <Link href="/donate">
-              <Button variant="glow" size="sm" className="hidden sm:flex hover:scale-105 transition-transform duration-200 text-xs xl:text-sm">
-                <Heart className="h-3 w-3 xl:h-4 xl:w-4 mr-1 xl:mr-2" />
+              <Button variant="glow" size="sm" className="hidden sm:flex hover:scale-105 transition-all duration-300 text-sm xl:text-base font-semibold">
+                <Heart className="h-4 w-4 xl:h-5 xl:w-5 mr-2" />
                 {t.nav.donateNow}
               </Button>
             </Link>
@@ -225,10 +227,10 @@ export function Navigation() {
 
       {/* Mobile Menu */}
       <div className={cn(
-        "lg:hidden bg-background/95 backdrop-blur-md border-t border-border transition-all duration-200 overflow-hidden",
+        "lg:hidden glass-intense backdrop-blur-2xl border-t border-white/10 transition-all duration-300 overflow-hidden shadow-glass-xl",
         isMobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
       )}>
-        <div className="container mx-auto px-4 py-4 space-y-3">
+        <div className="container mx-auto px-4 py-6 space-y-4">
           {navItems.map((item) => (
             <Link
               key={item.href}

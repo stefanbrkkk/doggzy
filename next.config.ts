@@ -50,6 +50,34 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      // Cache static assets
+      {
+        source: '/images/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/_next/static/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/videos/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
     ]
   },
   images: {
@@ -76,11 +104,28 @@ const nextConfig: NextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   experimental: {
-    optimizePackageImports: ['lucide-react', 'framer-motion'],
+    optimizePackageImports: ['lucide-react', 'framer-motion', '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
+    optimizeCss: true,
+    webVitalsAttribution: ['CLS', 'LCP'],
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
+  // Performance optimizations
+  compress: true,
+  poweredByHeader: false,
+  
+  // Bundle analyzer (conditional)
+  ...(process.env.ANALYZE === 'true' && {
+    webpack: (config: any) => {
+      config.plugins.push(
+        new (require('@next/bundle-analyzer')({
+          enabled: true,
+        }))()
+      );
+      return config;
+    },
+  }),
 };
 
 export default nextConfig;

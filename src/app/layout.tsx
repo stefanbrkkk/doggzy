@@ -3,6 +3,8 @@ import "./globals.css";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { initializeAccessibility } from "@/lib/accessibility";
+import { preloadCriticalResources } from "@/lib/performance";
 
 export const metadata: Metadata = {
   title: "Doggzy - Global Dog Rescue Charity | Donate & Shop to Save Lives",
@@ -60,19 +62,50 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Initialize accessibility and performance features
+  if (typeof window !== 'undefined') {
+    initializeAccessibility();
+    preloadCriticalResources();
+  }
+
   return (
     <html lang="en" className="scroll-smooth">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <meta name="theme-color" content="#ff6b35" />
+        <meta name="color-scheme" content="light dark" />
       </head>
-      <body className="min-h-screen bg-background text-foreground antialiased">
+      <body className="min-h-screen bg-background text-foreground antialiased focus:outline-none">
         <LanguageProvider>
+          {/* Skip to main content link */}
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-[100] bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold shadow-lg"
+          >
+            Skip to main content
+          </a>
+          
           <Navigation />
-          <main id="main-content" className="pt-16 lg:pt-20">
+          
+          <main 
+            id="main-content" 
+            className="pt-16 lg:pt-20"
+            role="main"
+            aria-label="Main content"
+          >
             {children}
           </main>
+          
           <Footer />
+          
+          {/* Live region for announcements */}
+          <div
+            id="live-region"
+            aria-live="polite"
+            aria-atomic="true"
+            className="sr-only"
+          />
         </LanguageProvider>
       </body>
     </html>

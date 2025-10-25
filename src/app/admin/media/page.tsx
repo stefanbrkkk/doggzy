@@ -135,29 +135,33 @@ export default function MediaManagement() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div className="space-y-8">
+      {/* Enhanced Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between animate-slide-up">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Upravljanje medijima</h1>
-          <p className="mt-2 text-gray-600">
-            Otpremite i organizujte slike, videe i druge fajlove za vaš sajt.
+          <h1 className="text-4xl lg:text-5xl font-display font-black bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-gradient-shift">
+            Upravljanje medijima
+          </h1>
+          <p className="mt-3 text-lg text-white/70 max-w-2xl">
+            Otpremite i organizujte slike, videe i druge fajlove za vaš sajt sa naprednim alatima za upravljanje.
           </p>
         </div>
-        <div className="mt-4 sm:mt-0">
+        <div className="mt-6 sm:mt-0 animate-slide-in-right">
           <Button
             onClick={() => fileInputRef.current?.click()}
-            className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
+            variant="glow"
+            size="lg"
+            className="hover:scale-105 transition-all duration-300 shadow-glow-lg"
             disabled={isUploading}
           >
             {isUploading ? (
               <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
                 Otpremanje...
               </>
             ) : (
               <>
-                <Upload className="h-4 w-4 mr-2" />
+                <Upload className="h-5 w-5 mr-3" />
                 Otpremi fajlove
               </>
             )}
@@ -173,108 +177,117 @@ export default function MediaManagement() {
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <ImageIcon className="h-5 w-5 text-blue-500" />
+      {/* Enhanced Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="glass-card border border-white/10 shadow-glass hover:shadow-glass-lg transition-all duration-300 group">
+          <CardContent className="p-6">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 rounded-2xl glass-subtle group-hover:scale-110 transition-all duration-300">
+                <ImageIcon className="h-6 w-6 text-blue-400 animate-pulse-glow" />
+              </div>
               <div>
-                <p className="text-sm text-gray-600">Slike</p>
-                <p className="text-lg font-semibold">{mediaFiles.filter(f => f.type === 'image').length}</p>
+                <p className="text-sm font-semibold text-white/60 uppercase tracking-wider">Slike</p>
+                <p className="text-2xl font-bold text-white">{mediaFiles.filter(f => f.type === 'image').length}</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Video className="h-5 w-5 text-green-500" />
+        <Card className="glass-card border border-white/10 shadow-glass hover:shadow-glass-lg transition-all duration-300 group">
+          <CardContent className="p-6">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 rounded-2xl glass-subtle group-hover:scale-110 transition-all duration-300">
+                <Video className="h-6 w-6 text-green-400 animate-pulse-glow" />
+              </div>
               <div>
-                <p className="text-sm text-gray-600">Videi</p>
-                <p className="text-lg font-semibold">{mediaFiles.filter(f => f.type === 'video').length}</p>
+                <p className="text-sm font-semibold text-white/60 uppercase tracking-wider">Videi</p>
+                <p className="text-2xl font-bold text-white">{mediaFiles.filter(f => f.type === 'video').length}</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <File className="h-5 w-5 text-purple-500" />
+        <Card className="glass-card border border-white/10 shadow-glass hover:shadow-glass-lg transition-all duration-300 group">
+          <CardContent className="p-6">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 rounded-2xl glass-subtle group-hover:scale-110 transition-all duration-300">
+                <File className="h-6 w-6 text-purple-400 animate-pulse-glow" />
+              </div>
               <div>
-                <p className="text-sm text-gray-600">Dokumenti</p>
-                <p className="text-lg font-semibold">{mediaFiles.filter(f => f.type === 'document').length}</p>
+                <p className="text-sm font-semibold text-white/60 uppercase tracking-wider">Dokumenti</p>
+                <p className="text-2xl font-bold text-white">{mediaFiles.filter(f => f.type === 'document').length}</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Upload className="h-5 w-5 text-orange-500" />
+        <Card className="glass-card border border-white/10 shadow-glass hover:shadow-glass-lg transition-all duration-300 group">
+          <CardContent className="p-6">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 rounded-2xl glass-subtle group-hover:scale-110 transition-all duration-300">
+                <Upload className="h-6 w-6 text-orange-400 animate-pulse-glow" />
+              </div>
               <div>
-                <p className="text-sm text-gray-600">Ukupno</p>
-                <p className="text-lg font-semibold">{mediaFiles.length}</p>
+                <p className="text-sm font-semibold text-white/60 uppercase tracking-wider">Ukupno</p>
+                <p className="text-2xl font-bold text-white">{mediaFiles.length}</p>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Controls */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-            <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+      {/* Enhanced Controls */}
+      <Card className="glass-card border border-white/10 shadow-glass-lg">
+        <CardContent className="p-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-6 sm:space-y-0">
+            <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-white/40" />
                 <Input
                   placeholder="Pretraži fajlove..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 w-full sm:w-64"
+                  className="pl-12 w-full sm:w-80 h-12 glass-subtle border border-white/20 rounded-xl text-white placeholder:text-white/40 focus:border-orange-500 focus:ring-orange-500"
                 />
               </div>
               <select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                className="px-4 py-3 h-12 glass-subtle border border-white/20 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white bg-transparent backdrop-blur-sm"
               >
                 {categories.map(category => (
-                  <option key={category.value} value={category.value}>
+                  <option key={category.value} value={category.value} className="bg-slate-800">
                     {category.label}
                   </option>
                 ))}
               </select>
             </div>
             
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-4">
               {selectedFiles.length > 0 && (
                 <Button
                   variant="destructive"
                   size="sm"
                   onClick={handleBulkDelete}
+                  className="hover:scale-105 transition-all duration-300 shadow-glow"
                 >
-                  <Trash2 className="h-4 w-4 mr-2" />
+                  <Trash2 className="h-5 w-5 mr-2" />
                   Obriši ({selectedFiles.length})
                 </Button>
               )}
-              <div className="flex border border-gray-300 rounded-lg">
+              <div className="flex glass-subtle border border-white/20 rounded-xl overflow-hidden">
                 <Button
-                  variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                  variant={viewMode === 'grid' ? 'glow' : 'ghost'}
                   size="sm"
                   onClick={() => setViewMode('grid')}
-                  className="rounded-r-none"
+                  className="rounded-none border-0 hover:scale-105 transition-all duration-300"
                 >
-                  <Grid className="h-4 w-4" />
+                  <Grid className="h-5 w-5" />
                 </Button>
                 <Button
-                  variant={viewMode === 'list' ? 'default' : 'ghost'}
+                  variant={viewMode === 'list' ? 'glow' : 'ghost'}
                   size="sm"
                   onClick={() => setViewMode('list')}
-                  className="rounded-l-none"
+                  className="rounded-none border-0 hover:scale-105 transition-all duration-300"
                 >
-                  <List className="h-4 w-4" />
+                  <List className="h-5 w-5" />
                 </Button>
               </div>
             </div>
@@ -282,27 +295,32 @@ export default function MediaManagement() {
         </CardContent>
       </Card>
 
-      {/* Media Grid/List */}
-      <Card>
-        <CardContent className="p-6">
+      {/* Enhanced Media Grid/List */}
+      <Card className="glass-card border border-white/10 shadow-glass-lg">
+        <CardContent className="p-8">
           {filteredFiles.length === 0 ? (
-            <div className="text-center py-12">
-              <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <div className="text-center py-16 animate-slide-up">
+              <div className="relative mb-8">
+                <Upload className="h-20 w-20 text-white/40 mx-auto animate-float" />
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-full blur-xl"></div>
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-4">
                 {searchQuery || filterCategory !== 'all' ? 'Nema rezultata' : 'Nema otpremljenih fajlova'}
               </h3>
-              <p className="text-gray-500 mb-4">
+              <p className="text-white/70 mb-8 text-lg max-w-md mx-auto">
                 {searchQuery || filterCategory !== 'all' 
                   ? 'Pokušajte sa drugačijim kriterijumima pretrage.'
-                  : 'Otpremite prvi fajl da počnete.'
+                  : 'Otpremite prvi fajl da počnete sa upravljanjem medijima.'
                 }
               </p>
               {!searchQuery && filterCategory === 'all' && (
                 <Button
                   onClick={() => fileInputRef.current?.click()}
-                  variant="outline"
+                  variant="glow"
+                  size="lg"
+                  className="hover:scale-105 transition-all duration-300"
                 >
-                  <Plus className="h-4 w-4 mr-2" />
+                  <Plus className="h-5 w-5 mr-3" />
                   Otpremi fajlove
                 </Button>
               )}
