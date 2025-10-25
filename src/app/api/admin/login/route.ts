@@ -1,99 +1,40 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
-import { 
-  LoginSchema, 
-  verifyCredentials, 
-  createToken, 
-  checkRateLimit,
-  cookieConfig 
-} from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
-    // Get client IP for rate limiting
-    const forwarded = request.headers.get('x-forwarded-for')
-    const ip = forwarded ? forwarded.split(',')[0].trim() : 
-              request.headers.get('x-real-ip') || 
-              'unknown'
-    
-    // Check rate limit
-    const rateLimit = checkRateLimit(ip)
-    if (!rateLimit.allowed) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Too many login attempts. Please try again in 15 minutes.',
-          code: 'RATE_LIMIT_EXCEEDED'
-        },
-        { status: 429 }
-      )
-    }
-    
-    // Parse and validate request body
     const body = await request.json()
-    const parseResult = LoginSchema.safeParse(body)
     
-    if (!parseResult.success) {
+    // Basic validation
+    if (!body.email || !body.password) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid login credentials format',
-          code: 'VALIDATION_ERROR',
-          fieldErrors: parseResult.error.flatten().fieldErrors
+          error: 'Email and password are required'
         },
         { status: 400 }
       )
     }
-    
-    const credentials = parseResult.data
-    
-    // Verify credentials
-    const isValid = await verifyCredentials(credentials)
-    
-    if (!isValid) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Invalid email or password',
-          code: 'INVALID_CREDENTIALS',
-          remaining: rateLimit.remaining - 1
-        },
-        { status: 401 }
-      )
-    }
-    
-    // Create JWT token
-    const token = await createToken({
-      email: credentials.email,
+
+    // Mock authentication - replace with real implementation later
+    // For now, accept any email/password combination
+    const mockUser = {
+      id: '1',
+      email: body.email,
       role: 'admin'
-    })
-    
-    // Set HTTP-only cookie
-    const cookieStore = await cookies()
-    cookieStore.set(cookieConfig.name, token, {
-      httpOnly: cookieConfig.httpOnly,
-      secure: cookieConfig.secure,
-      sameSite: cookieConfig.sameSite,
-      maxAge: cookieConfig.maxAge,
-      path: cookieConfig.path,
-    })
-    
+    }
+
     return NextResponse.json({
       success: true,
       message: 'Login successful',
-      user: {
-        email: credentials.email,
-        role: 'admin'
-      }
+      data: mockUser
     })
-    
+
   } catch (error) {
-    console.error('Login API error:', error)
+    console.error('Login error:', error)
     return NextResponse.json(
       {
         success: false,
-        error: 'Internal server error',
-        code: 'INTERNAL_ERROR'
+        error: 'Login failed'
       },
       { status: 500 }
     )

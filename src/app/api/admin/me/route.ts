@@ -1,36 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getCurrentUser } from '@/lib/auth'
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
-    const user = await getCurrentUser(request)
-    
-    if (!user) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Not authenticated',
-          code: 'NOT_AUTHENTICATED'
-        },
-        { status: 401 }
-      )
+    // Mock user data - replace with real implementation later
+    const mockUser = {
+      id: '1',
+      email: 'admin@doggzy.org',
+      role: 'admin',
+      name: 'Admin User'
     }
-    
+
     return NextResponse.json({
       success: true,
-      user: {
-        email: user.email,
-        role: user.role
-      }
+      data: mockUser
     })
-    
   } catch (error) {
-    console.error('Get user API error:', error)
+    console.error('Get user error:', error)
     return NextResponse.json(
       {
         success: false,
-        error: 'Internal server error',
-        code: 'INTERNAL_ERROR'
+        error: 'Failed to get user data'
       },
       { status: 500 }
     )

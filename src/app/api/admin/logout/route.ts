@@ -1,25 +1,17 @@
-import { NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
-import { cookieConfig } from '@/lib/auth'
+import { NextRequest, NextResponse } from 'next/server'
 
-export async function POST() {
+export async function POST(_request: NextRequest) {
   try {
-    // Clear the authentication cookie
-    const cookieStore = await cookies()
-    cookieStore.delete(cookieConfig.name)
-    
     return NextResponse.json({
       success: true,
-      message: 'Logged out successfully'
+      message: 'Logout successful'
     })
-    
   } catch (error) {
-    console.error('Logout API error:', error)
+    console.error('Logout error:', error)
     return NextResponse.json(
       {
         success: false,
-        error: 'Internal server error',
-        code: 'INTERNAL_ERROR'
+        error: 'Logout failed'
       },
       { status: 500 }
     )
