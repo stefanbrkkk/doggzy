@@ -105,7 +105,6 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion', '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
-    optimizeCss: true,
     webVitalsAttribution: ['CLS', 'LCP'],
   },
   compiler: {

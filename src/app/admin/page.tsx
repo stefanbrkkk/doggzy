@@ -12,7 +12,8 @@ import {
   Edit,
   Eye,
   Calendar,
-  Clock
+  Clock,
+  Settings
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -304,7 +305,6 @@ export default function AdminDashboard() {
               </div>
             </CardContent>
           </Card>
-        </div>
         </div>
       </div>
 

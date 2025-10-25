@@ -38,7 +38,7 @@ export class FocusManager {
   }
 
   // Trap focus within an element
-  trapFocus(element: HTMLElement): void {
+  trapFocus(element: HTMLElement): (() => void) | void {
     const focusableElements = this.getFocusableElements(element)
     if (focusableElements.length === 0) return
 
