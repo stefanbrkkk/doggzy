@@ -105,7 +105,10 @@ export function DonateForm() {
     <div className="space-y-6 rounded-5xl border border-line bg-elevated p-6 sm:p-8">
       <fieldset>
         <legend className="text-sm font-medium text-ink">Koliko?</legend>
-        <ul className="mt-4 grid grid-cols-3 gap-2">
+        {/* Two columns on the narrowest phones: at 320px a third of the row is
+            80px and the widest amount renders 84px, so the figure spilled
+            outside its own pill. */}
+        <ul className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
           {AMOUNTS.map((value) => {
             const active = !custom && amount === value
             return (
@@ -161,7 +164,10 @@ export function DonateForm() {
 
       <fieldset>
         <legend className="text-sm font-medium text-ink">Koliko često?</legend>
-        <div className="mt-3 grid grid-cols-2 gap-2">
+        {/* One column below `sm`: half of a 320px viewport leaves 49px for the
+            label, and „Jednokratno” is 75px — the word painted outside its own
+            border. */}
+        <div className="mt-3 grid gap-2 sm:grid-cols-2">
           <FrequencyOption
             active={!recurring}
             onClick={() => setRecurring(false)}
@@ -329,7 +335,9 @@ function FrequencyOption({
       <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-elevated text-brand">
         <Icon className="h-4 w-4" aria-hidden="true" />
       </span>
-      <span>
+      {/* `min-w-0`, so the labels wrap instead of pushing the button wider than
+          its grid column — at 320px the content ran 20px past the border. */}
+      <span className="min-w-0">
         <span className="block text-sm text-ink">{title}</span>
         <span className="block text-xs text-ink-subtle">{hint}</span>
       </span>

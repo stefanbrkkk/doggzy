@@ -78,7 +78,15 @@ export function PhoneFrame({
           onPointerLeave={reset}
           onPointerCancel={reset}
           style={{ rotateX, rotateY }}
-          className="relative [transform-style:preserve-3d]"
+          // Flat, not `preserve-3d`. Nothing inside the frame carries its own
+          // 3D transform — body, bezel, screen and side hardware are coplanar —
+          // so the perspective-projected tilt renders pixel-identically either
+          // way. With `preserve-3d` Chromium hit-tests the screen subtree
+          // against a plane that does not match where it paints: with the
+          // pointer resting inside the phone (which is unavoidable to reach any
+          // control) more than half the report flow stopped responding to
+          // clicks, and the aim point landed on the phone body instead.
+          className="relative"
         >
           {/* Titanium body */}
           <div

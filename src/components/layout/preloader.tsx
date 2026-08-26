@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, animate, motion } from 'framer-motion'
 import { duration, ease } from '@/lib/motion'
 import { lockScroll, safeStorage } from '@/lib/scroll-lock'
@@ -46,6 +46,18 @@ export function Preloader() {
   const reduced = useReducedMotionSafe()
   const [open, setOpen] = useState(true)
   const [progress, setProgress] = useState(0)
+  /**
+   * Released when the panels have finished lifting, not when they start.
+   * `setOpen(false)` only begins a ~1.4s exit, and releasing there left the
+   * page scrollable while the curtain still covered it.
+   */
+  const releaseScrollRef = useRef<(() => void) | null>(null)
+
+  const releaseScrollLock = useCallback(() => {
+    document.documentElement.style.overflow = ''
+    releaseScrollRef.current?.()
+    releaseScrollRef.current = null
+  }, [])
 
   useEffect(() => {
     const root = document.documentElement
@@ -57,6 +69,7 @@ export function Preloader() {
 
     /** Retire the curtain without animating it. */
     const skip = () => {
+      root.style.overflow = ''
       root.classList.add('preloaded')
       safeStorage.set('session', SESSION_KEY, '1')
       setOpen(false)
@@ -64,6 +77,7 @@ export function Preloader() {
     }
 
     if (root.classList.contains('preloaded')) {
+      root.style.overflow = ''
       setOpen(false)
       return
     }
@@ -75,7 +89,7 @@ export function Preloader() {
       return
     }
 
-    const releaseScroll = lockScroll()
+    releaseScrollRef.current = lockScroll()
     const mountedAt = performance.now()
 
     let finished = false
@@ -97,7 +111,6 @@ export function Preloader() {
           window.setTimeout(() => {
             root.classList.add('preloaded')
             safeStorage.set('session', SESSION_KEY, '1')
-            releaseScroll()
             setOpen(false)
             // The hero waits for this before starting its entrance, so its
             // choreography is not spent behind an opaque panel.
@@ -126,12 +139,12 @@ export function Preloader() {
       controls.stop()
       window.clearTimeout(ceiling)
       window.clearTimeout(pending)
-      releaseScroll()
+      releaseScrollLock()
     }
-  }, [reduced])
+  }, [reduced, releaseScrollLock])
 
   return (
-    <AnimatePresence>
+    <AnimatePresence onExitComplete={releaseScrollLock}>
       {open ? (
         <div data-preloader className="fixed inset-0 z-[300] grid place-items-center">
           {/* One announcement, not a stream. `role="status"` lives on this span
@@ -194,7 +207,14 @@ export function Preloader() {
 }
 
 /**
- * Runs before first paint. Keeps returning visitors from seeing the curtain at
- * all, and gives the CSS a hook to hide it without waiting for React.
+ * Runs before first paint.
+ *
+ * Two jobs. It keeps returning visitors from seeing the curtain at all, and it
+ * locks scrolling for everyone else — the curtain is server-rendered and on
+ * screen from first paint, but `lockScroll` cannot run until hydration, and
+ * Lenis was happily scrolling the page underneath it in the meantime. The
+ * component clears the inline style when it retires the curtain; the timeout is
+ * the failsafe for a bundle that never arrives, and outlives the CSS animation
+ * that hides the overlay so the two cannot leave a locked, empty page.
  */
-export const preloaderScript = `(function(){try{if(sessionStorage.getItem('${SESSION_KEY}')){document.documentElement.classList.add('preloaded')}}catch(e){}})();`
+export const preloaderScript = `(function(){var d=document.documentElement;try{if(sessionStorage.getItem('${SESSION_KEY}')){d.classList.add('preloaded');return}}catch(e){}d.style.overflow='clip';setTimeout(function(){d.style.overflow=''},${DEADLINE_MS + 2500});})();`

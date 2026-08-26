@@ -37,6 +37,11 @@ export function ContactForm() {
   const submit = async (event: React.FormEvent) => {
     event.preventDefault()
 
+    // Cleared before validating, not after sending. A failed send left its
+    // alert on screen through the next submit, so a form that never reached the
+    // network still told the visitor the send had failed.
+    setStatus((current) => (current === 'error' ? 'idle' : current))
+
     const parsed = contactSchema.safeParse(values)
     if (!parsed.success) {
       const next: Errors = {}

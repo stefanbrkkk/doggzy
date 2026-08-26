@@ -76,6 +76,13 @@ export function CartDrawer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCartOpen])
 
+  // Emptying the cart unmounts whichever stepper or trash button had focus and
+  // swaps the list for <EmptyCart>, so focus falls to <body> — outside a dialog
+  // that is still open. Hand it back to the panel.
+  useEffect(() => {
+    if (isCartOpen && entries.length === 0) panelRef.current?.focus()
+  }, [entries.length, isCartOpen])
+
   const remainingForFreeShipping = Math.max(0, freeShippingThreshold - subtotal)
   const shippingProgress = Math.min(1, subtotal / freeShippingThreshold)
 

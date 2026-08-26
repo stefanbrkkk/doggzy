@@ -52,6 +52,14 @@ export function SiteHeader() {
     if (isCartOpen) setMenuOpen(false)
   }, [isCartOpen])
 
+  // Read by the menu effect's cleanup, which must not fight the drawer for
+  // focus. A ref, not the value: the cleanup closes over the render in which
+  // the menu opened, where the cart was still closed.
+  const isCartOpenRef = useRef(isCartOpen)
+  useEffect(() => {
+    isCartOpenRef.current = isCartOpen
+  }, [isCartOpen])
+
   // The mobile menu is a modal overlay, so it needs the full modal contract:
   // scroll lock, Escape, a focus trap, and focus handed back on close.
   useEffect(() => {
@@ -89,7 +97,11 @@ export function SiteHeader() {
     return () => {
       release()
       document.removeEventListener('keydown', onKey)
-      opener?.focus?.()
+      // Only when the menu itself is what closed. Opening the cart retires the
+      // menu, and this cleanup then ran ~9ms after the drawer had already
+      // focused its own panel — yanking focus back to the hamburger, outside
+      // the open dialog, where the drawer's Tab trap could not engage.
+      if (!isCartOpenRef.current) opener?.focus?.()
     }
   }, [menuOpen])
 

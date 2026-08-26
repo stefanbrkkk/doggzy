@@ -135,12 +135,18 @@ export default function AboutPage() {
       <section className="py-16">
         <Container>
           <SectionHeader eyebrow="Ko sve učestvuje" title="Tri strane, jedan dnevnik" />
-          <ul className="mt-12 grid gap-px overflow-hidden rounded-4xl border border-line bg-rule sm:grid-cols-3">
+          {/* Subgrid, like the transparency stat strip: "Skloništa i udruženja"
+              wraps to two lines while its neighbours do not, and without shared
+              tracks the three bodies stop sharing a baseline. */}
+          <ul className="mt-12 grid gap-px overflow-hidden rounded-4xl border border-line bg-rule sm:grid-cols-3 sm:grid-rows-[auto_auto_auto]">
             {PARTNERS.map((partner, index) => {
               const Icon = partner.icon
               return (
-                <li key={partner.title} className="bg-elevated p-7">
-                  <Reveal delay={index * 0.06}>
+                <li
+                  key={partner.title}
+                  className="grid bg-elevated p-7 sm:row-span-3 sm:grid-rows-subgrid"
+                >
+                  <Reveal delay={index * 0.06} className="grid sm:row-span-3 sm:grid-rows-subgrid">
                     <Icon className="h-5 w-5 text-brand" aria-hidden="true" />
                     <h3 className="mt-4 text-headline text-ink">{partner.title}</h3>
                     <p className="mt-2 text-sm leading-relaxed text-ink-muted">{partner.body}</p>

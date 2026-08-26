@@ -87,7 +87,9 @@ export default async function DogPage({ params }: { params: Promise<{ slug: stri
               </div>
             </Reveal>
 
-            <div className="space-y-8">
+            {/* Capped through the 768-1023px band, where the grid is still one
+                column and the prose ran to 130 characters per line. */}
+            <div className="max-w-2xl space-y-8 lg:max-w-none">
               <Reveal direction="up" delay={0.06}>
                 <div className="space-y-4">
                   <Badge

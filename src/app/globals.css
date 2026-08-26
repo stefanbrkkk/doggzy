@@ -551,6 +551,14 @@
     scroll-behavior: auto !important;
   }
 
+  /* Lenis' own stylesheet is not imported — these are the two rules from it
+     that matter. `lenis-stopped` is set by `lenis.stop()`, which `lockScroll`
+     calls: without it the driver stops but the document stays scrollable by
+     keyboard and scrollbar. */
+  .lenis.lenis-stopped {
+    overflow: clip;
+  }
+
   .lenis.lenis-stopped {
     overflow: hidden;
   }

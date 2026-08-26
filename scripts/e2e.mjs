@@ -1084,6 +1084,203 @@ await group('Staklene površine stvarno zamućuju pozadinu', async () => {
   await page.close()
 })
 
+// --------------------------------------------------------- zaključan skrol --
+await group('Modali stvarno zaustavljaju skrol, ne samo overflow', async () => {
+  const page = await context.newPage()
+  await page.goto(`${BASE}/prodavnica`, { waitUntil: 'load' })
+  await sleep(900)
+  await resetStore(page)
+
+  await page.locator('button:has-text("Dodaj u korpu")').first().click()
+  await sleep(900)
+  check('korpa je otvorena', await page.locator('[role="dialog"][aria-label="Korpa"]').isVisible())
+
+  // `body { overflow: hidden }` alone does not stop Lenis, which drives
+  // window.scrollY programmatically — every overlay scrolled the page behind it.
+  const before = await page.evaluate(() => window.scrollY)
+  await page.mouse.wheel(0, 700)
+  await sleep(800)
+  const during = await page.evaluate(() => window.scrollY)
+  check('stranica se ne pomera iza korpe', during === before, `${before} → ${during}`)
+  check(
+    'pokretač skrola je zaustavljen',
+    await page.evaluate(() => document.documentElement.classList.contains('lenis-stopped')),
+  )
+
+  await page.keyboard.press('Escape')
+  await sleep(700)
+  check('pozicija je ista posle zatvaranja', (await page.evaluate(() => window.scrollY)) === before)
+  await page.mouse.wheel(0, 500)
+  await sleep(700)
+  check('skrol ponovo radi', (await page.evaluate(() => window.scrollY)) > before)
+
+  await resetStore(page)
+  await page.close()
+})
+
+await group('Zavesa ne pušta stranicu da se pomeri ispod nje', async () => {
+  const fresh = await browser.newContext({ viewport: { width: 1440, height: 900 } })
+  const page = await fresh.newPage()
+  await page.goto(`${BASE}/`, { waitUntil: 'commit' })
+  await sleep(500)
+  await page.mouse.wheel(0, 800)
+  await sleep(700)
+  const state = await page.evaluate(() => ({
+    y: window.scrollY,
+    curtain: document.querySelector('[data-preloader]') !== null,
+  }))
+  check('zavesa je još gore', state.curtain)
+  check('stranica je i dalje na vrhu', state.y === 0, `y=${state.y}`)
+  await fresh.close()
+})
+
+// ------------------------------------------------------- nagnut telefon -----
+await group('Nagnut telefon ostaje kliktabilan', async () => {
+  const page = await context.newPage()
+  await page.goto(`${BASE}/`, { waitUntil: 'load' })
+  await sleep(2500)
+
+  const screen = page.locator('[role="group"][aria-label="Prijava psa"]')
+  const option = screen.locator('button', { hasText: 'Nestao mi je pas' }).first()
+  await option.hover()
+  await sleep(600)
+  await option.click()
+  await sleep(400)
+  // The tilt only exists once the pointer is inside the frame, which is
+  // unavoidable to reach any control — and `transform-style: preserve-3d` made
+  // Chromium hit-test the screen against a plane that did not match the paint.
+  check(
+    'izbor prima klik dok je telefon nagnut',
+    (await option.getAttribute('aria-pressed')) === 'true',
+  )
+
+  const dead = await page.evaluate(() => {
+    const node = document.querySelector('[role="group"][aria-label="Prijava psa"]')
+    const rect = node.getBoundingClientRect()
+    let total = 0
+    let bad = 0
+    for (let i = 1; i <= 9; i += 1) {
+      for (let j = 1; j <= 11; j += 1) {
+        total += 1
+        const x = rect.left + (rect.width * i) / 10
+        const y = rect.top + (rect.height * j) / 12
+        if (!node.contains(document.elementFromPoint(x, y))) bad += 1
+      }
+    }
+    return Math.round((bad / total) * 100)
+  })
+  check('nema mrtve zone na ekranu telefona', dead === 0, `${dead}%`)
+
+  await screen.locator('button', { hasText: 'Dalje' }).first().click()
+  await sleep(600)
+  check('„Dalje” pomera korak', (await screen.innerText()).includes('Gde'))
+
+  await page.close()
+})
+
+// ------------------------------------------------------------- fokus --------
+await group('Fokus ostaje u otvorenom dijalogu', async () => {
+  const page = await context.newPage()
+  await page.goto(`${BASE}/prodavnica`, { waitUntil: 'load' })
+  await sleep(900)
+  await resetStore(page)
+
+  await page.locator('button[aria-label^="Brzi pregled"]').first().click()
+  await sleep(900)
+  // `focus()` on a `visibility: hidden` element is a no-op, so focusing the
+  // panel before it became visible left focus on the trigger outside.
+  check(
+    'brzi pregled preuzima fokus',
+    await page.evaluate(() => {
+      const dialog = document.querySelector('[role="dialog"]')
+      return Boolean(dialog && dialog.contains(document.activeElement))
+    }),
+  )
+  await page.keyboard.press('Escape')
+  await sleep(600)
+
+  await page.locator('button:has-text("Dodaj u korpu")').first().click()
+  await sleep(900)
+  await page.locator('button[aria-label^="Smanji količinu"]').first().click()
+  await sleep(800)
+  check(
+    'pražnjenje korpe ne ispušta fokus iz dijaloga',
+    await page.evaluate(() => {
+      const dialog = document.querySelector('[role="dialog"][aria-label="Korpa"]')
+      return Boolean(dialog && dialog.contains(document.activeElement))
+    }),
+  )
+  await page.keyboard.press('Escape')
+  await resetStore(page)
+  await page.close()
+})
+
+// --------------------------------------------------- vidljive tvrdnje -------
+await group('Trake pokrivenosti se popune na svakom rasporedu', async () => {
+  const page = await context.newPage()
+  for (const width of [1024, 1280, 1440]) {
+    await page.setViewportSize({ width, height: 900 })
+    await page.goto(`${BASE}/psi`, { waitUntil: 'load' })
+    await sleep(700)
+    // Stepped rather than jumped: an instant scroll past a card never gives the
+    // observer a frame to report it.
+    await page.evaluate(async () => {
+      const end = document.body.scrollHeight
+      for (let y = 0; y <= end; y += 300) {
+        window.scrollTo(0, y)
+        await new Promise((resolve) => setTimeout(resolve, 90))
+      }
+    })
+    await sleep(1400)
+    const scales = await page.evaluate(() =>
+      [...document.querySelectorAll('.h-1\\.5.overflow-hidden > *')].map((node) =>
+        Number(new DOMMatrix(getComputedStyle(node).transform).a.toFixed(2)),
+      ),
+    )
+    check(
+      `trake se popune na ${width}px`,
+      scales.length > 0 && scales.every((scale) => scale > 0),
+      scales.join(' '),
+    )
+  }
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.close()
+})
+
+await group('Nijedno dugme ne seče sopstveni natpis', async () => {
+  const page = await context.newPage()
+  for (const width of [320, 360, 390, 640, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 900 })
+    for (const route of ['/prodavnica/ortopedski-lezaj', '/korpa', '/doniraj', '/kontakt']) {
+      await page.goto(`${BASE}${route}`, { waitUntil: 'load' })
+      await sleep(400)
+      const clipped = await page.evaluate(() =>
+        [...document.querySelectorAll('button, a')]
+          .filter((node) => !node.className.toString().includes('sr-only'))
+          .filter((node) => node.textContent?.trim())
+          .map((node) => ({ node, overflow: getComputedStyle(node).overflowX }))
+          // Two different defects, and two different tolerances. A control that
+          // hides its overflow eats the label outright, so any excess counts.
+          // One that shows it merely paints outside its border — and there a
+          // couple of pixels are routine, because `scrollWidth` also grows to
+          // cover a rotated child (the FAQ's plus icon) and sub-pixel layout.
+          // A word spilling out of its box is an order of magnitude larger.
+          .filter(({ node, overflow }) => {
+            const excess = node.scrollWidth - node.clientWidth
+            return overflow === 'visible' ? excess > 8 : excess > 1
+          })
+          .map(
+            ({ node, overflow }) =>
+              `${node.textContent.trim().slice(0, 18)} ${node.scrollWidth}>${node.clientWidth} (${overflow})`,
+          ),
+      )
+      check(`${route} @${width}`, clipped.length === 0, clipped.join(' | '))
+    }
+  }
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.close()
+})
+
 await context.close()
 await browser.close()
 

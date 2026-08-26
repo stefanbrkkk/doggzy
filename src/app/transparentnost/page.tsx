@@ -100,12 +100,18 @@ export default function TransparencyPage() {
 
       <section className="py-16">
         <Container>
-          <ul className="grid gap-px overflow-hidden rounded-4xl border border-line bg-rule sm:grid-cols-2">
+          {/* Same subgrid as the stat strip above: one title wraps and one does
+              not in every row, so without shared tracks the bodies sit 30px
+              apart. */}
+          <ul className="grid gap-px overflow-hidden rounded-4xl border border-line bg-rule sm:grid-cols-2 sm:grid-rows-[repeat(6,auto)]">
             {PRINCIPLES.map((principle, index) => {
               const Icon = principle.icon
               return (
-                <li key={principle.title} className="bg-elevated p-7">
-                  <Reveal delay={index * 0.05}>
+                <li
+                  key={principle.title}
+                  className="grid bg-elevated p-7 sm:row-span-3 sm:grid-rows-subgrid"
+                >
+                  <Reveal delay={index * 0.05} className="grid sm:row-span-3 sm:grid-rows-subgrid">
                     <Icon className="h-5 w-5 text-brand" aria-hidden="true" />
                     <h2 className="mt-4 text-headline text-ink">{principle.title}</h2>
                     <p className="mt-2 text-sm leading-relaxed text-ink-muted">{principle.body}</p>

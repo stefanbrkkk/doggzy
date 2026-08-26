@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { motion } from 'framer-motion'
+import { useRef } from 'react'
+import { motion, useInView } from 'framer-motion'
 import { ArrowUpRight, MapPin } from 'lucide-react'
 import { cn, formatRsd } from '@/lib/utils'
 import { duration, ease } from '@/lib/motion'
@@ -20,6 +21,9 @@ const STATUS_TONE: Record<Dog['status'], 'brand' | 'accent' | 'positive' | 'crit
 export function DogCard({ dog, className }: { dog: Dog; className?: string }) {
   const { cost, covered, progress } = dogNeedTotals(dog)
   const hasNeeds = dog.needs.length > 0
+
+  const trackRef = useRef<HTMLDivElement>(null)
+  const trackInView = useInView(trackRef, { once: true, margin: '0px 0px -8% 0px' })
 
   return (
     <motion.article
@@ -83,12 +87,17 @@ export function DogCard({ dog, className }: { dog: Dog; className?: string }) {
                   {formatRsd(covered)} / {formatRsd(cost)}
                 </span>
               </div>
-              <div className="h-1.5 overflow-hidden rounded-full bg-sunken">
+              {/* The track is observed, not the fill. `whileInView` on the
+                  fill gated its own reveal on an element that starts at
+                  `scaleX(0)` — a zero-area box inside an `overflow-hidden`
+                  parent, which the IntersectionObserver never reported as
+                  intersecting. The bar then stayed empty for good, printing 0%
+                  next to a label reading 59%. */}
+              <div ref={trackRef} className="h-1.5 overflow-hidden rounded-full bg-sunken">
                 <motion.div
                   className="h-full rounded-full bg-linear-to-r from-brand to-iris-400"
-                  initial={{ scaleX: 0 }}
-                  whileInView={{ scaleX: progress }}
-                  viewport={{ once: true }}
+                  initial={false}
+                  animate={{ scaleX: trackInView ? progress : 0 }}
                   style={{ originX: 0 }}
                   transition={{ duration: duration.epic, ease: ease.outExpo }}
                 />

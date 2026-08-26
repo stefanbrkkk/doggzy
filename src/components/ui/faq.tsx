@@ -40,7 +40,7 @@ export function Faq({ items, className }: { items: FaqItem[]; className?: string
                 onClick={() => setOpen(isOpen ? null : index)}
                 className="flex w-full items-start justify-between gap-6 py-5 text-left transition-colors hover:text-brand-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               >
-                <span className="text-base font-medium text-ink">{item.question}</span>
+                <span className="min-w-0 text-base font-medium text-ink">{item.question}</span>
                 <motion.span
                   aria-hidden="true"
                   animate={{ rotate: isOpen ? 45 : 0 }}

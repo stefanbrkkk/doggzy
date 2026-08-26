@@ -28,7 +28,13 @@ export function ProductPurchase({ product }: { product: Product }) {
         <div className="flex flex-wrap items-center gap-3">
           <Stepper value={quantity} onChange={setQuantity} label={product.name} />
 
-          <Button size="lg" onClick={add} className="flex-1">
+          <Button
+            size="lg"
+            onClick={add} // A real floor, so the row wraps instead of truncating: `buttonStyles`
+            // sets `overflow-hidden`, which zeroes a flex item's automatic
+            // minimum size, and the label was hard-clipped mid-word.
+            className="min-w-[13rem] flex-1"
+          >
             <ShoppingBag className="h-4 w-4" />
             Dodaj u korpu
           </Button>

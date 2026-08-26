@@ -162,6 +162,10 @@ export function ReportFlow({ onSubmit, className }: ReportFlowProps) {
   )
 
   const goNext = useCallback(async () => {
+    // Same reason as `goBack`: a failed send's alert must not outlive the
+    // attempt. Without this a validation-only press still showed it.
+    setStatus((current) => (current === 'error' ? 'idle' : current))
+
     if (!validateStep(step)) return
 
     if (step < 3) {

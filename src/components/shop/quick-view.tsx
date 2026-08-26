@@ -78,12 +78,20 @@ export function QuickView({
     )
   }, [animate, originRect, product, reduced, scope])
 
+  // Focus is taken only once the panel is visible. `focus()` on a
+  // `visibility: hidden` element is a no-op, so focusing it in the effect that
+  // opens the dialog left focus on the trigger outside — and the Tab trap below
+  // only engages when activeElement is inside the panel, so tabbing walked
+  // straight into the page behind the modal.
+  useEffect(() => {
+    if (product && ready) scope.current?.focus()
+  }, [product, ready, scope])
+
   useEffect(() => {
     if (!product) return
 
     restoreFocus.current = document.activeElement as HTMLElement | null
     const release = lockScroll()
-    scope.current?.focus()
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -208,7 +216,13 @@ export function QuickView({
               {product.inStock ? (
                 <div className="mt-auto flex flex-wrap items-center gap-3 pt-2">
                   <Stepper value={quantity} onChange={setQuantity} label={product.name} />
-                  <Button size="md" onClick={add} className="flex-1">
+                  <Button
+                    size="md"
+                    onClick={add} // A real floor, so the row wraps instead of truncating: `buttonStyles`
+                    // sets `overflow-hidden`, which zeroes a flex item's automatic
+                    // minimum size, and the label was hard-clipped mid-word.
+                    className="min-w-[12rem] flex-1"
+                  >
                     <ShoppingBag className="h-4 w-4" />
                     Dodaj u korpu
                   </Button>

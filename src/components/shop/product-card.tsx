@@ -89,7 +89,7 @@ export function ProductCard({
             ) : null}
 
             {product.badges.length > 0 ? (
-              <ul className="pointer-events-none absolute left-4 top-4 z-20 flex flex-wrap gap-1.5">
+              <ul className="pointer-events-none absolute inset-x-4 top-4 pr-11 z-20 flex flex-wrap gap-1.5">
                 {product.badges.map((badge) => (
                   <li key={badge}>
                     <Badge tone={BADGE_TONE[badge]} size="sm">
