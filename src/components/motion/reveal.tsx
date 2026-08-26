@@ -1,6 +1,6 @@
 'use client'
 
-import { type ElementType, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { duration, ease, viewportOnce } from '@/lib/motion'
@@ -24,7 +24,6 @@ export interface RevealProps {
   /** Multiplier on the travel distance, for tighter or looser reveals. */
   amount?: number
   blur?: boolean
-  as?: ElementType
 }
 
 /**
@@ -39,11 +38,9 @@ export function Reveal({
   delay = 0,
   amount = 1,
   blur = false,
-  as = 'div',
 }: RevealProps) {
   const reduced = useReducedMotion()
   const offset = OFFSET[direction]
-  const MotionTag = motion[as as 'div'] ?? motion.div
 
   const hidden = reduced
     ? { opacity: 0 }
@@ -59,7 +56,7 @@ export function Reveal({
     : { opacity: 1, x: 0, y: 0, ...(blur ? { filter: 'blur(0px)' } : {}) }
 
   return (
-    <MotionTag
+    <motion.div
       className={cn(className)}
       initial={hidden}
       whileInView={visible}
@@ -67,6 +64,6 @@ export function Reveal({
       transition={{ duration: duration.slow, ease: ease.outExpo, delay }}
     >
       {children}
-    </MotionTag>
+    </motion.div>
   )
 }

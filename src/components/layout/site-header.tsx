@@ -11,7 +11,7 @@ import {
   useScroll,
 } from 'framer-motion'
 import { Heart, Menu, ShoppingBag, X } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, plural } from '@/lib/utils'
 import { duration, ease, spring } from '@/lib/motion'
 import { primaryNav, routes, secondaryNav } from '@/config/site'
 import { useShop } from '@/lib/store/shop-store'
@@ -128,7 +128,11 @@ export function SiteHeader() {
               type="button"
               data-cart-target
               onClick={openCart}
-              aria-label={`Korpa${hydrated && itemCount ? `, ${itemCount} stavki` : ', prazna'}`}
+              aria-label={
+                hydrated && itemCount
+                  ? `Korpa, ${itemCount} ${plural(itemCount, 'stavka', 'stavke', 'stavki')}`
+                  : 'Korpa, prazna'
+              }
               className="relative grid h-10 w-10 place-items-center rounded-xl text-ink-muted transition-colors hover:bg-elevated hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
             >
               <ShoppingBag className="h-[18px] w-[18px]" />

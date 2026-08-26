@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, Star } from 'lucide-react'
-import { formatRsd } from '@/lib/utils'
+import { formatRsd, plural } from '@/lib/utils'
 import { routes } from '@/config/site'
 import { getProductBySlug, products, relatedProducts } from '@/content/products'
 import { Container } from '@/components/ui/section'
@@ -106,7 +106,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                       <Star className="h-4 w-4 fill-brand text-brand" aria-hidden="true" />
                       <span data-numeric>{product.rating.toFixed(1)}</span>
                       <span className="text-ink-subtle">
-                        (<span data-numeric>{product.reviews}</span> ocena)
+                        (<span data-numeric>{product.reviews}</span>{' '}
+                        {plural(product.reviews, 'ocena', 'ocene', 'ocena')})
                       </span>
                     </p>
                   </div>

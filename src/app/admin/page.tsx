@@ -10,7 +10,7 @@ import {
   ShoppingBag,
   Sparkles,
 } from 'lucide-react'
-import { formatRsd } from '@/lib/utils'
+import { formatRsd, plural } from '@/lib/utils'
 import { routes } from '@/config/site'
 import { getSession } from '@/lib/auth'
 import { isAuthConfigured } from '@/lib/auth-edge'
@@ -71,17 +71,17 @@ export default async function AdminPage() {
             <ul className="space-y-3">
               <Attention
                 ok={unverified.length === 0}
-                label={`${unverified.length} unosa bez dokaza`}
+                label={`${unverified.length} ${plural(unverified.length, 'unos', 'unosa', 'unosa')} bez dokaza`}
                 detail="Nepotvrđeni unosi su javno označeni, ali ih treba potkrepiti računom ili nalazom."
               />
               <Attention
                 ok={openNeeds.length === 0}
-                label={`${openNeeds.length} pasa sa nepokrivenim lečenjem`}
+                label={`${openNeeds.length} ${plural(openNeeds.length, 'pas', 'psa', 'pasa')} sa nepokrivenim lečenjem`}
                 detail={openNeeds.map((dog) => dog.name).join(', ') || 'Sve je pokriveno.'}
               />
               <Attention
                 ok={outOfStock.length === 0}
-                label={`${outOfStock.length} proizvoda van stanja`}
+                label={`${outOfStock.length} ${plural(outOfStock.length, 'proizvod', 'proizvoda', 'proizvoda')} van stanja`}
                 detail={outOfStock.map((product) => product.name).join(', ') || 'Sve je na stanju.'}
               />
             </ul>
@@ -132,10 +132,14 @@ export default async function AdminPage() {
                       <Badge size="sm">{statusLabels[dog.status]}</Badge>
                     </span>
                     <span className="flex items-center gap-4 text-xs text-ink-subtle">
-                      <span data-numeric>{dog.timeline.length} unosa</span>
+                      <span data-numeric>
+                        {dog.timeline.length}{' '}
+                        {plural(dog.timeline.length, 'unos', 'unosa', 'unosa')}
+                      </span>
                       {dogUnverified > 0 ? (
                         <span className="text-critical">
-                          <span data-numeric>{dogUnverified}</span> bez dokaza
+                          <span data-numeric>{dogUnverified}</span>{' '}
+                          {plural(dogUnverified, 'unos', 'unosa', 'unosa')} bez dokaza
                         </span>
                       ) : (
                         <span className="text-positive">sve potvrđeno</span>

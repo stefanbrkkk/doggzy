@@ -3,7 +3,7 @@
 import { useDeferredValue, useMemo, useState } from 'react'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import { Leaf, PackageCheck, Search, SlidersHorizontal, X } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, plural } from '@/lib/utils'
 import { duration, ease, spring } from '@/lib/motion'
 import { productCategories, products, type Product, type ProductCategory } from '@/content/products'
 import { ProductCard } from './product-card'
@@ -107,7 +107,9 @@ export function ShopClient() {
               />
             </div>
 
-            <div className="flex items-center gap-2">
+            {/* Scrolls sideways below lg instead of wrapping: at 390px the
+                toggles were breaking mid-word and squeezing the select. */}
+            <div className="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-0.5 [scrollbar-width:none] lg:mx-0 lg:overflow-visible lg:px-0 [&::-webkit-scrollbar]:hidden">
               <Toggle active={ecoOnly} onClick={() => setEcoOnly((value) => !value)} icon={Leaf}>
                 Eko
               </Toggle>
@@ -119,7 +121,7 @@ export function ShopClient() {
                 Na stanju
               </Toggle>
 
-              <div className="relative">
+              <div className="relative shrink-0">
                 <SlidersHorizontal
                   aria-hidden="true"
                   className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-subtle"
@@ -144,7 +146,7 @@ export function ShopClient() {
           </div>
 
           <LayoutGroup id="shop-categories">
-            <ul className="mt-3 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <ul className="mask-fade-x -mx-1 mt-3 flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none] sm:mask-none [&::-webkit-scrollbar]:hidden">
               {[ALL, ...productCategories].map((option) => {
                 const active = category === option
                 return (
@@ -154,7 +156,7 @@ export function ShopClient() {
                       onClick={() => setCategory(option)}
                       aria-pressed={active}
                       className={cn(
-                        'relative whitespace-nowrap rounded-full px-4 py-2 text-sm transition-colors',
+                        'relative shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm transition-colors',
                         active ? 'text-brand-ink' : 'text-ink-muted hover:text-ink',
                       )}
                     >
@@ -178,7 +180,7 @@ export function ShopClient() {
       <div className="flex items-center justify-between gap-4">
         <p className="text-sm text-ink-subtle" aria-live="polite">
           <span data-numeric>{visible.length}</span>{' '}
-          {visible.length === 1 ? 'proizvod' : visible.length < 5 ? 'proizvoda' : 'proizvoda'}
+          {plural(visible.length, 'proizvod', 'proizvoda', 'proizvoda')}
         </p>
         <AnimatePresence>
           {hasFilters ? (
@@ -232,7 +234,7 @@ function Toggle({
       onClick={onClick}
       aria-pressed={active}
       className={cn(
-        'flex h-11 items-center gap-2 rounded-xl border px-3.5 text-sm transition-colors',
+        'flex h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-xl border px-3.5 text-sm transition-colors',
         active
           ? 'border-brand bg-brand/12 text-brand-text'
           : 'border-line bg-sunken text-ink-muted hover:text-ink',

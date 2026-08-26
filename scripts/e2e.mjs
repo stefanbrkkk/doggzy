@@ -242,7 +242,7 @@ await group('Prodavnica: filtriranje, pretraga, korpa', async () => {
   const drawerOpen = await page.getByRole('dialog', { name: 'Korpa' }).isVisible()
   check('korpa se otvara posle dodavanja', drawerOpen)
 
-  const badge = await page.getByRole('button', { name: /Korpa, 1 stavki/ }).count()
+  const badge = await page.getByRole('button', { name: /Korpa, 1 stavka/ }).count()
   check('bedž u zaglavlju se ažurira', badge > 0)
 
   await page.getByRole('button', { name: 'Zatvori korpu' }).first().click()
@@ -251,7 +251,7 @@ await group('Prodavnica: filtriranje, pretraga, korpa', async () => {
   // Persistence across a reload is the whole point of the store.
   await page.reload({ waitUntil: 'load' })
   await sleep(900)
-  const persisted = await page.getByRole('button', { name: /Korpa, 1 stavki/ }).count()
+  const persisted = await page.getByRole('button', { name: /Korpa, 1 stavka/ }).count()
   check('korpa preživi osvežavanje', persisted > 0)
 
   check('prodavnica bez grešaka', watcher.errors.length === 0, watcher.errors.join(' | '))
