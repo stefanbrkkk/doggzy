@@ -24,7 +24,7 @@ import { Magnetic } from '@/components/motion'
 export function SiteHeader() {
   const pathname = usePathname()
   const reduced = useReducedMotion()
-  const { itemCount, favoriteIds, hydrated, openCart } = useShop()
+  const { itemCount, favoriteIds, hydrated, openCart, isCartOpen } = useShop()
 
   const [condensed, setCondensed] = useState(false)
   const [hidden, setHidden] = useState(false)
@@ -43,6 +43,14 @@ export function SiteHeader() {
   useEffect(() => {
     setMenuOpen(false)
   }, [pathname])
+
+  // The cart drawer is the topmost overlay, and the header sits above the menu
+  // so its cart button stays clickable while the menu is open. Retiring the
+  // menu when the cart opens keeps two modals off screen at once — otherwise a
+  // single Escape reaches both document-level handlers and closes both.
+  useEffect(() => {
+    if (isCartOpen) setMenuOpen(false)
+  }, [isCartOpen])
 
   // The mobile menu is a modal overlay, so it needs the full modal contract:
   // scroll lock, Escape, a focus trap, and focus handed back on close.

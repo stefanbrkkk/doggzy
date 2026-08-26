@@ -43,7 +43,7 @@ export function Reveal({
   const offset = OFFSET[direction]
 
   const hidden = reduced
-    ? { opacity: 0 }
+    ? { opacity: 0, x: 0, y: 0, ...(blur ? { filter: 'blur(0px)' } : {}) }
     : {
         opacity: 0,
         x: offset.x * amount,
@@ -51,9 +51,13 @@ export function Reveal({
         ...(blur ? { filter: 'blur(10px)' } : {}),
       }
 
-  const visible = reduced
-    ? { opacity: 1 }
-    : { opacity: 1, x: 0, y: 0, ...(blur ? { filter: 'blur(0px)' } : {}) }
+  // The target always carries `x`/`y`, reduced or not. The flag is false on the
+  // server and on the first client render, so the element is already committed
+  // with the full translate from `hidden`; a target that drops the axes has
+  // nothing to reset it and the offset becomes permanent — the whole footer
+  // stranded 32px low. Motion applies positional keys instantly under reduced
+  // motion, so keeping them costs no movement.
+  const visible = { opacity: 1, x: 0, y: 0, ...(blur ? { filter: 'blur(0px)' } : {}) }
 
   return (
     <motion.div

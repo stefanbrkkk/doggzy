@@ -8,7 +8,7 @@ import { cn, formatRsd } from '@/lib/utils'
 import { duration, ease, spring } from '@/lib/motion'
 import { routes } from '@/config/site'
 import { lockScroll } from '@/lib/scroll-lock'
-import { useShop } from '@/lib/store/shop-store'
+import { MAX_QTY, useShop } from '@/lib/store/shop-store'
 import { buttonStyles } from '@/components/ui/button'
 import { ProductArt } from '@/components/shop/product-art'
 
@@ -189,6 +189,7 @@ export function CartDrawer() {
                               value={entry.quantity}
                               onChange={(next) => setQuantity(entry.product.id, next)}
                               label={entry.product.name}
+                              min={0}
                             />
                             <button
                               type="button"
@@ -251,22 +252,36 @@ function Row({ label, value }: { label: string; value: string }) {
   )
 }
 
+/**
+ * Quantity control. Owns its own bounds rather than trusting each call site:
+ * the reducer clamps to MAX_QTY anyway, so a UI that can count past it just
+ * shows a total that will change by itself on the next page load.
+ *
+ * `min` is 0 inside the cart, where stepping below one line removes it, and 1
+ * on the product page and in quick view, where there is nothing to remove.
+ */
 export function Stepper({
   value,
   onChange,
   label,
+  min = 1,
 }: {
   value: number
   onChange: (next: number) => void
   label: string
+  min?: number
 }) {
+  const atMin = value <= min
+  const atMax = value >= MAX_QTY
+
   return (
     <div className="inline-flex items-center rounded-lg border border-line">
       <button
         type="button"
-        onClick={() => onChange(value - 1)}
+        onClick={() => onChange(Math.max(min, value - 1))}
+        disabled={atMin}
         aria-label={`Smanji količinu — ${label}`}
-        className="grid h-8 w-8 place-items-center rounded-l-lg text-ink-muted transition-colors hover:bg-sunken hover:text-ink"
+        className="grid h-8 w-8 place-items-center rounded-l-lg text-ink-muted transition-colors hover:bg-sunken hover:text-ink disabled:pointer-events-none disabled:opacity-40"
       >
         <Minus className="h-3.5 w-3.5" />
       </button>
@@ -275,9 +290,10 @@ export function Stepper({
       </span>
       <button
         type="button"
-        onClick={() => onChange(value + 1)}
+        onClick={() => onChange(Math.min(MAX_QTY, value + 1))}
+        disabled={atMax}
         aria-label={`Povećaj količinu — ${label}`}
-        className="grid h-8 w-8 place-items-center rounded-r-lg text-ink-muted transition-colors hover:bg-sunken hover:text-ink"
+        className="grid h-8 w-8 place-items-center rounded-r-lg text-ink-muted transition-colors hover:bg-sunken hover:text-ink disabled:pointer-events-none disabled:opacity-40"
       >
         <Plus className="h-3.5 w-3.5" />
       </button>

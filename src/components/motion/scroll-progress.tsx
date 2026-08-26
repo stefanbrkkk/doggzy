@@ -4,8 +4,10 @@ import { motion, useScroll, useSpring } from 'framer-motion'
 import { spring } from '@/lib/motion'
 
 /**
- * A hairline reading-progress bar pinned under the header. Uses scaleX on a
- * fixed element, so it never triggers layout while scrolling.
+ * The site-wide reading-progress hairline, pinned to the very top of the
+ * viewport above the header. Uses scaleX on a fixed element, so it never
+ * triggers layout while scrolling. Story pages rely on this one too — a second
+ * bar at the same origin only stacks into a two-tone line.
  */
 export function ScrollProgress() {
   const { scrollYProgress } = useScroll()

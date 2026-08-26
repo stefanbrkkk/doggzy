@@ -10,7 +10,6 @@ import { Container } from '@/components/ui/section'
 import { buttonStyles } from '@/components/ui/button'
 import { Reveal } from '@/components/motion'
 import { GenerativeArt } from '@/components/visuals/generative-art'
-import { ReadingProgress } from '@/components/ui/reading-progress'
 import { JsonLd } from '@/components/seo/json-ld'
 import { articleSchema, breadcrumbSchema } from '@/lib/structured-data'
 
@@ -61,8 +60,6 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
           ]),
         ]}
       />
-
-      <ReadingProgress />
 
       <article className="pb-24 pt-32 sm:pt-40">
         <Container size="narrow">

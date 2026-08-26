@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { chromium } from 'playwright'
+import { resolveChromium } from './chromium-path.mjs'
 import { setTimeout as sleep } from 'node:timers/promises'
 
 /**
@@ -101,7 +102,7 @@ function watch(page, label) {
 }
 
 const browser = await chromium.launch({
-  executablePath: process.env.CHROMIUM_PATH || undefined,
+  executablePath: resolveChromium(),
   args: [
     '--no-sandbox',
     '--no-proxy-server',
@@ -465,7 +466,9 @@ await group('Admin: zaštita i odbijanje pogrešnih podataka', async () => {
   })
   check(
     'prijava sa pogrešnim podacima ne uspeva',
-    login.status() === 401 || login.status() === 503,
+    // 429 counts: the limiter refusing to even try is still a refusal, and a
+    // suite run against a long-lived server legitimately reaches it.
+    [401, 429, 503].includes(login.status()),
     `status ${login.status()}`,
   )
 
@@ -497,7 +500,9 @@ await group('Admin: uspešna prijava, sesija i odjava', async () => {
     failOnStatusCode: false,
   })
   if (probe.status() === 429) {
-    console.log('  --   preskočeno (ograničenje pokušaja je aktivno; pokreni protiv svežeg servera)')
+    console.log(
+      '  --   preskočeno (ograničenje pokušaja je aktivno; pokreni protiv svežeg servera)',
+    )
     await page.close()
     return
   }
@@ -773,6 +778,222 @@ await group('Pristupačnost: preskoči na sadržaj, fokus, alt tekst', async () 
     (nodes) => nodes.length,
   )
   check('svaka ilustracija ima opis', imagesWithoutLabel === 0, `${imagesWithoutLabel} bez opisa`)
+
+  await page.close()
+})
+
+// ------------------------------------------------- kvantitet i granice ------
+await group('Količina se ne može podići iznad gornje granice', async () => {
+  const page = await context.newPage()
+  await page.goto(`${BASE}/prodavnica/poslastice-za-obuku`, { waitUntil: 'load' })
+  await sleep(700)
+  await resetStore(page)
+
+  const plus = page.locator('button[aria-label^="Povećaj količinu"]').first()
+  // Far past the 99 cap: the control must refuse rather than let the reducer
+  // trim the value later and change the total by itself on the next load.
+  for (let i = 0; i < 120; i += 1) {
+    if (await plus.isDisabled()) break
+    await plus.click()
+  }
+
+  const shown = Number(
+    await page
+      .locator('button[aria-label^="Povećaj količinu"]')
+      .first()
+      .locator('xpath=preceding-sibling::span[1]')
+      .innerText(),
+  )
+  check('brojač staje na 99', shown === 99, String(shown))
+  check('dugme „+” je onemogućeno na granici', await plus.isDisabled())
+
+  await page.getByRole('button', { name: 'Dodaj u korpu' }).first().click()
+  await sleep(600)
+  const readTotal = () =>
+    page
+      .locator('dt', { hasText: /^Ukupno$/ })
+      .first()
+      .locator('xpath=following-sibling::dd[1]')
+      .innerText()
+  const totalBefore = await readTotal()
+
+  await page.reload({ waitUntil: 'load' })
+  await sleep(900)
+  // The header retracts while scrolling down, and the browser restores the
+  // previous scroll position on reload — put it back on screen first.
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await sleep(700)
+  await page.locator('button[data-cart-target]').first().click()
+  await sleep(600)
+  const totalAfter = await readTotal()
+  check(
+    'ukupno se ne menja posle osvežavanja',
+    totalBefore === totalAfter,
+    `${totalBefore} → ${totalAfter}`,
+  )
+
+  await resetStore(page)
+  await page.close()
+})
+
+// ------------------------------------------------------- telo zahteva -------
+await group('Preveliki zahtevi se odbijaju pre učitavanja u memoriju', async () => {
+  const oversized = await context.request.post(`${BASE}/api/kontakt`, {
+    headers: { 'content-type': 'application/json' },
+    data: JSON.stringify({
+      name: 'A',
+      email: 'a@b.rs',
+      topic: 'opste',
+      message: 'x'.repeat(200_000),
+    }),
+    failOnStatusCode: false,
+  })
+  check(
+    '/api/kontakt odbija telo iznad granice sa 413',
+    oversized.status() === 413,
+    String(oversized.status()),
+  )
+
+  const ok = await context.request.post(`${BASE}/api/kontakt`, {
+    headers: { 'content-type': 'application/json' },
+    data: {
+      name: 'A',
+      email: 'a@b.rs',
+      topic: 'opste',
+      message: 'ne salji ovo, e2e provera granice',
+    },
+    failOnStatusCode: false,
+  })
+  check('normalan zahtev i dalje prolazi validaciju', ok.status() < 500, String(ok.status()))
+})
+
+// ------------------------------------------------------- bez skriptovanja ---
+await group('Sajt je čitljiv i kada se skripte ne izvrše', async () => {
+  const noScript = await browser.newContext({
+    viewport: { width: 1280, height: 900 },
+    javaScriptEnabled: false,
+  })
+  const page = await noScript.newPage()
+  await page.goto(`${BASE}/`, { waitUntil: 'load' })
+
+  const heading = await page.locator('h1').first().innerText()
+  check('naslov je serverski renderovan', heading.includes('Svaki dinar'), heading)
+
+  // The curtain is server-rendered. Without JS nothing in React can retire it,
+  // so the <noscript> rule has to.
+  const curtainVisible = await page.evaluate(() => {
+    const node = document.querySelector('[data-preloader]')
+    if (!node) return false
+    return getComputedStyle(node).display !== 'none'
+  })
+  check('zavesa se ne prikazuje bez skripti', curtainVisible === false)
+
+  await noScript.close()
+})
+
+// -------------------------------------------------------- ulazna animacija --
+await group('Hero čeka da se zavesa podigne', async () => {
+  const fresh = await browser.newContext({ viewport: { width: 1280, height: 900 } })
+  const page = await fresh.newPage()
+  await page.goto(`${BASE}/`, { waitUntil: 'commit' })
+
+  const liftedGlyphs = () =>
+    page.evaluate(
+      () =>
+        [...document.querySelectorAll('h1 span')].filter((node) => {
+          const t = getComputedStyle(node).transform
+          if (!t.startsWith('matrix(')) return false
+          return Math.abs(Number(t.slice(7, -1).split(',')[5])) > 1
+        }).length,
+    )
+
+  // While the curtain is up the headline glyphs are still under their mask.
+  const early = await page.evaluate(async () => {
+    const start = performance.now()
+    while (performance.now() - start < 2000) {
+      if (document.querySelector('[data-preloader]') && document.querySelector('h1 span'))
+        return true
+      await new Promise((resolve) => requestAnimationFrame(() => resolve()))
+    }
+    return false
+  })
+  check('zavesa se pojavljuje na prvoj poseti', early)
+
+  const maskedDuring = await liftedGlyphs()
+  check('naslov je još pod maskom dok zavesa stoji', maskedDuring > 0, `${maskedDuring} pomerenih`)
+
+  await sleep(6000)
+  const curtainGone = await page.evaluate(() => document.querySelector('[data-preloader]') === null)
+  check('zavesa nestaje', curtainGone)
+
+  const maskedAfter = await liftedGlyphs()
+  check(
+    'naslov je izašao iz maske posle zavese',
+    maskedAfter === 0,
+    `${maskedAfter} ostalo pomereno`,
+  )
+
+  await fresh.close()
+})
+
+// ------------------------------------------------- smanjene animacije: pozicija
+await group('Smanjene animacije ne ostavljaju pomerene elemente', async () => {
+  const reduced = await browser.newContext({
+    viewport: { width: 1280, height: 900 },
+    reducedMotion: 'reduce',
+  })
+  const page = await reduced.newPage()
+  await page.goto(`${BASE}/`, { waitUntil: 'load' })
+  await sleep(600)
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+  // Lenis animates programmatic scrolls, and every reveal on the way down
+  // starts as it arrives — wait for the page to actually come to rest.
+  await page.evaluate(async () => {
+    let last = -1
+    while (last !== window.scrollY) {
+      last = window.scrollY
+      await new Promise((resolve) => setTimeout(resolve, 250))
+    }
+  })
+  await sleep(1500)
+
+  const stranded = await page.evaluate(
+    () =>
+      [...document.querySelectorAll('footer *, main *')].filter((node) => {
+        const t = getComputedStyle(node).transform
+        if (!t.startsWith('matrix(')) return false
+        const parts = t.slice(7, -1).split(',').map(Number)
+        // Only a leftover translate counts; scales and rotations are deliberate.
+        return parts[0] === 1 && parts[3] === 1 && Math.abs(parts[5]) > 4
+      }).length,
+  )
+  check(
+    'nijedan element nije zaglavljen ispod svoje pozicije',
+    stranded === 0,
+    `${stranded} pomerenih`,
+  )
+
+  await reduced.close()
+})
+
+// ------------------------------------------------------ jedna traka napretka
+await group('Napredak čitanja se ne dupla', async () => {
+  const page = await context.newPage()
+  await page.goto(`${BASE}/price/cetrdeset-minuta`, { waitUntil: 'load' })
+  await sleep(700)
+  await page.evaluate(() => window.scrollTo(0, 1500))
+  await sleep(600)
+
+  const barsAtTop = await page.evaluate(
+    () =>
+      [...document.querySelectorAll('body *')].filter((node) => {
+        const style = getComputedStyle(node)
+        if (style.position !== 'fixed') return false
+        const rect = node.getBoundingClientRect()
+        return rect.top === 0 && rect.height > 0 && rect.height <= 4 && rect.width > 200
+      }).length,
+  )
+  check('samo jedna traka stoji na vrhu', barsAtTop === 1, `${barsAtTop} traka`)
 
   await page.close()
 })

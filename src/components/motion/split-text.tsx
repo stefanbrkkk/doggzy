@@ -3,7 +3,7 @@
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import { duration, ease, viewportOnce } from '@/lib/motion'
+import { glyphRise, stagger as staggerVariants, viewportOnce } from '@/lib/motion'
 import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
 export interface SplitTextProps {
@@ -13,8 +13,12 @@ export interface SplitTextProps {
   by?: 'char' | 'word'
   delay?: number
   stagger?: number
-  /** Reveal on mount instead of waiting for the viewport. */
-  immediate?: boolean
+  /**
+   * `view` (default) reveals when scrolled into view, `mount` reveals straight
+   * away, and `hold` stays masked until it is switched to `mount` — that last
+   * one is how the hero keeps its entrance from playing behind the preloader.
+   */
+  trigger?: 'view' | 'mount' | 'hold'
   as?: 'h1' | 'h2' | 'h3' | 'p' | 'span' | 'div'
 }
 
@@ -38,7 +42,7 @@ export function SplitText({
   by = 'char',
   delay = 0,
   stagger,
-  immediate = false,
+  trigger = 'view',
   as: Tag = 'span',
 }: SplitTextProps) {
   const reduced = useReducedMotionSafe()
@@ -68,19 +72,12 @@ export function SplitText({
     return <Tag className={className}>{children}</Tag>
   }
 
-  const container = {
-    hidden: {},
-    visible: { transition: { delayChildren: delay, staggerChildren: step } },
-  }
+  const container = staggerVariants(step, delay)
 
-  const glyph = {
-    hidden: { y: '115%' },
-    visible: { y: '0%', transition: { duration: duration.epic, ease: ease.outExpo } },
-  }
-
-  const animationProps = immediate
-    ? { animate: 'visible' as const }
-    : { whileInView: 'visible' as const, viewport: viewportOnce }
+  const animationProps =
+    trigger === 'view'
+      ? { whileInView: 'visible' as const, viewport: viewportOnce }
+      : { animate: trigger === 'mount' ? ('visible' as const) : ('hidden' as const) }
 
   return (
     <Tag className={cn('inline', className)} aria-label={children}>
@@ -97,13 +94,13 @@ export function SplitText({
               {by === 'char' ? (
                 <span className="inline-block">
                   {entry.graphemes.map((grapheme) => (
-                    <motion.span key={grapheme.key} className="inline-block" variants={glyph}>
+                    <motion.span key={grapheme.key} className="inline-block" variants={glyphRise}>
                       {grapheme.char}
                     </motion.span>
                   ))}
                 </span>
               ) : (
-                <motion.span className="inline-block" variants={glyph}>
+                <motion.span className="inline-block" variants={glyphRise}>
                   {entry.word}
                 </motion.span>
               )}

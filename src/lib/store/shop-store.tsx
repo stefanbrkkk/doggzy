@@ -15,7 +15,13 @@ import { getProduct, type Product } from '@/content/products'
 import { safeStorage } from '@/lib/scroll-lock'
 
 const STORAGE_KEY = 'doggzy.shop.v1'
-const MAX_QTY = 99
+/**
+ * Ceiling for a single cart line. Exported so the UI can refuse to express a
+ * quantity the reducer would silently trim — an over-cap value used to survive
+ * in memory and in localStorage and then get rewritten on the next load, so the
+ * order total changed with no user action.
+ */
+export const MAX_QTY = 99
 
 export interface CartLine {
   productId: string
@@ -67,7 +73,10 @@ function reducer(state: ShopState, action: Action): ShopState {
           // a large quantity to an empty cart stored an over-cap value that
           // parsePersisted then silently trimmed on the next reload — the total
           // dropped with no explanation.
-          { productId: action.productId, quantity: Math.min(MAX_QTY, action.quantity) },
+          {
+            productId: action.productId,
+            quantity: Math.min(MAX_QTY, Math.max(1, Math.round(action.quantity))),
+          },
         ],
       }
     }

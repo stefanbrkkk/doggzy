@@ -207,11 +207,7 @@ export function QuickView({
 
               {product.inStock ? (
                 <div className="mt-auto flex flex-wrap items-center gap-3 pt-2">
-                  <Stepper
-                    value={quantity}
-                    onChange={(next) => setQuantity(Math.max(1, next))}
-                    label={product.name}
-                  />
+                  <Stepper value={quantity} onChange={setQuantity} label={product.name} />
                   <Button size="md" onClick={add} className="flex-1">
                     <ShoppingBag className="h-4 w-4" />
                     Dodaj u korpu

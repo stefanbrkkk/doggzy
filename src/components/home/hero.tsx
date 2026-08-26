@@ -2,10 +2,11 @@
 
 import Link from 'next/link'
 import { useRef } from 'react'
-import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
+import type { Variants } from 'framer-motion'
 import { ArrowRight, ChevronDown, Heart } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { duration, ease, spring } from '@/lib/motion'
+import { duration, ease } from '@/lib/motion'
 import { routes } from '@/config/site'
 import { buttonStyles } from '@/components/ui/button'
 import { LineReveal, Magnetic, SplitText } from '@/components/motion'
@@ -13,6 +14,7 @@ import { AuroraField } from '@/components/visuals/aurora-field'
 import { PhoneFrame } from '@/components/phone/phone-frame'
 import { ReportFlow } from '@/components/phone/report-flow'
 import { submitReport } from '@/lib/report-client'
+import { useEntranceCue } from '@/lib/use-entrance-cue'
 import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
 const TRUST = [
@@ -21,16 +23,52 @@ const TRUST = [
   { value: 'Svaka stavka', label: 'Ima račun na stranici psa' },
 ]
 
+/**
+ * One beat of the entrance. `custom` carries the delay so every element can
+ * share a single variant object and the cascade stays readable in one place.
+ */
+const beat: Variants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: (delay: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: duration.slow, ease: ease.outExpo, delay },
+  }),
+}
+
+const phoneBeat: Variants = {
+  // `transformPerspective` is what makes rotateX read as a tilt rather than a
+  // 2% vertical squash: without it Motion emits a rotation matrix with a zero
+  // perspective component. The `perspective` declared inside PhoneFrame is a
+  // descendant of this element, so it cannot apply here.
+  hidden: { opacity: 0, y: 48, rotateX: 12, transformPerspective: 1200 },
+  visible: (delay: number) => ({
+    opacity: 1,
+    y: 0,
+    rotateX: 0,
+    transformPerspective: 1200,
+    transition: { duration: duration.epic, ease: ease.outExpo, delay },
+  }),
+}
+
 export function Hero() {
   const reduced = useReducedMotionSafe()
+  const { ready, lead } = useEntranceCue()
   const ref = useRef<HTMLElement>(null)
 
+  // Transformed directly, not through a spring. Lenis is already smoothing the
+  // scroll position; a second integrator on top of it leaves the copy drifting
+  // for ~0.4s after the page itself has come to rest.
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const smooth = useSpring(scrollYProgress, spring.scroll)
-  const copyY = useTransform(smooth, [0, 1], ['0%', '32%'])
-  const copyOpacity = useTransform(smooth, [0, 0.65], [1, 0])
-  const phoneY = useTransform(smooth, [0, 1], ['0%', '-14%'])
-  const backdropScale = useTransform(smooth, [0, 1], [1, 1.18])
+  const copyY = useTransform(scrollYProgress, [0, 1], ['0%', '32%'])
+  const copyOpacity = useTransform(scrollYProgress, [0, 0.65], [1, 0])
+  const phoneY = useTransform(scrollYProgress, [0, 1], ['0%', '-14%'])
+  const backdropScale = useTransform(scrollYProgress, [0, 1], [1, 1.18])
+
+  // Held until the preloader's curtain lifts, so the choreography is not spent
+  // behind an opaque panel. Returning visitors are ready on the first render.
+  const cue = ready ? 'visible' : 'hidden'
+  const textTrigger = ready ? 'mount' : 'hold'
 
   return (
     <section
@@ -56,15 +94,18 @@ export function Hero() {
         className="absolute inset-0 -z-10 mask-fade-b opacity-[0.18] [background-image:linear-gradient(var(--line-strong)_1px,transparent_1px),linear-gradient(90deg,var(--line-strong)_1px,transparent_1px)] [background-size:64px_64px]"
       />
 
-      <div className="mx-auto grid w-full max-w-[92rem] gap-16 px-5 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-10">
+      <motion.div
+        initial="hidden"
+        animate={cue}
+        className="mx-auto grid w-full max-w-[92rem] gap-16 px-5 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-10"
+      >
         <motion.div
           style={reduced ? undefined : { y: copyY, opacity: copyOpacity }}
           className="max-w-2xl"
         >
           <motion.p
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: duration.slow, ease: ease.outExpo, delay: 0.15 }}
+            variants={beat}
+            custom={lead + 0.15}
             className="inline-flex items-center gap-2.5 rounded-full border border-line bg-elevated/70 px-3.5 py-1.5 text-2xs uppercase tracking-[0.18em] text-ink-muted backdrop-blur"
           >
             <span className="relative flex h-1.5 w-1.5">
@@ -75,18 +116,17 @@ export function Hero() {
           </motion.p>
 
           <h1 className="mt-7 text-hero text-ink">
-            <SplitText immediate delay={0.28}>
+            <SplitText trigger={textTrigger} delay={lead + 0.28}>
               Svaki dinar
             </SplitText>
-            <LineReveal immediate delay={0.46} className="text-gradient">
+            <LineReveal trigger={textTrigger} delay={lead + 0.46} className="text-gradient">
               ima ime.
             </LineReveal>
           </h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: duration.slow, ease: ease.outExpo, delay: 0.72 }}
+            variants={beat}
+            custom={lead + 0.72}
             className="mt-7 max-w-xl text-lead text-ink-muted"
           >
             Prijavi nestalog ili ugroženog psa za jedan minut. Doniraj i vidi tačno koji je račun
@@ -94,9 +134,8 @@ export function Hero() {
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: duration.slow, ease: ease.outExpo, delay: 0.84 }}
+            variants={beat}
+            custom={lead + 0.84}
             className="mt-9 flex flex-wrap items-center gap-3"
           >
             <Magnetic strength={14}>
@@ -117,9 +156,8 @@ export function Hero() {
           </motion.div>
 
           <motion.dl
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: duration.slow, delay: 1 }}
+            variants={beat}
+            custom={lead + 1}
             className="mt-12 grid gap-x-8 gap-y-5 border-t border-line pt-7 sm:grid-cols-3"
           >
             {TRUST.map((item) => (
@@ -133,9 +171,8 @@ export function Hero() {
 
         <motion.div
           style={reduced ? undefined : { y: phoneY }}
-          initial={{ opacity: 0, y: 48, rotateX: 12 }}
-          animate={{ opacity: 1, y: 0, rotateX: 0 }}
-          transition={{ duration: 1.1, ease: ease.outExpo, delay: 0.4 }}
+          variants={phoneBeat}
+          custom={lead + 0.4}
           className="justify-self-center lg:justify-self-end"
         >
           <div className="mb-5 flex items-center justify-center gap-2 lg:justify-end">
@@ -151,15 +188,15 @@ export function Hero() {
             <ReportFlow onSubmit={submitReport} />
           </PhoneFrame>
         </motion.div>
-      </div>
+      </motion.div>
 
       <motion.a
         href="#kako-radi"
         aria-label="Idi na sledeću sekciju"
         className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-1.5 text-ink-subtle transition-colors hover:text-ink lg:flex"
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.4, duration: duration.slow }}
+        animate={ready ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ delay: lead + 1.4, duration: duration.slow }}
       >
         <span className="text-2xs uppercase tracking-[0.2em]">Skroluj</span>
         <ChevronDown className="h-4 w-4 animate-float" />

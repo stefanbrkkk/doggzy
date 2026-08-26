@@ -16,6 +16,14 @@ import { stdin, stdout } from 'node:process'
 
 const scryptAsync = promisify(scrypt)
 
+// Without a terminal `question()` never resolves and node exits with an
+// "unsettled top-level await" warning and no hash — which reads as success in
+// a pipeline and writes an empty value into .env.
+if (!stdin.isTTY) {
+  console.error('Pokreni interaktivno: lozinka se čita sa terminala, ne iz pipe-a.')
+  process.exit(1)
+}
+
 const rl = createInterface({ input: stdin, output: stdout })
 const password = await rl.question('Lozinka: ')
 rl.close()

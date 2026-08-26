@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createReference, reportSchema } from '@/lib/schemas'
 import { clientKey, rateLimit } from '@/lib/rate-limit'
+import { BODY_LIMIT, withBodyLimit } from '@/lib/request-limits'
 import { deliverNotification } from '@/lib/notify'
 
 export const runtime = 'nodejs'
@@ -17,9 +18,14 @@ export async function POST(request: Request) {
     )
   }
 
+  // Capped before parsing. `formData()` buffers the whole body, so the 8 MB
+  // photo check below only ever ran after the allocation it was meant to stop.
+  const capped = await withBodyLimit(request, BODY_LIMIT.report)
+  if (!capped.ok) return capped.response
+
   let form: FormData
   try {
-    form = await request.formData()
+    form = await capped.request.formData()
   } catch {
     return NextResponse.json({ error: 'Neispravan format zahteva.' }, { status: 400 })
   }

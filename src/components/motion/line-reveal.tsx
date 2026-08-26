@@ -10,8 +10,8 @@ export interface LineRevealProps {
   children: ReactNode
   className?: string
   delay?: number
-  /** Reveal on mount instead of waiting for the viewport. */
-  immediate?: boolean
+  /** See <SplitText>: `view` on scroll, `mount` straight away, `hold` stays masked. */
+  trigger?: 'view' | 'mount' | 'hold'
 }
 
 /**
@@ -23,16 +23,17 @@ export interface LineRevealProps {
  * text renders transparent over nothing and disappears. Anything using
  * `text-gradient` should reveal with this instead.
  */
-export function LineReveal({ children, className, delay = 0, immediate = false }: LineRevealProps) {
+export function LineReveal({ children, className, delay = 0, trigger = 'view' }: LineRevealProps) {
   const reduced = useReducedMotionSafe()
 
   if (reduced) {
     return <span className={cn('block', className)}>{children}</span>
   }
 
-  const animationProps = immediate
-    ? { animate: { y: '0%' } }
-    : { whileInView: { y: '0%' }, viewport: viewportOnce }
+  const animationProps =
+    trigger === 'view'
+      ? { whileInView: { y: '0%' }, viewport: viewportOnce }
+      : { animate: { y: trigger === 'mount' ? '0%' : '112%' } }
 
   return (
     <span className="block overflow-hidden [clip-path:inset(-0.3em_-0.2em_-0.2em)]">

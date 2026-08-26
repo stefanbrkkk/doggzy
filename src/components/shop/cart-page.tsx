@@ -108,6 +108,7 @@ export function CartPage() {
                     value={entry.quantity}
                     onChange={(next) => setQuantity(entry.product.id, next)}
                     label={entry.product.name}
+                    min={0}
                   />
                   <button
                     type="button"

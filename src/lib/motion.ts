@@ -40,50 +40,12 @@ export const spring = {
   pop: { type: 'spring', stiffness: 520, damping: 20, mass: 0.7 },
 } as const satisfies Record<string, Transition | Record<string, number>>
 
-export const transition = {
-  base: { duration: duration.base, ease: ease.outExpo },
-  fast: { duration: duration.fast, ease: ease.swift },
-  slow: { duration: duration.slow, ease: ease.outExpo },
-} as const satisfies Record<string, Transition>
-
 /** Default viewport config: fire once, slightly before the element is centred. */
 export const viewportOnce = { once: true, margin: '0px 0px -12% 0px' } as const
 
 /**
- * Vertical rise used by nearly every section. `distance` is in pixels so the
- * travel stays constant across breakpoints instead of scaling with the box.
- */
-export function rise(distance = 28, delay = 0): Variants {
-  return {
-    hidden: { opacity: 0, y: distance },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: duration.slow, ease: ease.outExpo, delay },
-    },
-  }
-}
-
-export function fade(delay = 0): Variants {
-  return {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: duration.slow, ease: ease.outQuart, delay } },
-  }
-}
-
-export function scaleIn(from = 0.94, delay = 0): Variants {
-  return {
-    hidden: { opacity: 0, scale: from },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: duration.slow, ease: ease.outExpo, delay },
-    },
-  }
-}
-
-/**
- * Parent variant that cascades its children. Pair with `rise()` on each child.
+ * Parent variant that cascades its children. Pair with a `variants` object on
+ * each child — <SplitText> uses it with `glyphRise` below.
  *
  * Uses `delayChildren: stagger(...)` rather than the older `staggerChildren`
  * number, which Motion deprecated in 12.22 — and which cannot express a
@@ -110,23 +72,4 @@ export const glyphRise: Variants = {
     opacity: 1,
     transition: { duration: duration.epic, ease: ease.outExpo },
   },
-}
-
-/** Cross-fade + slide used by step machines (the phone flow, checkout, filters). */
-export function slideStep(direction: 1 | -1): Variants {
-  return {
-    enter: { opacity: 0, x: 28 * direction, filter: 'blur(6px)' },
-    center: {
-      opacity: 1,
-      x: 0,
-      filter: 'blur(0px)',
-      transition: { duration: duration.base, ease: ease.outExpo },
-    },
-    exit: {
-      opacity: 0,
-      x: -28 * direction,
-      filter: 'blur(6px)',
-      transition: { duration: duration.fast, ease: ease.swift },
-    },
-  }
 }

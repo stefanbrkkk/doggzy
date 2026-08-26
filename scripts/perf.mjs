@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { chromium } from 'playwright'
+import { resolveChromium } from './chromium-path.mjs'
 import { setTimeout as sleep } from 'node:timers/promises'
 
 /**
@@ -25,7 +26,7 @@ const BUDGET = {
 }
 
 const browser = await chromium.launch({
-  executablePath: process.env.CHROMIUM_PATH || undefined,
+  executablePath: resolveChromium(),
   args: [
     '--no-sandbox',
     '--no-proxy-server',

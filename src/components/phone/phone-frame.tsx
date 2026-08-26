@@ -102,7 +102,11 @@ export function PhoneFrame({
                   aria-hidden="true"
                   className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between px-7 pt-3.5 text-[11px] font-medium text-ink"
                 >
-                  <span data-numeric>{statusTime}</span>
+                  {/* Decoration, like the signal icons beside it: a screen
+                      reader reading the demo should not open with "9:41". */}
+                  <span data-numeric aria-hidden="true">
+                    {statusTime}
+                  </span>
                   <span className="flex items-center gap-1">
                     <SignalIcon />
                     <WifiIcon />

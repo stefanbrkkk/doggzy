@@ -97,6 +97,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: preloaderScript }} />
+        {/* With scripting off the curtain has nothing to lift it, and the CSS
+            failsafe in globals.css would still leave it up for 5.5s. */}
+        <noscript>
+          <style>{`[data-preloader]{display:none!important}`}</style>
+        </noscript>
       </head>
       <body className="min-h-dvh bg-canvas text-ink antialiased">
         <a

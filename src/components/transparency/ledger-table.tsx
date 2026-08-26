@@ -91,6 +91,11 @@ export function LedgerTable({ events }: { events: LedgerEntry[] }) {
       <div className="overflow-hidden rounded-4xl border border-line">
         <table className="w-full border-collapse text-left">
           <caption className="sr-only">Hronološki pregled troškova i donacija po psu</caption>
+          {/* Hidden outright below `sm`, where the rows stack: `sr-only` would
+              absolutely position the thead, and an absolutely positioned
+              table-internal box is blockified, which costs the columnheader
+              roles it was meant to preserve. The stacked layout carries its
+              column names in <Label> instead — see the note there. */}
           <thead className="hidden sm:table-header-group">
             <tr className="border-b border-line bg-elevated">
               <Th>Datum</Th>
@@ -200,13 +205,17 @@ function Td({ children, className }: { children: React.ReactNode; className?: st
   )
 }
 
-/** Column name shown only in the stacked mobile layout. */
+/**
+ * Column name shown only in the stacked mobile layout.
+ *
+ * Not `aria-hidden`: below `sm` the `<thead>` is `display: none`, so without
+ * this every cell in the table is announced with no column name at all. Above
+ * `sm` this element is itself hidden and the real headers take over, so the
+ * name is never announced twice.
+ */
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <span
-      aria-hidden="true"
-      className="mb-0.5 block text-2xs uppercase tracking-widest text-ink-subtle sm:hidden"
-    >
+    <span className="mb-0.5 block text-2xs uppercase tracking-widest text-ink-subtle sm:hidden">
       {children}
     </span>
   )

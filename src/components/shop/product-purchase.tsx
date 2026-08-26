@@ -26,11 +26,7 @@ export function ProductPurchase({ product }: { product: Product }) {
     <div ref={anchorRef} className="space-y-4">
       {product.inStock ? (
         <div className="flex flex-wrap items-center gap-3">
-          <Stepper
-            value={quantity}
-            onChange={(next) => setQuantity(Math.max(1, next))}
-            label={product.name}
-          />
+          <Stepper value={quantity} onChange={setQuantity} label={product.name} />
 
           <Button size="lg" onClick={add} className="flex-1">
             <ShoppingBag className="h-4 w-4" />

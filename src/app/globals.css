@@ -624,6 +624,27 @@
   html.preloaded [data-preloader] {
     display: none !important;
   }
+
+  /* Last-resort escape hatch for the curtain.
+
+     The overlay is server-rendered and normally removed by React. If the
+     client bundle never loads — a 4xx on a chunk, a blocked script, a
+     hydration crash — nothing else retires it, and an opaque full-viewport
+     panel sits over a perfectly good server-rendered page forever. This
+     animation's clock starts at first paint rather than at hydration, so it
+     covers exactly the case React cannot. The React exit normally wins by
+     ~3 seconds; when it does, the node unmounts and this never fires. */
+  [data-preloader] {
+    animation: preloader-failsafe 1ms linear 5.5s forwards;
+  }
+
+  @keyframes preloader-failsafe {
+    to {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
 }
 
 /* ==========================================================================
@@ -645,16 +666,23 @@
 /* Windows High Contrast replaces every colour, so any state carried purely by a
    background swap disappears. These give the same states a border to stand on. */
 @media (forced-colors: active) {
+  /* Outline rather than border: these pills mostly have no border of their
+     own, and adding one would reflow the row. `outline-offset: -2px` draws it
+     inside the box, so the selected filter, the selected donation amount and
+     the current nav item stay distinguishable at zero layout cost. */
   [aria-pressed='true'],
   [aria-current='page'],
+  [aria-current='true'],
   [data-state='active'] {
-    border: 2px solid Highlight !important;
+    outline: 2px solid Highlight !important;
+    outline-offset: -2px;
     forced-color-adjust: none;
     color: Highlight !important;
   }
 
   :focus-visible {
     outline: 3px solid Highlight !important;
+    outline-offset: 2px;
   }
 }
 

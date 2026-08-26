@@ -5,10 +5,29 @@ import { AnimatePresence, animate, motion } from 'framer-motion'
 import { duration, ease } from '@/lib/motion'
 import { lockScroll, safeStorage } from '@/lib/scroll-lock'
 import { LogoMark } from '@/components/ui/logo'
+import { ENTRANCE_CUE } from '@/lib/use-entrance-cue'
 import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
 const SESSION_KEY = 'doggzy.visited'
 const PANELS = 6
+
+/**
+ * Hard deadline for the curtain, measured from navigation start rather than
+ * from mount.
+ *
+ * The obvious version of this — a `setTimeout` inside the effect — cannot
+ * bound anything, because the effect does not run until the bundle has
+ * downloaded, parsed and hydrated. On a 150 kbps link that is 35 seconds, and
+ * a "3 second ceiling" written that way becomes "hydration + 3s": the visitor
+ * stares at an opaque panel covering a page that finished rendering long ago.
+ * `performance.now()` in the effect is time since navigation start, so
+ * comparing against it makes the deadline absolute — this effect can only ever
+ * shorten the curtain, never extend it.
+ */
+const DEADLINE_MS = 3000
+
+/** Minimum time the bar is on screen, so it never flashes 0 → 100. */
+const MIN_VISIBLE_MS = 620
 
 /**
  * First-visit curtain.
@@ -18,9 +37,10 @@ const PANELS = 6
  * this session has already seen it, and CSS hides the overlay before first
  * paint — so returning visitors pay nothing.
  *
- * Progress is real: it eases to 90% while the document is still loading and
- * only completes once `window.load` fires (or a 3s ceiling, so a stalled
- * third-party asset can never trap the visitor behind the curtain).
+ * Three things can retire it, and the site stays usable if any two fail:
+ * React (the normal path), the absolute deadline above, and a CSS animation in
+ * globals.css that runs on the server-rendered node whether or not the bundle
+ * ever loads.
  */
 export function Preloader() {
   const reduced = useReducedMotionSafe()
@@ -30,19 +50,27 @@ export function Preloader() {
   useEffect(() => {
     const root = document.documentElement
 
+    /** Retire the curtain without animating it. */
+    const skip = () => {
+      root.classList.add('preloaded')
+      safeStorage.set('session', SESSION_KEY, '1')
+      setOpen(false)
+    }
+
     if (root.classList.contains('preloaded')) {
       setOpen(false)
       return
     }
 
-    if (reduced) {
-      root.classList.add('preloaded')
-      safeStorage.set('session', SESSION_KEY, '1')
-      setOpen(false)
+    // Hydration itself already outlasted the curtain's budget, or the visitor
+    // asked for no motion. Either way there is nothing left to reveal.
+    if (reduced || performance.now() >= DEADLINE_MS) {
+      skip()
       return
     }
 
     const releaseScroll = lockScroll()
+    const mountedAt = performance.now()
 
     let finished = false
     const controls = animate(0, 90, {
@@ -65,22 +93,33 @@ export function Preloader() {
             safeStorage.set('session', SESSION_KEY, '1')
             releaseScroll()
             setOpen(false)
-          }, 180)
+            // The hero waits for this before starting its entrance, so its
+            // choreography is not spent behind an opaque panel.
+            window.dispatchEvent(new Event(ENTRANCE_CUE))
+          }, 90)
         },
       })
     }
 
-    if (document.readyState === 'complete') {
-      window.setTimeout(finish, 900)
-    } else {
-      window.addEventListener('load', finish, { once: true })
+    /** Never before the bar has visibly travelled, never past the deadline. */
+    const scheduleFinish = () => {
+      const now = performance.now()
+      const floor = mountedAt + MIN_VISIBLE_MS
+      return window.setTimeout(finish, Math.max(0, Math.min(floor, DEADLINE_MS) - now))
     }
-    const ceiling = window.setTimeout(finish, 3000)
+
+    let pending = 0
+    if (document.readyState === 'complete') {
+      pending = scheduleFinish()
+    } else {
+      window.addEventListener('load', () => (pending = scheduleFinish()), { once: true })
+    }
+    const ceiling = window.setTimeout(finish, Math.max(0, DEADLINE_MS - performance.now()))
 
     return () => {
       controls.stop()
       window.clearTimeout(ceiling)
-      window.removeEventListener('load', finish)
+      window.clearTimeout(pending)
       releaseScroll()
     }
   }, [reduced])
@@ -88,10 +127,15 @@ export function Preloader() {
   return (
     <AnimatePresence>
       {open ? (
-        <div data-preloader className="fixed inset-0 z-[300] grid place-items-center" role="status">
-          {/* One announcement, not a stream. The counter below re-renders dozens
-              of times; a live region wrapping it would read every digit. */}
-          <span className="sr-only">Sajt se učitava</span>
+        <div data-preloader className="fixed inset-0 z-[300] grid place-items-center">
+          {/* One announcement, not a stream. `role="status"` lives on this span
+              alone: on the container it made the whole overlay a live region,
+              and the counter below re-renders dozens of times, so a screen
+              reader read out "Doggzy 077", "Doggzy 086", "Doggzy 090"… The
+              visual progress block is aria-hidden for the same reason. */}
+          <span role="status" className="sr-only">
+            Sajt se učitava
+          </span>
           {/* The curtain itself: vertical panels that lift in a stagger. */}
           <div className="absolute inset-0 flex">
             {Array.from({ length: PANELS }).map((_, index) => (
@@ -110,6 +154,7 @@ export function Preloader() {
           </div>
 
           <motion.div
+            aria-hidden="true"
             className="relative flex flex-col items-center gap-8"
             exit={{ opacity: 0, y: -24, transition: { duration: duration.fast, ease: ease.swift } }}
           >
@@ -124,7 +169,7 @@ export function Preloader() {
             <div className="flex w-[min(78vw,26rem)] flex-col gap-3">
               <div className="flex items-baseline justify-between">
                 <span className="text-2xs uppercase tracking-[0.3em] text-ink-subtle">Doggzy</span>
-                <span aria-hidden="true" data-numeric className="text-sm text-ink-muted">
+                <span data-numeric className="text-sm text-ink-muted">
                   {Math.round(progress).toString().padStart(3, '0')}
                 </span>
               </div>

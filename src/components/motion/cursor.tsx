@@ -16,6 +16,13 @@ type CursorState = 'idle' | 'focus' | 'expand' | 'hide'
 const HIT_SELECTOR = '[data-cursor], a, button, input, textarea, select, [role="button"]'
 
 /**
+ * The ring's rendered diameter. Every state is a `scale` of this one box, so
+ * the class list below hard-codes the same number — Tailwind needs a static
+ * class and cannot read the constant.
+ */
+const RING_PX = 72
+
+/**
  * A trailing ring that follows the pointer and reacts to what is under it.
  *
  * Elements opt in with `data-cursor="expand" | "hide"` (plus an optional
@@ -109,6 +116,11 @@ export function Cursor() {
 
   if (!enabled) return null
 
+  // The ring is rendered once at RING_PX and scaled. Spring-animating width,
+  // height and both margins instead would interpolate four layout-triggering
+  // properties on every frame the pointer crosses a link — while the pointer
+  // itself is also moving. `scale` produces the identical visual on the
+  // compositor, and `-translate-*` centres it without animated negative margins.
   const size = state === 'expand' ? 72 : state === 'focus' ? 44 : 26
 
   return (
@@ -124,12 +136,17 @@ export function Cursor() {
           exit={{ opacity: 0 }}
         >
           <motion.div
-            className="flex items-center justify-center rounded-full border border-white/80"
+            // The border scales with the box, so it is authored at 3px to land
+            // on a crisp ~1px hairline in the idle state the pointer spends
+            // most of its life in.
+            className="flex h-[72px] w-[72px] items-center justify-center rounded-full border-[3px] border-white/80"
+            // Centring lives here rather than in a `-translate-x-1/2` class:
+            // Motion writes the whole `transform` inline, so a Tailwind
+            // translate on the same element is overwritten the moment `scale`
+            // animates.
+            style={{ x: '-50%', y: '-50%' }}
             animate={{
-              width: size,
-              height: size,
-              marginLeft: -size / 2,
-              marginTop: -size / 2,
+              scale: size / RING_PX,
               backgroundColor: state === 'expand' ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0)',
             }}
             transition={spring.surface}

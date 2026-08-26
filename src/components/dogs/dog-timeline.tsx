@@ -12,7 +12,7 @@ import {
   Stethoscope,
 } from 'lucide-react'
 import { cn, formatDate, formatRsd } from '@/lib/utils'
-import { duration, ease, viewportOnce } from '@/lib/motion'
+import { duration, ease, spring, viewportOnce } from '@/lib/motion'
 import type { TimelineEvent, TimelineType } from '@/content/dogs'
 import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
@@ -47,7 +47,7 @@ export function DogTimeline({ events }: { events: TimelineEvent[] }) {
     target: ref,
     offset: ['start 75%', 'end 65%'],
   })
-  const lineScale = useSpring(scrollYProgress, { stiffness: 90, damping: 26, restDelta: 0.001 })
+  const lineScale = useSpring(scrollYProgress, spring.scroll)
 
   const spent = events
     .filter((event) => event.type !== 'donacija' && typeof event.amount === 'number')

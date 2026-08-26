@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import { routes, secondaryNav, site } from '@/config/site'
 import { Logo } from '@/components/ui/logo'
 import { Reveal } from '@/components/motion'
+import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
 const columns = [
   {
@@ -39,6 +40,7 @@ const columns = [
 ]
 
 export function SiteFooter() {
+  const reduced = useReducedMotionSafe()
   const ref = useRef<HTMLElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end end'] })
 
@@ -133,7 +135,11 @@ export function SiteFooter() {
       <motion.p
         aria-hidden="true"
         data-decor
-        style={{ y: wordmarkY, opacity: wordmarkOpacity }}
+        // Scroll-linked motion values are driven by the scroll position, not
+        // by a transition, so `MotionConfig reducedMotion="user"` does not
+        // touch them. Gating them here is the only thing that stops a 15rem
+        // wordmark from sliding for a visitor who asked for no motion.
+        style={reduced ? undefined : { y: wordmarkY, opacity: wordmarkOpacity }}
         className="pointer-events-none select-none px-4 text-center font-display text-[clamp(4rem,17vw,15rem)] font-bold leading-[0.78] tracking-tighter text-ink/[0.055]"
       >
         doggzy

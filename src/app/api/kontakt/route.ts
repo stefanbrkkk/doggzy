@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { contactSchema } from '@/lib/schemas'
 import { clientKey, rateLimit } from '@/lib/rate-limit'
+import { BODY_LIMIT, withBodyLimit } from '@/lib/request-limits'
 import { deliverNotification } from '@/lib/notify'
 
 export const runtime = 'nodejs'
@@ -22,9 +23,14 @@ export async function POST(request: Request) {
     )
   }
 
+  // Capped before parsing: `json()` buffers the whole body, and the message
+  // length rule in the schema cannot run until after that allocation.
+  const capped = await withBodyLimit(request, BODY_LIMIT.contact)
+  if (!capped.ok) return capped.response
+
   let json: unknown
   try {
-    json = await request.json()
+    json = await capped.request.json()
   } catch {
     return NextResponse.json({ error: 'Neispravan JSON.' }, { status: 400 })
   }

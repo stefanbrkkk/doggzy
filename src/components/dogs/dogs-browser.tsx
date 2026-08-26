@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
-import { cn } from '@/lib/utils'
+import { cn, plural } from '@/lib/utils'
 import { spring } from '@/lib/motion'
 import { statusLabels, type Dog, type DogStatus } from '@/content/dogs'
 import { DogCard } from './dog-card'
@@ -69,6 +69,15 @@ export function DogsBrowser({ dogs }: { dogs: Dog[] }) {
           })}
         </ul>
       </LayoutGroup>
+
+      {/* The cards are h3s sitting directly under the page h1, which skips a
+          level in the outline. This also gives the filter a landmark: its text
+          changes with the selection, so a screen-reader user hears what the
+          list now contains. */}
+      <h2 className="sr-only" aria-live="polite">
+        {filter === ALL ? 'Svi psi' : statusLabels[filter]} — {visible.length}{' '}
+        {plural(visible.length, 'pas', 'psa', 'pasa')}
+      </h2>
 
       {visible.length === 0 ? (
         <p className="rounded-4xl border border-dashed border-line py-24 text-center text-sm text-ink-muted">

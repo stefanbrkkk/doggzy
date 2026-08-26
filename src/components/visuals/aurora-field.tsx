@@ -167,16 +167,21 @@ export function AuroraField({ className, intensity, palette, background }: Auror
     const canvas = canvasRef.current
     if (!canvas) return
 
-    const gl =
-      (canvas.getContext('webgl', {
-        alpha: false,
-        antialias: false,
-        depth: false,
-        stencil: false,
-        powerPreference: 'low-power',
-        failIfMajorPerformanceCaveat: false,
-      }) as WebGLRenderingContext | null) ??
-      (canvas.getContext('experimental-webgl') as WebGLRenderingContext | null)
+    // `failIfMajorPerformanceCaveat: true` is the important flag here. The
+    // default (false) hands back a context even when the browser has fallen
+    // through to a software rasterizer — no GPU, blocklisted driver, a VM —
+    // and this shader is four 4-octave fbm calls per pixel at up to 1.5x DPR.
+    // On that path it saturates the main thread and the hero stops scrolling.
+    // Failing instead falls to `setSupported(false)` and the CSS gradient
+    // below, which is what that path should have been getting all along.
+    const gl = canvas.getContext('webgl', {
+      alpha: false,
+      antialias: false,
+      depth: false,
+      stencil: false,
+      powerPreference: 'low-power',
+      failIfMajorPerformanceCaveat: true,
+    }) as WebGLRenderingContext | null
 
     if (!gl) {
       setSupported(false)
