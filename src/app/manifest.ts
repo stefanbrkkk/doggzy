@@ -13,6 +13,22 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: '#171514',
     orientation: 'portrait',
     categories: ['charity', 'lifestyle'],
+    // `src/app/icon.tsx` renders this. `maskable` as well as `any`, so Android
+    // fills its own shape rather than dropping the mark into a white tile.
+    icons: [
+      {
+        src: '/icon',
+        sizes: '512x512',
+        type: 'image/png',
+        purpose: 'any',
+      },
+      {
+        src: '/icon',
+        sizes: '512x512',
+        type: 'image/png',
+        purpose: 'maskable',
+      },
+    ],
     // The report flow is the reason anyone would install this.
     shortcuts: [
       {
