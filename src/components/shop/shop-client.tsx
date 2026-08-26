@@ -97,7 +97,7 @@ export function ShopClient() {
           background instead would have been worse, because `backdrop-filter`
           samples whatever is painted directly behind the element: an opaque
           parent turns the blur into a flat fill of the parent's own colour. */}
-      <div className="glass-strong sticky top-20 z-40 rounded-3xl p-3">
+      <div className="glass sticky top-20 z-40 rounded-3xl p-3">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
           <div className="relative flex-1">
             <Search

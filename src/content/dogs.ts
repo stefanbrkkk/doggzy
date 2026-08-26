@@ -263,20 +263,23 @@ export const dogs: Dog[] = [
         note: 'Radnik na pruzi prijavio leglo bez majke.',
         verified: true,
       },
+      // Limin deo, ne trošak celog legla. Stranica psa sabira ove iznose u
+      // „Potrošeno na negu”, pa je zbir od 25.000 tvrdio da je toliko otišlo na
+      // nju samu, dok su same beleške govorile da je novac pokrio petoro.
       {
         date: '2026-03-08',
         type: 'nega',
         title: 'Hraniteljstvo',
-        note: 'Pet štenaca kod dve hraniteljske porodice.',
-        amount: 12000,
+        note: 'Limin deo; leglo od petoro kod dve hraniteljske porodice koštalo je 12.000.',
+        amount: 2400,
         verified: true,
       },
       {
         date: '2026-05-11',
         type: 'vet',
         title: 'Vakcinacija i čipovanje',
-        note: 'Sve petoro.',
-        amount: 13000,
+        note: 'Limin deo; za svih petoro 13.000.',
+        amount: 2600,
         verified: true,
       },
       {

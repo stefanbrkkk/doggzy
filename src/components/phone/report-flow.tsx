@@ -721,7 +721,7 @@ function StepContact({
       </div>
 
       <p className="rounded-xl bg-elevated p-3 text-xs leading-relaxed text-ink-subtle">
-        Kontakt vidi samo naš tim. Javno se objavljuju samo opis, lokacija i fotografija.
+        Javno se objavljuju opis i lokacija. Fotografija i tvoj kontakt idu samo našem timu.
       </p>
 
       {status === 'error' ? (

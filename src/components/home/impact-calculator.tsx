@@ -57,8 +57,8 @@ export function ImpactCalculator() {
             </Reveal>
             <Reveal direction="up" delay={0.12}>
               <p className="text-lead text-ink-muted">
-                Ovo nisu procene. Svaka stavka je račun koji već stoji na stranici psa pored njenog
-                imena — otvori je i proveri.
+                Ovo nisu procene. Svaka stavka je račun koji već stoji na stranici psa pored
+                njegovog imena — otvori je i proveri.
               </p>
             </Reveal>
 
@@ -232,7 +232,10 @@ function Receipt({
                 </>
               ) : (
                 <span className="text-positive">
-                  Ovim iznosom pokrivena je cela lista — uključujući operaciju.
+                  {/* Named from the data, not asserted. The old line promised
+                      "including the operation" — a leftover from the hardcoded
+                      list, and no ledger item is an operation. */}
+                  Ovim iznosom pokrivena je cela lista — uključujući „{LINE_ITEMS.at(-1)?.label}”.
                 </span>
               )}
             </motion.p>

@@ -53,7 +53,7 @@ const FAQ_ITEMS = [
   {
     question: 'Ko vidi moj broj telefona?',
     answer:
-      'Samo naš tim i sklonište koje preuzima slučaj. Javno se objavljuju opis, lokacija i fotografija — nikada tvoj kontakt.',
+      'Samo naš tim i sklonište koje preuzima slučaj. Javno se objavljuju opis i lokacija; fotografija za sada ostaje kod nas, a tvoj kontakt nikada ne izlazi u javnost.',
   },
   {
     question: 'Šta ako nisam siguran da je pas napušten?',

@@ -58,13 +58,30 @@ export function DonateForm() {
 
   const effectiveAmount = custom ? Math.max(0, Number(custom.replace(/\D/g, ''))) : amount
 
-  const covers = useMemo(
-    () => COVERS.find((entry) => effectiveAmount >= entry.min)?.text ?? COVERS.at(-1)!.text,
-    [effectiveAmount],
-  )
-
   const sponsorable = dogs.filter((dog) => dog.sponsorMonthly > 0)
   const chosenDog = sponsorable.find((dog) => dog.id === target)
+
+  /**
+   * What this amount pays for, on the chosen dog's own page.
+   *
+   * COVERS is the whole site's ledger, so pairing it with a named dog produced
+   * sentences like "22.000 RSD pokriva previjanje rane — za Pahulju" when
+   * Pahulja's page carries no bandaging at all. Once a dog is picked, the item
+   * has to come from that dog's own needs, and it is quoted by its exact label
+   * rather than paraphrased — a label lifted verbatim needs no case agreement,
+   * and it is the string the reader will find when they go and check.
+   */
+  const covers = useMemo(() => {
+    if (chosenDog) {
+      const own = [...chosenDog.needs].sort((a, b) => b.cost - a.cost)
+      const match = own.find((need) => effectiveAmount >= need.cost)
+      if (match) return `stavku „${match.label}”`
+      // Tesla is the one male dog on the sponsorship list, so the possessive
+      // cannot be hardcoded.
+      return `deo troškova ${chosenDog.sex === 'ženka' ? 'njene' : 'njegove'} nege`
+    }
+    return COVERS.find((entry) => effectiveAmount >= entry.min)?.text ?? COVERS.at(-1)!.text
+  }, [chosenDog, effectiveAmount])
 
   const purpose = chosenDog
     ? `Donacija za ${chosenDog.nameAccusative}${recurring ? ' (mesečno)' : ''}`

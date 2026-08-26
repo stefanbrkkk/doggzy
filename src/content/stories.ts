@@ -34,7 +34,7 @@ export const stories: Story[] = [
       {
         paragraphs: [
           'U 17:12 jedna žena je zastala iza pijace u Zemunu jer je nešto videla između dva kontejnera. U 17:14 je poslala prijavu sa telefona: tip „pas u opasnosti”, lokacija, jedna fotografija, jedna rečenica opisa.',
-          'U 17:19 je prijava stigla do dežurnog. U 17:52 su kola bila tamo.',
+          'U 17:19 je prijava stigla do dežurnog. U 17:54 su kola bila tamo.',
         ],
       },
       {
@@ -72,7 +72,7 @@ export const stories: Story[] = [
         ],
       },
       {
-        heading: 'Sedam nedelja, stavku po stavku',
+        heading: 'Osam nedelja, stavku po stavku',
         paragraphs: [
           'Previjanja: 22.000 dinara, od čega je do sada pokriveno 15.200. Antibiotici: 7.400, pokriveno u celosti. Sterilizacija: 9.000, još nije pokrivena.',
           'Svaka od ovih stavki ima račun na Teslinoj stranici. To je jedini način na koji donator može da proveri da je novac otišao tamo gde smo rekli.',

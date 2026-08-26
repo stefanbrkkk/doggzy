@@ -41,7 +41,7 @@ export default function ShopPage() {
             <Reveal direction="up" delay={0.12}>
               <p className="mt-6 text-lead text-ink-muted">
                 Nema marže koja negde nestane. Na svakom proizvodu piše tačno koju stavku iz nege
-                pokriva profit od jednog komada.
+                pokriva profit od prodaje.
               </p>
             </Reveal>
           </div>

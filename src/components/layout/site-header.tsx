@@ -113,7 +113,7 @@ export function SiteHeader() {
             'mx-auto flex max-w-[92rem] items-center gap-3 rounded-2xl px-3 py-2.5 sm:gap-4 sm:px-4',
             'transition-[background-color,border-color,box-shadow,backdrop-filter] duration-500 ease-out-expo',
             condensed
-              ? 'glass-strong border border-line shadow-lift'
+              ? 'glass border border-line shadow-lift'
               : 'border border-transparent bg-transparent',
           )}
         >

@@ -50,6 +50,8 @@ export default async function DogPage({ params }: { params: Promise<{ slug: stri
   const totals = dogNeedTotals(dog)
   const relatedStory = stories.find((story) => story.dogSlug === dog.slug)
   const isMissing = dog.status === 'nestao'
+  /** Adopted, with nothing left to fund and no sponsorship tier to join. */
+  const isClosed = !isMissing && dog.needs.length === 0 && dog.sponsorMonthly === 0
 
   return (
     <>
@@ -126,6 +128,14 @@ export default async function DogPage({ params }: { params: Promise<{ slug: stri
                     <Link href={routes.report} className={cn(buttonStyles({ size: 'lg' }))}>
                       <Siren className="h-4 w-4" />
                       Video sam ovog psa
+                    </Link>
+                  ) : isClosed ? (
+                    /* Nothing left to fund, and /doniraj does not list this dog
+                       as a recipient — "Pomozi Bori" sent the reader to a page
+                       where Bora could not be chosen. */
+                    <Link href={routes.donate} className={cn(buttonStyles({ size: 'lg' }))}>
+                      <Heart className="h-4 w-4" />
+                      Doniraj nekom ko još čeka
                     </Link>
                   ) : (
                     <Link href={routes.donate} className={cn(buttonStyles({ size: 'lg' }))}>

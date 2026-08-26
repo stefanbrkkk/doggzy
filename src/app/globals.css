@@ -408,7 +408,9 @@
  * Higher opacity and less blur than the 2021 idiom: a milky 60%/20px veil
  * washes out whatever is behind it, which defeats the point. The asymmetric
  * bevel — light on the top edge, shadow on the bottom — is what actually reads
- * as a pane of glass.
+ * as a pane of glass. Slightly more opaque and less saturated than that idiom
+ * too, because both surfaces using this sit over the generative artwork rather
+ * than over flat page ground, so the wash coming through is already colourful.
  *
  * Never hand-write `-webkit-backdrop-filter` beside the standard property.
  * Lightning CSS (which @tailwindcss/postcss runs) treats the two spellings as
@@ -420,19 +422,12 @@
  * Declaring the standard property alone makes Lightning emit both.
  * `scripts/e2e.mjs` asserts the computed value in a real browser, because
  * nothing about this is visible in source review.
+ *
+ * `backdrop-filter` samples what is painted directly behind the element, so
+ * this must never sit inside an opaque parent — that turns the blur into a
+ * flat fill of the parent's own colour.
  */
 @utility glass {
-  background: color-mix(in oklch, var(--surface) 82%, transparent);
-  border: 1px solid var(--line-strong);
-  box-shadow: var(--shadow-inset-hairline);
-
-  @supports (backdrop-filter: blur(1px)) {
-    background: color-mix(in oklch, var(--surface) 68%, transparent);
-    backdrop-filter: blur(16px) saturate(180%);
-  }
-}
-
-@utility glass-strong {
   background: color-mix(in oklch, var(--elevated) 94%, transparent);
   border: 1px solid var(--line-strong);
   box-shadow:
@@ -441,12 +436,6 @@
     var(--shadow-lift);
 
   @supports (backdrop-filter: blur(1px)) {
-    /* Slightly more opaque and less saturated than `glass`: this is the one
-       glass surface that sits over the generative artwork rather than over
-       flat page ground, so the wash coming through it is already colourful
-       before any boost. Both numbers were verified against the shop grid with
-       the blur actually applied — see the note above for why that had to be
-       said out loud. */
     background: color-mix(in oklch, var(--elevated) 84%, transparent);
     backdrop-filter: blur(22px) saturate(140%);
   }
