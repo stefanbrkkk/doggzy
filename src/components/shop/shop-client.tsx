@@ -91,108 +91,106 @@ export function ShopClient() {
 
   return (
     <div className="space-y-10">
-      {/* One blurred surface, not two stacked: backdrop-filter re-samples the
-          page behind it every frame, and the outer layer was invisible anyway.
-
-          The wrapper carries the page ground. Its `py-3` gutter used to be
-          fully transparent, so product cards visibly slid past above and below
-          the glass panel instead of disappearing behind one plane. */}
-      <div className="sticky top-20 z-40 -mx-2 rounded-3xl bg-canvas px-2 py-3">
-        <div className="glass-strong rounded-3xl p-3">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
-            <div className="relative flex-1">
-              <Search
-                aria-hidden="true"
-                className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-subtle"
-              />
-              <label htmlFor="shop-search" className="sr-only">
-                Pretraži proizvode
-              </label>
-              <input
-                id="shop-search"
-                type="search"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Pretraži proizvode…"
-                className="h-11 w-full rounded-xl border border-line-interactive bg-sunken pl-10 pr-4 text-sm text-ink placeholder:text-ink-subtle focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/15"
-              />
-            </div>
-
-            {/* Scrolls sideways below lg instead of wrapping: at 390px the
-                toggles were breaking mid-word and squeezing the select. */}
-            <div className="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-0.5 [scrollbar-width:none] lg:mx-0 lg:overflow-visible lg:px-0 [&::-webkit-scrollbar]:hidden">
-              <Toggle active={ecoOnly} onClick={() => setEcoOnly((value) => !value)} icon={Leaf}>
-                Eko
-              </Toggle>
-              <Toggle
-                active={inStockOnly}
-                onClick={() => setInStockOnly((value) => !value)}
-                icon={PackageCheck}
-              >
-                Na stanju
-              </Toggle>
-
-              <div className="relative shrink-0">
-                <SlidersHorizontal
-                  aria-hidden="true"
-                  className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-subtle"
-                />
-                <label htmlFor="shop-sort" className="sr-only">
-                  Sortiranje
-                </label>
-                <select
-                  id="shop-sort"
-                  value={sort}
-                  onChange={(event) => setSort(event.target.value as Sort)}
-                  className="h-11 appearance-none rounded-xl border border-line-interactive bg-sunken pl-9 pr-9 text-sm text-ink focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/15"
-                >
-                  {SORTS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-                {/* `appearance-none` removes the native arrow; without this the
-                    control is indistinguishable from a text input and the
-                    padding reserved for the indicator holds nothing. */}
-                <ChevronDown
-                  aria-hidden="true"
-                  className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-subtle"
-                />
-              </div>
-            </div>
+      {/* The sticky offset lives on the glass itself. It used to sit on an outer
+          wrapper whose `py-3` was fully transparent, so cards slid through a
+          12px band that read as a gap in the panel — and giving that wrapper a
+          background instead would have been worse, because `backdrop-filter`
+          samples whatever is painted directly behind the element: an opaque
+          parent turns the blur into a flat fill of the parent's own colour. */}
+      <div className="glass-strong sticky top-20 z-40 rounded-3xl p-3">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+          <div className="relative flex-1">
+            <Search
+              aria-hidden="true"
+              className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-subtle"
+            />
+            <label htmlFor="shop-search" className="sr-only">
+              Pretraži proizvode
+            </label>
+            <input
+              id="shop-search"
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Pretraži proizvode…"
+              className="h-11 w-full rounded-xl border border-line-interactive bg-sunken pl-10 pr-4 text-sm text-ink placeholder:text-ink-subtle focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/15"
+            />
           </div>
 
-          <LayoutGroup id="shop-categories">
-            <ul className="mask-fade-x -mx-1 mt-3 flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none] lg:mask-none [&::-webkit-scrollbar]:hidden">
-              {[ALL, ...productCategories].map((option) => {
-                const active = category === option
-                return (
-                  <li key={option}>
-                    <button
-                      type="button"
-                      onClick={() => setCategory(option)}
-                      aria-pressed={active}
-                      className={cn(
-                        'relative shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm transition-colors',
-                        active ? 'text-brand-ink' : 'text-ink-muted hover:text-ink',
-                      )}
-                    >
-                      {active ? (
-                        <motion.span
-                          layoutId="shop-category-pill"
-                          className="absolute inset-0 rounded-full bg-brand"
-                          transition={spring.surface}
-                        />
-                      ) : null}
-                      <span className="relative z-10">{option}</span>
-                    </button>
-                  </li>
-                )
-              })}
-            </ul>
-          </LayoutGroup>
+          {/* Scrolls sideways below lg instead of wrapping: at 390px the
+                toggles were breaking mid-word and squeezing the select. */}
+          <div className="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-0.5 [scrollbar-width:none] lg:mx-0 lg:overflow-visible lg:px-0 [&::-webkit-scrollbar]:hidden">
+            <Toggle active={ecoOnly} onClick={() => setEcoOnly((value) => !value)} icon={Leaf}>
+              Eko
+            </Toggle>
+            <Toggle
+              active={inStockOnly}
+              onClick={() => setInStockOnly((value) => !value)}
+              icon={PackageCheck}
+            >
+              Na stanju
+            </Toggle>
+
+            <div className="relative shrink-0">
+              <SlidersHorizontal
+                aria-hidden="true"
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-subtle"
+              />
+              <label htmlFor="shop-sort" className="sr-only">
+                Sortiranje
+              </label>
+              <select
+                id="shop-sort"
+                value={sort}
+                onChange={(event) => setSort(event.target.value as Sort)}
+                className="h-11 appearance-none rounded-xl border border-line-interactive bg-sunken pl-9 pr-9 text-sm text-ink focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/15"
+              >
+                {SORTS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              {/* `appearance-none` removes the native arrow; without this the
+                    control is indistinguishable from a text input and the
+                    padding reserved for the indicator holds nothing. */}
+              <ChevronDown
+                aria-hidden="true"
+                className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-subtle"
+              />
+            </div>
+          </div>
         </div>
+
+        <LayoutGroup id="shop-categories">
+          <ul className="mask-fade-x -mx-1 mt-3 flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none] lg:mask-none [&::-webkit-scrollbar]:hidden">
+            {[ALL, ...productCategories].map((option) => {
+              const active = category === option
+              return (
+                <li key={option}>
+                  <button
+                    type="button"
+                    onClick={() => setCategory(option)}
+                    aria-pressed={active}
+                    className={cn(
+                      'relative shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm transition-colors',
+                      active ? 'text-brand-ink' : 'text-ink-muted hover:text-ink',
+                    )}
+                  >
+                    {active ? (
+                      <motion.span
+                        layoutId="shop-category-pill"
+                        className="absolute inset-0 rounded-full bg-brand"
+                        transition={spring.surface}
+                      />
+                    ) : null}
+                    <span className="relative z-10">{option}</span>
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+        </LayoutGroup>
       </div>
 
       <div className="flex items-center justify-between gap-4">

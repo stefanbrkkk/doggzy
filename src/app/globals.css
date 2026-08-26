@@ -409,6 +409,17 @@
  * washes out whatever is behind it, which defeats the point. The asymmetric
  * bevel — light on the top edge, shadow on the bottom — is what actually reads
  * as a pane of glass.
+ *
+ * Never hand-write `-webkit-backdrop-filter` beside the standard property.
+ * Lightning CSS (which @tailwindcss/postcss runs) treats the two spellings as
+ * one property and keeps only the last one declared, so standard-then-prefixed
+ * ships a rule containing ONLY `-webkit-backdrop-filter` — which Chrome no
+ * longer supports. Both glass surfaces rendered completely unblurred for as
+ * long as that ordering was in the file, and the `@supports` gate did not
+ * catch it because Lightning rewrites the query to test both spellings.
+ * Declaring the standard property alone makes Lightning emit both.
+ * `scripts/e2e.mjs` asserts the computed value in a real browser, because
+ * nothing about this is visible in source review.
  */
 @utility glass {
   background: color-mix(in oklch, var(--surface) 82%, transparent);
@@ -418,7 +429,6 @@
   @supports (backdrop-filter: blur(1px)) {
     background: color-mix(in oklch, var(--surface) 68%, transparent);
     backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
   }
 }
 
@@ -431,15 +441,14 @@
     var(--shadow-lift);
 
   @supports (backdrop-filter: blur(1px)) {
-    /* 92%, and a much gentler saturation boost than `glass`.
-
-       This is the one glass surface that sits over the generative artwork
-       rather than over flat page ground, and `saturate(170%)` amplified the
-       chroma of whatever card was passing underneath — the panel picked up
-       green and pink blotches instead of reading as a single plane. */
-    background: color-mix(in oklch, var(--elevated) 92%, transparent);
-    backdrop-filter: blur(22px) saturate(112%);
-    -webkit-backdrop-filter: blur(22px) saturate(112%);
+    /* Slightly more opaque and less saturated than `glass`: this is the one
+       glass surface that sits over the generative artwork rather than over
+       flat page ground, so the wash coming through it is already colourful
+       before any boost. Both numbers were verified against the shop grid with
+       the blur actually applied — see the note above for why that had to be
+       said out loud. */
+    background: color-mix(in oklch, var(--elevated) 84%, transparent);
+    backdrop-filter: blur(22px) saturate(140%);
   }
 }
 

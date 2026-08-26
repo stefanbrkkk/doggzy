@@ -1047,6 +1047,43 @@ await group('Napredak čitanja se ne dupla', async () => {
   await page.close()
 })
 
+// ---------------------------------------------------------------- staklo ----
+await group('Staklene površine stvarno zamućuju pozadinu', async () => {
+  const page = await context.newPage()
+  await page.goto(`${BASE}/prodavnica`, { waitUntil: 'load' })
+  await sleep(800)
+
+  // Checked as a computed value in a real browser, not as text in the
+  // stylesheet. Lightning CSS collapses `backdrop-filter` and
+  // `-webkit-backdrop-filter` into one property and keeps only the last one
+  // declared, so a source file that spells out both can ship the prefixed form
+  // alone — which Chrome does not support. The rule looked right in review and
+  // every glass surface on the site rendered flat.
+  const glass = await page.evaluate(() => {
+    if (!CSS.supports('backdrop-filter', 'blur(1px)')) return { skip: true }
+    return [...document.querySelectorAll('[class*="glass"]')].map((node) => ({
+      cls: node.className.split(' ').find((c) => c.startsWith('glass')),
+      filter: getComputedStyle(node).backdropFilter,
+    }))
+  })
+
+  if (glass.skip) {
+    console.log('  --   preskočeno (pregledač ne podržava backdrop-filter)')
+    await page.close()
+    return
+  }
+
+  check('stranica ima staklenu površinu', glass.length > 0, `${glass.length} pronađeno`)
+  const flat = glass.filter((entry) => entry.filter === 'none' || !entry.filter)
+  check(
+    'nijedna staklena površina nije bez zamućenja',
+    flat.length === 0,
+    flat.map((entry) => entry.cls).join(', '),
+  )
+
+  await page.close()
+})
+
 await context.close()
 await browser.close()
 
