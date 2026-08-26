@@ -3,8 +3,8 @@
 Pomoć psima koja se može proveriti.
 
 Doggzy je platforma za Srbiju koja spaja tri stvari: prijavu nestalog,
-pronađenog ili ugroženog psa; usvajanje i virtuelno starateljstvo; i prodavnicu
-čiji profit ide u negu. Sve troši se javno — svaki pas ima stranicu na kojoj
+pronađenog ili ugroženog psa; udomljavanje i virtuelno starateljstvo; i prodavnicu
+čiji profit ide u negu. Svaki trošak je javan — svaki pas ima stranicu na kojoj
 stoji šta je urađeno, koliko je koštalo i da li postoji dokaz.
 
 Ovaj repozitorijum je sam sajt.
@@ -60,12 +60,12 @@ i tiho bi odsekao heš.
 ## Provere
 
 ```bash
-npm run check                  # tipovi, lint, latinica, kontrast, build
-npm run test:e2e               # 172 provere kroz pravi pregledač
+npm run check                  # tipovi, lint, latinica, kontrast, iznosi, build
+npm run test:e2e               # 217 provera kroz pravi pregledač
 npm run test:perf              # LCP, CLS, težina, ispušteni kadrovi
 ```
 
-Četiri provere postoje zato što su odgovarajuće greške već napravljene u ovom
+Pet provera postoji zato što su odgovarajuće greške već napravljene u ovom
 projektu i nisu se videle na pregled:
 
 - **`check:script`** traži ćirilične karaktere u latiničnom tekstu. Homoglifi
@@ -73,8 +73,14 @@ projektu i nisu se videle na pregled:
 - **`check:contrast`** računa WCAG odnose direktno iz `globals.css`
   (OKLCH → linearni sRGB → luminansa) i pada ako neki par padne ispod praga.
   Uhvatila je četiri para u svetloj temi, uključujući natpis na glavnom dugmetu.
+  Alfa se kompozituje u gama prostoru, kao u pregledaču — u linearnom je svaka
+  providna boja izgledala kontrastnije nego što jeste.
 - **`test:e2e`** proverava i ono što se ne vidi u kodu: `Intl` piše srpske
   mesece ćirilicom ako se lokal ne zaključa na `sr-Latn-RS`.
+- **`check:figures`** proverava svaki iznos na sajtu prema dnevnicima pasa.
+  Ista stavka je koštala 2.600 RSD u kalkulatoru i 3.800 u dnevniku, a jedan
+  duks je „plaćao mikročipovanje pet pasa” — što traži 1.098 RSD profita po
+  čipu. Sada tvrdnja proizvoda mora da izdrži množenje.
 - **`test:perf`** meri ispuštene kadrove tokom skrolovanja. Zrno preko celog
   ekrana sa `mix-blend-mode` obaralo je 67% kadrova na stranici prodavnice.
 
