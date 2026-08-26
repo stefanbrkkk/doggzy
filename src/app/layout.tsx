@@ -1,113 +1,124 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { Navigation } from "@/components/navigation";
-import { Footer } from "@/components/footer";
-import { LanguageProvider } from "@/contexts/LanguageContext";
-import { initializeAccessibility } from "@/lib/accessibility";
-import { preloadCriticalResources } from "@/lib/performance";
+import type { Metadata, Viewport } from 'next'
+import { Inter, Instrument_Serif, JetBrains_Mono, Space_Grotesk } from 'next/font/google'
+import './globals.css'
+import { site } from '@/config/site'
+import { Providers } from '@/components/providers'
+import { SiteHeader } from '@/components/layout/site-header'
+import { SiteFooter } from '@/components/layout/site-footer'
+import { Preloader, preloaderScript } from '@/components/layout/preloader'
+import { CartDrawer } from '@/components/shop/cart-drawer'
+import { FlyToCart } from '@/components/shop/fly-to-cart'
+import { Cursor, ScrollProgress } from '@/components/motion'
+
+const inter = Inter({
+  subsets: ['latin', 'latin-ext'],
+  variable: '--font-inter',
+  display: 'swap',
+})
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin', 'latin-ext'],
+  variable: '--font-space-grotesk',
+  display: 'swap',
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin', 'latin-ext'],
+  variable: '--font-jetbrains-mono',
+  display: 'swap',
+})
+
+const instrumentSerif = Instrument_Serif({
+  // latin-ext carries č ć š ž đ — without it the serif silently drops Serbian
+  // diacritics mid-word.
+  subsets: ['latin', 'latin-ext'],
+  weight: '400',
+  style: ['normal', 'italic'],
+  variable: '--font-instrument-serif',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
-  title: "Doggzy - Global Dog Rescue Charity | Donate & Shop to Save Lives",
-  description: "Join Doggzy in our mission to rescue dogs worldwide. Donate directly, shop eco-friendly pet products, or sponsor a rescue dog. Every contribution saves lives and creates happy endings.",
-  keywords: "dog rescue, animal charity, donate dogs, pet adoption, animal welfare, global rescue",
-  authors: [{ name: "Doggzy Team" }],
-  creator: "Doggzy",
-  publisher: "Doggzy",
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
+  metadataBase: new URL(site.url),
+  title: {
+    default: `${site.name} — ${site.tagline}`,
+    template: `%s · ${site.name}`,
   },
-  metadataBase: new URL('https://doggzy.org'),
-  alternates: {
-    canonical: '/',
-  },
+  description: site.description,
+  applicationName: site.name,
+  keywords: [
+    'nestao pas',
+    'prijava psa',
+    'usvajanje pasa Srbija',
+    'donacije za pse',
+    'skloništa Srbija',
+    'virtuelno starateljstvo',
+  ],
+  authors: [{ name: site.name }],
+  alternates: { canonical: '/' },
   openGraph: {
-    title: "Doggzy - Global Dog Rescue Charity",
-    description: "Join our mission to rescue dogs worldwide. Donate, shop, or sponsor to save lives.",
-    url: 'https://doggzy.org',
-    siteName: 'Doggzy',
-    images: [
-      {
-        url: '/og-image.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Doggzy - Global Dog Rescue',
-      },
-    ],
-    locale: 'en_US',
     type: 'website',
+    locale: 'sr_RS',
+    url: site.url,
+    siteName: site.name,
+    title: `${site.name} — ${site.tagline}`,
+    description: site.description,
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Doggzy - Global Dog Rescue Charity',
-    description: 'Join our mission to rescue dogs worldwide. Donate, shop, or sponsor to save lives.',
-    images: ['/og-image.jpg'],
+    title: `${site.name} — ${site.tagline}`,
+    description: site.description,
   },
   robots: {
     index: true,
     follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 },
   },
-};
+}
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  // Initialize accessibility and performance features
-  if (typeof window !== 'undefined') {
-    initializeAccessibility();
-    preloadCriticalResources();
-  }
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: dark)', color: '#151312' },
+    { media: '(prefers-color-scheme: light)', color: '#fbfaf8' },
+  ],
+  colorScheme: 'dark light',
+  width: 'device-width',
+  initialScale: 1,
+}
 
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html
+      lang="sr-Latn-RS"
+      // `dark` matches the default in <Providers>; next-themes rewrites it
+      // before paint if the visitor has chosen otherwise.
+      className={`dark ${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable}`}
+      suppressHydrationWarning
+    >
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <meta name="theme-color" content="#ff6b35" />
-        <meta name="color-scheme" content="light dark" />
+        <script dangerouslySetInnerHTML={{ __html: preloaderScript }} />
       </head>
-      <body className="min-h-screen bg-background text-foreground antialiased focus:outline-none">
-        <LanguageProvider>
-          {/* Skip to main content link */}
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-[100] bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold shadow-lg"
-          >
-            Skip to main content
-          </a>
-          
-          <Navigation />
-          
-          <main 
-            id="main-content" 
-            className="pt-16 lg:pt-20"
-            role="main"
-            aria-label="Main content"
-          >
-            {children}
-          </main>
-          
-          <Footer />
-          
-          {/* Live region for announcements */}
-          <div
-            id="live-region"
-            aria-live="polite"
-            aria-atomic="true"
-            className="sr-only"
-          />
-        </LanguageProvider>
+      <body className="min-h-dvh bg-canvas text-ink antialiased">
+        <a
+          href="#sadrzaj"
+          className="sr-only z-[400] focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:rounded-xl focus:bg-brand focus:px-5 focus:py-3 focus:font-medium focus:text-brand-ink"
+        >
+          Pređi na sadržaj
+        </a>
+
+        <Providers>
+          <Preloader />
+          <ScrollProgress />
+          <Cursor />
+          <SiteHeader />
+
+          <main id="sadrzaj">{children}</main>
+
+          <SiteFooter />
+          <CartDrawer />
+          <FlyToCart />
+        </Providers>
       </body>
     </html>
-  );
+  )
 }

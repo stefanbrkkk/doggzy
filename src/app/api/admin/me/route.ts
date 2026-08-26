@@ -1,27 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
+import { getSession } from '@/lib/auth'
 
-export async function GET(_request: NextRequest) {
-  try {
-    // Mock user data - replace with real implementation later
-    const mockUser = {
-      id: '1',
-      email: 'admin@doggzy.org',
-      role: 'admin',
-      name: 'Admin User'
-    }
+export const runtime = 'nodejs'
 
-    return NextResponse.json({
-      success: true,
-      data: mockUser
-    })
-  } catch (error) {
-    console.error('Get user error:', error)
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Failed to get user data'
-      },
-      { status: 500 }
-    )
+export async function GET() {
+  const session = await getSession()
+
+  // The middleware already rejects anonymous callers; this is defence in depth.
+  if (!session) {
+    return NextResponse.json({ error: 'Neautorizovano.' }, { status: 401 })
   }
+
+  return NextResponse.json({ email: session.sub, role: session.role })
 }

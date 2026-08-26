@@ -1,0 +1,544 @@
+#!/usr/bin/env node
+import { chromium } from 'playwright'
+import { setTimeout as sleep } from 'node:timers/promises'
+
+/**
+ * End-to-end suite.
+ *
+ * Deliberately a plain script rather than a test-runner dependency: it needs to
+ * run identically in CI and in a sandbox, and the whole surface fits in one
+ * file. Assumes a production server is already listening on BASE_URL.
+ *
+ *   npm run build && npm run start &   # then
+ *   npm run test:e2e
+ */
+
+const BASE = process.env.E2E_BASE_URL ?? `http://localhost:${process.env.PORT ?? 3000}`
+
+const ROUTES = [
+  '/',
+  '/prijava',
+  '/psi',
+  '/psi/mrvica',
+  '/psi/siva',
+  '/doniraj',
+  '/prodavnica',
+  '/prodavnica/gps-ogrlica',
+  '/korpa',
+  '/omiljeno',
+  '/price',
+  '/price/cetrdeset-minuta',
+  '/transparentnost',
+  '/o-nama',
+  '/kontakt',
+  '/privatnost',
+  '/uslovi',
+  '/pristupacnost',
+]
+
+/** Console noise that is expected and not a defect. */
+const IGNORED_CONSOLE = [/Download the React DevTools/i, /\[Fast Refresh\]/i]
+
+let passed = 0
+const failures = []
+
+function check(name, condition, detail = '') {
+  if (condition) {
+    passed += 1
+    console.log(`  ok   ${name}`)
+  } else {
+    failures.push(`${name}${detail ? ` — ${detail}` : ''}`)
+    console.log(`  FAIL ${name}${detail ? ` — ${detail}` : ''}`)
+  }
+}
+
+async function group(title, fn) {
+  console.log(`\n${title}`)
+  try {
+    await fn()
+  } catch (error) {
+    failures.push(`${title} threw: ${error.message}`)
+    console.log(`  FAIL ${title} threw — ${error.message}`)
+  }
+}
+
+/** Attaches error collectors and returns the accumulating array. */
+function watch(page, label) {
+  const errors = []
+  page.on('console', (message) => {
+    if (message.type() !== 'error') return
+    const text = message.text()
+    if (IGNORED_CONSOLE.some((pattern) => pattern.test(text))) return
+    errors.push(`console: ${text}`)
+  })
+  page.on('pageerror', (error) => errors.push(`pageerror: ${error.message}`))
+  page.on('requestfailed', (request) => {
+    const failure = request.failure()?.errorText ?? ''
+    if (failure.includes('ERR_ABORTED')) return
+    errors.push(`requestfailed: ${request.url()} ${failure}`)
+  })
+  page.on('response', (response) => {
+    if (response.status() >= 400) errors.push(`HTTP ${response.status()}: ${response.url()}`)
+  })
+  return { label, errors }
+}
+
+const browser = await chromium.launch({
+  executablePath: process.env.CHROMIUM_PATH || undefined,
+  args: [
+    '--no-sandbox',
+    '--no-proxy-server',
+    '--use-gl=swiftshader',
+    '--enable-unsafe-swiftshader',
+  ],
+})
+
+const context = await browser.newContext({ viewport: { width: 1440, height: 900 } })
+// The preloader is a first-visit curtain; skipping it keeps every test honest
+// about what it is actually waiting for.
+await context.addInitScript(() => {
+  try {
+    sessionStorage.setItem('doggzy.visited', '1')
+  } catch {}
+})
+
+// ---------------------------------------------------------------- routes ---
+await group('Rute: status, naslov, greške u konzoli', async () => {
+  for (const route of ROUTES) {
+    const page = await context.newPage()
+    const watcher = watch(page, route)
+
+    const response = await page.goto(`${BASE}${route}`, { waitUntil: 'load', timeout: 30000 })
+    await sleep(500)
+
+    check(`${route} vraća 200`, response?.status() === 200, `status ${response?.status()}`)
+
+    const h1Count = await page.locator('h1').count()
+    check(`${route} ima tačno jedan <h1>`, h1Count === 1, `nađeno ${h1Count}`)
+
+    const title = await page.title()
+    check(`${route} ima <title>`, title.length > 5, title)
+
+    const lang = await page.getAttribute('html', 'lang')
+    check(`${route} ima lang="sr-Latn-RS"`, lang === 'sr-Latn-RS', String(lang))
+
+    check(`${route} bez grešaka u konzoli`, watcher.errors.length === 0, watcher.errors.join(' | '))
+
+    await page.close()
+  }
+})
+
+// ------------------------------------------------------------ no overflow ---
+await group('Bez horizontalnog prelivanja na 390px', async () => {
+  const mobile = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true })
+  await mobile.addInitScript(() => {
+    try {
+      sessionStorage.setItem('doggzy.visited', '1')
+    } catch {}
+  })
+
+  for (const route of ROUTES) {
+    const page = await mobile.newPage()
+    await page.goto(`${BASE}${route}`, { waitUntil: 'load', timeout: 30000 })
+    await sleep(350)
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    )
+    check(`${route} se ne preliva`, overflow <= 1, `${overflow}px viška`)
+    await page.close()
+  }
+  await mobile.close()
+})
+
+// ------------------------------------------------------------ report flow ---
+await group('Prijava psa: ceo tok do potvrde', async () => {
+  const page = await context.newPage()
+  const watcher = watch(page, '/prijava')
+  await page.goto(`${BASE}/prijava`, { waitUntil: 'load' })
+  await sleep(600)
+
+  const phone = page.locator('[aria-label="Prijava psa"]').first()
+
+  await phone.getByRole('button', { name: /Nestao mi je pas/ }).click()
+  await phone.getByRole('button', { name: 'Dalje' }).click()
+  await sleep(400)
+
+  await page.locator('#report-location').fill('Vračar, Njegoševa 12')
+  await phone.getByRole('button', { name: 'Dalje' }).click()
+  await sleep(400)
+
+  await phone.getByRole('button', { name: 'Srednji', exact: true }).click()
+  await phone.getByRole('button', { name: 'Crn', exact: true }).click()
+  await page.locator('#report-description').fill('Crn mešanac, crvena ogrlica, plah prema ljudima.')
+  await phone.getByRole('button', { name: 'Dalje' }).click()
+  await sleep(400)
+
+  await page.locator('#report-name').fill('Milan')
+  await page.locator('#report-contact').fill('060 1234567')
+  await phone.getByRole('button', { name: 'Pošalji prijavu' }).click()
+  await sleep(2000)
+
+  const confirmed = await page.getByText('Prijava je primljena').isVisible()
+  check('prijava stiže do potvrde', confirmed)
+
+  const reference = await page.locator('text=/DG-\\d{4}-[A-Z0-9]{4}/').count()
+  check('potvrda sadrži broj prijave', reference > 0)
+
+  check('tok bez grešaka', watcher.errors.length === 0, watcher.errors.join(' | '))
+  await page.close()
+})
+
+await group('Prijava psa: validacija zaustavlja prazan korak', async () => {
+  const page = await context.newPage()
+  await page.goto(`${BASE}/prijava`, { waitUntil: 'load' })
+  await sleep(500)
+
+  const phone = page.locator('[aria-label="Prijava psa"]').first()
+  await phone.getByRole('button', { name: 'Dalje' }).click()
+  await sleep(300)
+
+  const error = await page.getByText('Izaberi jednu opciju.').isVisible()
+  check('bez izbora tipa prijave javlja grešku', error)
+
+  const stillOnStepOne = await phone.getByText('Šta se dešava?', { exact: true }).isVisible()
+  check('ostaje na prvom koraku', stillOnStepOne)
+  await page.close()
+})
+
+// -------------------------------------------------------------------- shop ---
+await group('Prodavnica: filtriranje, pretraga, korpa', async () => {
+  const page = await context.newPage()
+  const watcher = watch(page, '/prodavnica')
+  await page.goto(`${BASE}/prodavnica`, { waitUntil: 'load' })
+  await sleep(700)
+
+  const initial = await page.locator('article').count()
+  check('mreža prikazuje sve proizvode', initial === 12, `prikazano ${initial}`)
+
+  await page.getByRole('button', { name: 'Igračke', exact: true }).click()
+  await sleep(900)
+  const toys = await page.locator('article').count()
+  check('filter po kategoriji smanjuje listu', toys === 2, `prikazano ${toys}`)
+
+  await page.getByRole('button', { name: 'Sve', exact: true }).click()
+  await sleep(500)
+
+  await page.locator('#shop-search').fill('ogrlica')
+  await sleep(700)
+  const searched = await page.locator('article').count()
+  check('pretraga filtrira', searched === 1, `prikazano ${searched}`)
+
+  await page.locator('#shop-search').fill('qqqqqq')
+  await sleep(700)
+  const empty = await page.getByText('Ništa ne odgovara pretrazi').isVisible()
+  check('prazno stanje se prikazuje', empty)
+
+  await page.getByRole('button', { name: 'Poništi filtere' }).first().click()
+  await sleep(600)
+
+  await page.locator('article').first().getByRole('button', { name: 'Dodaj u korpu' }).click()
+  await sleep(900)
+
+  const drawerOpen = await page.getByRole('dialog', { name: 'Korpa' }).isVisible()
+  check('korpa se otvara posle dodavanja', drawerOpen)
+
+  const badge = await page.getByRole('button', { name: /Korpa, 1 stavki/ }).count()
+  check('bedž u zaglavlju se ažurira', badge > 0)
+
+  await page.getByRole('button', { name: 'Zatvori korpu' }).first().click()
+  await sleep(500)
+
+  // Persistence across a reload is the whole point of the store.
+  await page.reload({ waitUntil: 'load' })
+  await sleep(900)
+  const persisted = await page.getByRole('button', { name: /Korpa, 1 stavki/ }).count()
+  check('korpa preživi osvežavanje', persisted > 0)
+
+  check('prodavnica bez grešaka', watcher.errors.length === 0, watcher.errors.join(' | '))
+  await page.close()
+})
+
+await group('Korpa: izmena količine i praznjenje', async () => {
+  const page = await context.newPage()
+  await page.goto(`${BASE}/korpa`, { waitUntil: 'load' })
+  await sleep(900)
+
+  const hasItem = await page.locator('main li').count()
+  check('stavka iz prethodnog testa je i dalje tu', hasItem > 0)
+
+  await page
+    .getByRole('button', { name: /Povećaj količinu/ })
+    .first()
+    .click()
+  await sleep(500)
+  const quantity = await page.locator('main [aria-live="polite"]').first().textContent()
+  check('količina se povećava', quantity?.trim() === '2', String(quantity))
+
+  await page.getByRole('button', { name: 'Isprazni korpu' }).click()
+  await sleep(700)
+  const emptied = await page.getByText('Korpa je prazna').isVisible()
+  check('korpa se prazni', emptied)
+  await page.close()
+})
+
+await group('Omiljeno: čuvanje između stranica', async () => {
+  const page = await context.newPage()
+  await page.goto(`${BASE}/prodavnica`, { waitUntil: 'load' })
+  await sleep(800)
+
+  await page
+    .getByRole('button', { name: /Dodaj .* u omiljene/ })
+    .first()
+    .click()
+  await sleep(600)
+
+  await page.goto(`${BASE}/omiljeno`, { waitUntil: 'load' })
+  await sleep(900)
+  const saved = await page.locator('article').count()
+  check('omiljeni proizvod se pojavljuje na stranici', saved === 1, `prikazano ${saved}`)
+  await page.close()
+})
+
+// ------------------------------------------------------------------- theme ---
+await group('Tema: prebacivanje i pamćenje', async () => {
+  const page = await context.newPage()
+  await page.goto(`${BASE}/`, { waitUntil: 'load' })
+  await sleep(700)
+
+  const before = await page.getAttribute('html', 'class')
+  check('podrazumevana tema je tamna', before?.includes('dark') === true, String(before))
+
+  await page.getByRole('button', { name: 'Uključi svetlu temu' }).first().click()
+  await sleep(600)
+  const after = await page.getAttribute('html', 'class')
+  check('prelazi na svetlu temu', after?.includes('light') === true, String(after))
+
+  await page.reload({ waitUntil: 'load' })
+  await sleep(700)
+  const remembered = await page.getAttribute('html', 'class')
+  check('tema se pamti', remembered?.includes('light') === true, String(remembered))
+
+  await page.getByRole('button', { name: 'Uključi tamnu temu' }).first().click()
+  await sleep(400)
+  await page.close()
+})
+
+// -------------------------------------------------------------- navigation ---
+await group('Navigacija: mobilni meni i unutrašnji linkovi', async () => {
+  const mobile = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true })
+  await mobile.addInitScript(() => {
+    try {
+      sessionStorage.setItem('doggzy.visited', '1')
+    } catch {}
+  })
+  const page = await mobile.newPage()
+  await page.goto(`${BASE}/`, { waitUntil: 'load' })
+  await sleep(700)
+
+  await page.getByRole('button', { name: 'Otvori meni' }).click()
+  await sleep(500)
+  const menuVisible = await page.locator('#mobile-menu').isVisible()
+  check('mobilni meni se otvara', menuVisible)
+
+  await page
+    .getByRole('link', { name: /Prijavi psa/ })
+    .first()
+    .click()
+  await page.waitForURL('**/prijava', { timeout: 10000 })
+  check('link iz menija vodi na prijavu', page.url().endsWith('/prijava'))
+
+  await page.close()
+  await mobile.close()
+})
+
+await group('Svi unutrašnji linkovi vode na postojeće stranice', async () => {
+  const page = await context.newPage()
+  const seen = new Set()
+
+  for (const route of ROUTES) {
+    await page.goto(`${BASE}${route}`, { waitUntil: 'load' })
+    const hrefs = await page.$$eval('a[href^="/"]', (links) =>
+      links.map((link) => link.getAttribute('href')),
+    )
+    for (const href of hrefs) {
+      if (href && !href.startsWith('//') && !href.startsWith('/#')) seen.add(href.split('#')[0])
+    }
+  }
+
+  const broken = []
+  for (const href of seen) {
+    const response = await page.request.get(`${BASE}${href}`)
+    if (response.status() >= 400 && response.status() !== 307)
+      broken.push(`${href} → ${response.status()}`)
+  }
+  check(`nema pokvarenih linkova (${seen.size} provereno)`, broken.length === 0, broken.join(', '))
+  await page.close()
+})
+
+// ------------------------------------------------------------------- admin ---
+await group('Admin: zaštita i odbijanje pogrešnih podataka', async () => {
+  const page = await context.newPage()
+
+  const response = await page.goto(`${BASE}/admin`, { waitUntil: 'load' })
+  check('/admin preusmerava na prijavu', page.url().includes('/admin/login'), page.url())
+  check('preusmerenje se završava sa 200', response?.status() === 200)
+
+  const api = await page.request.get(`${BASE}/api/admin/me`)
+  check('/api/admin/me odbija bez sesije', api.status() === 401, `status ${api.status()}`)
+
+  const login = await page.request.post(`${BASE}/api/admin/login`, {
+    data: { email: 'napadac@example.com', password: 'pogresno' },
+    failOnStatusCode: false,
+  })
+  check(
+    'prijava sa pogrešnim podacima ne uspeva',
+    login.status() === 401 || login.status() === 503,
+    `status ${login.status()}`,
+  )
+
+  await page.close()
+})
+
+await group('Admin: uspešna prijava, sesija i odjava', async () => {
+  const page = await context.newPage()
+
+  // Only meaningful where credentials are configured; elsewhere the negative
+  // path above is the whole contract.
+  const health = await page.request.get(`${BASE}/api/health`)
+  const { config } = await health.json()
+  const email = process.env.ADMIN_EMAIL
+  const password = process.env.E2E_ADMIN_PASSWORD
+
+  if (!config.adminAuth || !email || !password) {
+    console.log('  --   preskočeno (ADMIN_EMAIL / E2E_ADMIN_PASSWORD nisu postavljeni)')
+    await page.close()
+    return
+  }
+
+  await page.goto(`${BASE}/admin/login`, { waitUntil: 'load' })
+  await sleep(500)
+
+  await page.locator('input[type="email"]').fill(email)
+  await page.locator('input[type="password"]').fill('sigurno-pogresna-lozinka')
+  await page.getByRole('button', { name: 'Prijavi se' }).click()
+  await sleep(1800)
+  // Either message counts: the contract is that a bad password never gets in,
+  // and after enough attempts the rate limiter answers instead.
+  const rejected =
+    (await page.getByText('Pogrešan email ili lozinka.').count()) +
+    (await page.getByText('Previše pokušaja.', { exact: false }).count())
+  check('pogrešna lozinka prikazuje poruku', rejected > 0)
+  check('pogrešna lozinka ne pušta dalje', page.url().includes('/admin/login'))
+
+  await page.locator('input[type="email"]').fill(email)
+  await page.locator('input[type="password"]').fill(password)
+  await page.getByRole('button', { name: 'Prijavi se' }).click()
+  await page.waitForURL('**/admin', { timeout: 15000 })
+  await sleep(1200)
+  check('tačna lozinka vodi na kontrolnu tablu', page.url().endsWith('/admin'))
+  check('kontrolna tabla se prikazuje', await page.getByText('Pregled sadržaja').isVisible())
+
+  const me = await page.request.get(`${BASE}/api/admin/me`)
+  check('sesija važi za API', me.status() === 200, `status ${me.status()}`)
+
+  await page.getByRole('button', { name: 'Odjavi se' }).click()
+  await page.waitForURL('**/admin/login', { timeout: 15000 })
+  check('odjava vraća na prijavu', page.url().includes('/admin/login'))
+
+  const afterLogout = await page.request.get(`${BASE}/api/admin/me`)
+  check('sesija više ne važi', afterLogout.status() === 401, `status ${afterLogout.status()}`)
+
+  await page.close()
+})
+
+// ------------------------------------------------------------- misc routes ---
+await group('404, sitemap, robots, health', async () => {
+  const page = await context.newPage()
+
+  const missing = await page.goto(`${BASE}/ova-stranica-ne-postoji`, { waitUntil: 'load' })
+  check('nepoznata putanja vraća 404', missing?.status() === 404, `status ${missing?.status()}`)
+  check('404 stranica je na srpskom', await page.getByText('Ova stranica ne postoji').isVisible())
+
+  const sitemap = await page.request.get(`${BASE}/sitemap.xml`)
+  const sitemapBody = await sitemap.text()
+  check('sitemap.xml se generiše', sitemap.status() === 200)
+  check('sitemap sadrži stranice pasa', sitemapBody.includes('/psi/mrvica'))
+  check('sitemap ne sadrži privatne rute', !sitemapBody.includes('/korpa'))
+
+  const robots = await page.request.get(`${BASE}/robots.txt`)
+  const robotsBody = await robots.text()
+  check('robots.txt se generiše', robots.status() === 200)
+  check('robots zabranjuje /admin', robotsBody.includes('/admin'))
+
+  const health = await page.request.get(`${BASE}/api/health`)
+  check('health endpoint odgovara', health.status() === 200)
+
+  await page.close()
+})
+
+await group('Ceo sajt je na latinici (uključujući formatirane datume)', async () => {
+  // The source-level check cannot see this: Intl renders Serbian month names in
+  // Cyrillic unless the locale is pinned to sr-Latn-RS, so it has to be caught
+  // in the rendered page.
+  const page = await context.newPage()
+
+  for (const route of ROUTES) {
+    await page.goto(`${BASE}${route}`, { waitUntil: 'load' })
+    await sleep(400)
+    const offending = await page.evaluate(() => {
+      const found = []
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT)
+      let node = walker.nextNode()
+      while (node) {
+        const text = node.textContent ?? ''
+        if (/[\u0400-\u04FF]/.test(text)) found.push(text.trim().slice(0, 60))
+        node = walker.nextNode()
+      }
+      return found
+    })
+    check(`${route} bez ćirilice`, offending.length === 0, offending.join(' | '))
+  }
+
+  await page.close()
+})
+
+// ---------------------------------------------------------------- a11y ------
+await group('Pristupačnost: preskoči na sadržaj, fokus, alt tekst', async () => {
+  const page = await context.newPage()
+  await page.goto(`${BASE}/`, { waitUntil: 'load' })
+  await sleep(700)
+
+  await page.keyboard.press('Tab')
+  const focused = await page.evaluate(() => document.activeElement?.textContent?.trim())
+  check('prvi Tab fokusira „Pređi na sadržaj”', focused === 'Pređi na sadržaj', String(focused))
+
+  await page.keyboard.press('Enter')
+  await sleep(400)
+  check('preskakanje vodi na #sadrzaj', page.url().includes('#sadrzaj'), page.url())
+
+  const unlabelled = await page.$$eval(
+    'button:not([aria-label]):not([aria-labelledby])',
+    (buttons) => buttons.filter((button) => !button.textContent?.trim()).length,
+  )
+  check('nema dugmadi bez pristupačnog imena', unlabelled === 0, `${unlabelled} bez imena`)
+
+  await page.goto(`${BASE}/prodavnica`, { waitUntil: 'load' })
+  await sleep(700)
+  const imagesWithoutLabel = await page.$$eval(
+    'svg[role="img"]:not([aria-label]), img:not([alt])',
+    (nodes) => nodes.length,
+  )
+  check('svaka ilustracija ima opis', imagesWithoutLabel === 0, `${imagesWithoutLabel} bez opisa`)
+
+  await page.close()
+})
+
+await context.close()
+await browser.close()
+
+console.log(`\n${passed} provera prošlo, ${failures.length} palo.`)
+if (failures.length > 0) {
+  console.error('\nPale provere:')
+  for (const failure of failures) console.error(`  - ${failure}`)
+  process.exit(1)
+}

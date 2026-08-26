@@ -1,160 +1,50 @@
-import { MetadataRoute } from 'next'
-import { blogStoryAdapter } from '@/lib/storage/file-adapter'
+import type { MetadataRoute } from 'next'
+import { routes, site } from '@/config/site'
+import { products } from '@/content/products'
+import { dogs } from '@/content/dogs'
+import { stories } from '@/content/stories'
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://doggzy.org'
-  const lastModified = new Date()
+/** Every indexable route. Cart and favourites are excluded — they are personal. */
+export default function sitemap(): MetadataRoute.Sitemap {
+  const now = new Date()
+  const url = (path: string) => `${site.url}${path}`
 
-  // Main public pages
-  const routes = [
-    {
-      url: baseUrl,
-      lastModified,
-      changeFrequency: 'daily' as const,
-      priority: 1,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified,
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/adopt`,
-      lastModified,
-      changeFrequency: 'daily' as const,
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/foster`,
-      lastModified,
-      changeFrequency: 'daily' as const,
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/sponsor`,
-      lastModified,
-      changeFrequency: 'daily' as const,
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/shop`,
-      lastModified,
-      changeFrequency: 'daily' as const,
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/stories`,
-      lastModified,
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/donate`,
-      lastModified,
-      changeFrequency: 'weekly' as const,
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/impact`,
-      lastModified,
+  const staticEntries: MetadataRoute.Sitemap = (
+    [
+      { url: url(routes.home), priority: 1, changeFrequency: 'weekly' },
+      { url: url(routes.report), priority: 0.9, changeFrequency: 'monthly' },
+      { url: url(routes.dogs), priority: 0.9, changeFrequency: 'daily' },
+      { url: url(routes.donate), priority: 0.8, changeFrequency: 'monthly' },
+      { url: url(routes.shop), priority: 0.8, changeFrequency: 'weekly' },
+      { url: url(routes.transparency), priority: 0.8, changeFrequency: 'weekly' },
+      { url: url(routes.stories), priority: 0.7, changeFrequency: 'weekly' },
+      { url: url(routes.about), priority: 0.6, changeFrequency: 'monthly' },
+      { url: url(routes.contact), priority: 0.5, changeFrequency: 'yearly' },
+      { url: url(routes.privacy), priority: 0.3, changeFrequency: 'yearly' },
+      { url: url(routes.terms), priority: 0.3, changeFrequency: 'yearly' },
+      { url: url(routes.accessibility), priority: 0.3, changeFrequency: 'yearly' },
+    ] satisfies MetadataRoute.Sitemap
+  ).map((entry) => ({ ...entry, lastModified: now }))
+
+  return [
+    ...staticEntries,
+    ...dogs.map((dog) => ({
+      url: url(routes.dog(dog.slug)),
+      lastModified: new Date(dog.timeline.at(-1)?.date ?? dog.arrivedAt),
       changeFrequency: 'weekly' as const,
       priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/careers`,
-      lastModified,
-      changeFrequency: 'weekly' as const,
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified,
-      changeFrequency: 'monthly' as const,
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/partners`,
-      lastModified,
-      changeFrequency: 'monthly' as const,
-      priority: 0.5,
-    },
-    // Application pages
-    {
-      url: `${baseUrl}/adopt/apply`,
-      lastModified,
+    })),
+    ...products.map((product) => ({
+      url: url(routes.product(product.slug)),
+      lastModified: now,
       changeFrequency: 'monthly' as const,
       priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/foster/apply`,
-      lastModified,
-      changeFrequency: 'monthly' as const,
+    })),
+    ...stories.map((story) => ({
+      url: url(routes.story(story.slug)),
+      lastModified: new Date(story.publishedAt),
+      changeFrequency: 'yearly' as const,
       priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/careers/apply`,
-      lastModified,
-      changeFrequency: 'monthly' as const,
-      priority: 0.5,
-    },
-    // Legal pages
-    {
-      url: `${baseUrl}/privacy`,
-      lastModified,
-      changeFrequency: 'yearly' as const,
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/terms`,
-      lastModified,
-      changeFrequency: 'yearly' as const,
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/accessibility`,
-      lastModified,
-      changeFrequency: 'yearly' as const,
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/refunds`,
-      lastModified,
-      changeFrequency: 'yearly' as const,
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/cookies`,
-      lastModified,
-      changeFrequency: 'yearly' as const,
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/report`,
-      lastModified,
-      changeFrequency: 'monthly' as const,
-      priority: 0.4,
-    },
+    })),
   ]
-
-  // Get published stories for dynamic routes
-  try {
-    const storiesResult = await blogStoryAdapter.getAll(
-      { status: 'published', limit: 1000 },
-      { field: 'publishedAt', direction: 'desc' }
-    )
-
-    const storyRoutes = storiesResult.items.map(story => ({
-      url: `${baseUrl}/stories/${story.slug}`,
-      lastModified: new Date(story.updatedAt),
-      changeFrequency: 'monthly' as const,
-      priority: 0.7,
-    }))
-
-    routes.push(...storyRoutes)
-  } catch (error) {
-    console.error('Failed to generate story routes for sitemap:', error)
-  }
-
-  return routes
 }
