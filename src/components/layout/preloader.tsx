@@ -53,7 +53,10 @@ export function Preloader() {
    */
   const releaseScrollRef = useRef<(() => void) | null>(null)
 
-  const releaseScrollLock = useCallback(() => {
+  const retireCurtain = useCallback(() => {
+    // Only now: the class hides the server-rendered overlay on the next
+    // navigation within this session, and must not fire during this one.
+    document.documentElement.classList.add('preloaded')
     document.documentElement.style.overflow = ''
     releaseScrollRef.current?.()
     releaseScrollRef.current = null
@@ -109,7 +112,11 @@ export function Preloader() {
         onUpdate: setProgress,
         onComplete: () => {
           window.setTimeout(() => {
-            root.classList.add('preloaded')
+            // `preloaded` is added by `onExitComplete`, not here. The CSS rule
+            // it drives is `display: none !important` on the overlay, so adding
+            // it before `setOpen(false)` un-rendered the node in the same tick
+            // the 1.4s panel lift was supposed to start — the whole reveal
+            // played on a box nobody could see, and the visitor got a hard cut.
             safeStorage.set('session', SESSION_KEY, '1')
             setOpen(false)
             // The hero waits for this before starting its entrance, so its
@@ -139,12 +146,12 @@ export function Preloader() {
       controls.stop()
       window.clearTimeout(ceiling)
       window.clearTimeout(pending)
-      releaseScrollLock()
+      retireCurtain()
     }
-  }, [reduced, releaseScrollLock])
+  }, [reduced, retireCurtain])
 
   return (
-    <AnimatePresence onExitComplete={releaseScrollLock}>
+    <AnimatePresence onExitComplete={retireCurtain}>
       {open ? (
         <div data-preloader className="fixed inset-0 z-[300] grid place-items-center">
           {/* One announcement, not a stream. `role="status"` lives on this span

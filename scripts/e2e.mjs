@@ -1198,6 +1198,48 @@ await group('Fokus ostaje u otvorenom dijalogu', async () => {
   )
   await page.keyboard.press('Escape')
   await sleep(600)
+  await page.close()
+})
+
+// Its own group, because the panel's paint gate behaves differently here: under
+// reduced motion the morph never runs, and it was that call which flushed the
+// panel to computed-visible. A `ready` flag alone is not visibility.
+await group('Brzi pregled preuzima fokus i uz smanjene animacije', async () => {
+  const reduced = await browser.newContext({
+    viewport: { width: 1440, height: 900 },
+    reducedMotion: 'reduce',
+  })
+  const page = await reduced.newPage()
+  await page.goto(`${BASE}/prodavnica`, { waitUntil: 'load' })
+  await sleep(1100)
+  await page.locator('button[aria-label^="Brzi pregled"]').first().click()
+  await sleep(900)
+  check(
+    'fokus je u dijalogu',
+    await page.evaluate(() => {
+      const dialog = document.querySelector('[role="dialog"]')
+      return Boolean(dialog && dialog.contains(document.activeElement))
+    }),
+  )
+
+  let escaped = false
+  for (let index = 0; index < 8; index += 1) {
+    await page.keyboard.press('Tab')
+    const inside = await page.evaluate(() => {
+      const dialog = document.querySelector('[role="dialog"]')
+      return Boolean(dialog && dialog.contains(document.activeElement))
+    })
+    if (!inside) escaped = true
+  }
+  check('Tab ne izlazi iza modala', !escaped)
+  await reduced.close()
+})
+
+await group('Prazna korpa zadržava fokus', async () => {
+  const page = await context.newPage()
+  await page.goto(`${BASE}/prodavnica`, { waitUntil: 'load' })
+  await sleep(900)
+  await resetStore(page)
 
   await page.locator('button:has-text("Dodaj u korpu")').first().click()
   await sleep(900)

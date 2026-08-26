@@ -346,12 +346,16 @@
   }
 }
 
+/* -100%, because <Marquee> animates each copy of the track rather than a
+   wrapper around them: a copy has to travel its own full width for the next one
+   to land exactly where it started. At -50% the ticker snapped a full screen of
+   content back into view once per cycle. */
 @keyframes marquee {
   0% {
     transform: translate3d(0, 0, 0);
   }
   100% {
-    transform: translate3d(-50%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
   }
 }
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { type ReactNode, useCallback, useRef, useState } from 'react'
+import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { motion, useMotionTemplate, useMotionValue, useSpring } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { spring } from '@/lib/motion'
@@ -74,7 +74,10 @@ export function TiltCard({
   const handleMove = useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
       if (event.pointerType !== 'mouse') return
-      const rect = box.current
+      // Re-measured when the cache was invalidated by a scroll, rather than
+      // bailing out — otherwise the card simply stops tilting for the rest of
+      // that hover.
+      const rect = (box.current ??= ref.current?.getBoundingClientRect() ?? null)
       if (!rect) return
 
       const px = (event.clientX - rect.left) / rect.width
@@ -96,6 +99,22 @@ export function TiltCard({
     rotateY.set(0)
     glareOpacity.set(0)
   }, [glareOpacity, rotateX, rotateY])
+
+  // Scrolling with the pointer held over the card fires neither enter nor
+  // leave, so the rect measured on enter goes stale and the tilt stops
+  // responding — it looks broken rather than merely offset. Same invalidation
+  // Magnetic uses.
+  useEffect(() => {
+    const invalidate = () => {
+      box.current = null
+    }
+    window.addEventListener('scroll', invalidate, { passive: true })
+    window.addEventListener('resize', invalidate)
+    return () => {
+      window.removeEventListener('scroll', invalidate)
+      window.removeEventListener('resize', invalidate)
+    }
+  }, [])
 
   if (reduced) {
     return (

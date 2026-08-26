@@ -44,8 +44,18 @@ export function QuickView({
   const [scope, animate] = useAnimate<HTMLDivElement>()
   const { addToCart, openCart, toggleFavorite, isFavorite, hydrated } = useShop()
   const [quantity, setQuantity] = useState(1)
-  // Gates the first paint. `visibility` rather than `opacity`, so React's style
-  // prop never fights the opacity Motion is animating.
+  /**
+   * Gates the first paint, with `opacity` rather than `visibility`.
+   *
+   * `visibility: hidden` takes the panel out of the focus order, and `ready`
+   * being true is not the same as the panel being computed-visible: under
+   * reduced motion the layout effect below returns before `animate()`, and it
+   * is that call which flushes the new visibility synchronously — leaving the
+   * panel hidden for ~85ms, long past the effect that focuses it. Focus then
+   * stayed on the trigger behind the modal and Tab walked the page underneath.
+   * `undefined` once ready, so React relinquishes the property entirely and
+   * never fights the opacity Motion animates.
+   */
   const [ready, setReady] = useState(false)
   const artRef = useRef<HTMLDivElement>(null)
   const restoreFocus = useRef<HTMLElement | null>(null)
@@ -78,11 +88,10 @@ export function QuickView({
     )
   }, [animate, originRect, product, reduced, scope])
 
-  // Focus is taken only once the panel is visible. `focus()` on a
-  // `visibility: hidden` element is a no-op, so focusing it in the effect that
-  // opens the dialog left focus on the trigger outside — and the Tab trap below
-  // only engages when activeElement is inside the panel, so tabbing walked
-  // straight into the page behind the modal.
+  // Focus is taken only once the panel is painted. See the note on `ready`:
+  // the element must not be `visibility: hidden` at this point, or `focus()` is
+  // a no-op and the Tab trap below never engages, because it only fires when
+  // activeElement is already inside the panel.
   useEffect(() => {
     if (product && ready) scope.current?.focus()
   }, [product, ready, scope])
@@ -160,7 +169,7 @@ export function QuickView({
             tabIndex={-1}
             // Hidden until the layout effect has measured and started the morph,
             // so the panel is never seen for a frame at its final position.
-            style={{ visibility: ready ? 'visible' : 'hidden' }}
+            style={{ opacity: ready ? undefined : 0, pointerEvents: ready ? undefined : 'none' }}
             className="relative grid w-full max-w-3xl overflow-hidden rounded-5xl border border-line bg-elevated outline-none sm:grid-cols-2"
             exit={{ opacity: 0, scale: 0.97, y: 12, transition: { duration: duration.fast } }}
           >

@@ -51,17 +51,23 @@ export function useEntranceCue(): EntranceCue {
       return
     }
 
+    // The event owns `lead`; the observer is only a fallback. Both writing it
+    // meant the observer's `lead: 0` landed last and the handoff was never
+    // applied — the hero started its beats immediately rather than overlapping
+    // the lifting curtain.
+    let cued = false
+
     const onCue = (event: Event) => {
+      cued = true
       const curtain = (event as EntranceCueEvent).detail?.curtain ?? false
       setCue({ ready: true, lead: curtain ? HANDOFF : 0 })
     }
     window.addEventListener(ENTRANCE_CUE, onCue, { once: true })
 
-    // Belt and braces: the class is the state, the event is only the hint that
-    // carries the handoff. Watching it means no future path that retires the
+    // Belt and braces: watching the class means no future path that retires the
     // overlay can leave an entrance stranded at its `hidden` offset.
     const observer = new MutationObserver(() => {
-      if (root.classList.contains('preloaded')) setCue({ ready: true, lead: 0 })
+      if (!cued && root.classList.contains('preloaded')) setCue({ ready: true, lead: 0 })
     })
     observer.observe(root, { attributes: true, attributeFilter: ['class'] })
 

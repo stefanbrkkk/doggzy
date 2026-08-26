@@ -14,6 +14,15 @@ import { Reveal } from '@/components/motion'
 import { JsonLd } from '@/components/seo/json-ld'
 import { breadcrumbSchema, productSchema } from '@/lib/structured-data'
 
+/**
+ * Every slug is enumerable, so an unknown one is a real 404.
+ *
+ * Without this Next renders the unknown param on demand and serves the
+ * `notFound()` page with status 200 and `s-maxage=31536000` — so a mistyped or
+ * crawler-invented URL became an indexable page, pinned in the cache for a year.
+ */
+export const dynamicParams = false
+
 export function generateStaticParams() {
   return products.map((product) => ({ slug: product.slug }))
 }

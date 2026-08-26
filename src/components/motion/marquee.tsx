@@ -15,10 +15,16 @@ export interface MarqueeProps {
 }
 
 /**
- * An infinite horizontal ticker. The track is duplicated once and translated by
- * exactly -50%, which makes the loop seamless without measuring anything at
- * runtime. Runs as a CSS animation on the compositor, so it costs no main-thread
- * work and keeps ticking during React renders.
+ * An infinite horizontal ticker.
+ *
+ * The track is duplicated once and each copy travels -100% of its own width,
+ * so the second copy lands exactly where the first started and the loop closes
+ * without measuring anything at runtime. The keyframe used to end at -50%,
+ * which is half a copy — the ticker snapped a full screen of content back into
+ * view once per cycle.
+ *
+ * Runs as a CSS animation on the compositor, so it costs no main-thread work
+ * and keeps ticking during React renders.
  */
 export function Marquee({
   children,
@@ -43,6 +49,8 @@ export function Marquee({
           key={copy}
           aria-hidden={copy === 1}
           className={cn(
+            // `min-w-full` is measured against the container, not against a
+            // wrapper, so a short item list still fills the viewport width.
             'flex min-w-full shrink-0 animate-marquee items-center',
             // The global reduced-motion rule collapses durations to 0.01ms,
             // which would snap the track to its end position rather than stop

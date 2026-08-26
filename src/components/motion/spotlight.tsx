@@ -1,6 +1,6 @@
 'use client'
 
-import { type ReactNode, useCallback, useRef } from 'react'
+import { type ReactNode, useCallback, useEffect, useRef } from 'react'
 import { motion, useMotionTemplate, useMotionValue, useSpring } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { spring } from '@/lib/motion'
@@ -45,6 +45,21 @@ export function Spotlight({
     rect.current = null
     opacity.set(0)
   }, [opacity])
+
+  // Scrolling with the pointer held still fires neither enter nor leave, so a
+  // rect cached on enter goes stale by exactly the scroll distance and the
+  // light pool detaches from the cursor. Magnetic already invalidates on these.
+  useEffect(() => {
+    const invalidate = () => {
+      rect.current = null
+    }
+    window.addEventListener('scroll', invalidate, { passive: true })
+    window.addEventListener('resize', invalidate)
+    return () => {
+      window.removeEventListener('scroll', invalidate)
+      window.removeEventListener('resize', invalidate)
+    }
+  }, [])
 
   const handleMove = useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
