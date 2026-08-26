@@ -40,8 +40,10 @@ export function Cursor() {
 
   const lastTarget = useRef<Element | null>(null)
 
-  const x = useMotionValue(0)
-  const y = useMotionValue(0)
+  // Off-screen until the first pointer move, so a stray render can never flash
+  // the ring in the top-left corner.
+  const x = useMotionValue(-200)
+  const y = useMotionValue(-200)
   const ringX = useSpring(x, spring.pointer)
   const ringY = useSpring(y, spring.pointer)
 

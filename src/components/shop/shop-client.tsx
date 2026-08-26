@@ -7,6 +7,7 @@ import { cn, plural } from '@/lib/utils'
 import { duration, ease, spring } from '@/lib/motion'
 import { productCategories, products, type Product, type ProductCategory } from '@/content/products'
 import { ProductCard } from './product-card'
+import { QuickView } from './quick-view'
 
 type Sort = 'popularno' | 'cena-rastuce' | 'cena-opadajuce' | 'ocena' | 'najnovije'
 
@@ -35,6 +36,9 @@ export function ShopClient() {
   const [sort, setSort] = useState<Sort>('popularno')
   const [ecoOnly, setEcoOnly] = useState(false)
   const [inStockOnly, setInStockOnly] = useState(false)
+  const [quickView, setQuickView] = useState<{ product: Product; rect: DOMRect | null } | null>(
+    null,
+  )
 
   // Keeps typing responsive on a long list without debounce timers.
   const deferredQuery = useDeferredValue(query)
@@ -74,6 +78,9 @@ export function ShopClient() {
   }, [category, deferredQuery, ecoOnly, inStockOnly, sort])
 
   const hasFilters = category !== ALL || ecoOnly || inStockOnly || query.length > 0
+
+  // One value that changes exactly when the grid's contents or order change.
+  const layoutKey = `${category}|${sort}|${ecoOnly}|${inStockOnly}|${deferredQuery}`
 
   const clearAll = () => {
     setQuery('')
@@ -203,16 +210,37 @@ export function ShopClient() {
       {visible.length === 0 ? (
         <EmptyState onClear={clearAll} />
       ) : (
-        <motion.ul layout className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <motion.ul
+          layout
+          // Measuring every card is only needed when the set or order actually
+          // changed — not on every parent render.
+          layoutDependency={layoutKey}
+          className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        >
           <AnimatePresence mode="popLayout">
             {visible.map((product: Product, index) => (
-              <motion.li key={product.id} layout transition={spring.surface}>
-                <ProductCard product={product} index={index} />
+              <motion.li
+                key={product.id}
+                layout
+                layoutDependency={layoutKey}
+                transition={spring.surface}
+              >
+                <ProductCard
+                  product={product}
+                  index={index}
+                  onQuickView={(item, rect) => setQuickView({ product: item, rect })}
+                />
               </motion.li>
             ))}
           </AnimatePresence>
         </motion.ul>
       )}
+
+      <QuickView
+        product={quickView?.product ?? null}
+        originRect={quickView?.rect ?? null}
+        onClose={() => setQuickView(null)}
+      />
     </div>
   )
 }

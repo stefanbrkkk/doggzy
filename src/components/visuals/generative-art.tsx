@@ -60,7 +60,12 @@ export function GenerativeArt({
   const glowId = `glow-${seed}`
 
   return (
-    <div className={cn('relative isolate overflow-hidden bg-sunken', className)}>
+    // Decorative by definition: it must never intercept a click meant for a
+    // control layered over it. Events pass through to ancestors either way, so
+    // a wrapping link still works.
+    <div
+      className={cn('pointer-events-none relative isolate overflow-hidden bg-sunken', className)}
+    >
       <svg
         viewBox="0 0 400 400"
         preserveAspectRatio="xMidYMid slice"

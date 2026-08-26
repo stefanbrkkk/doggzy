@@ -62,6 +62,23 @@ async function group(title, fn) {
   }
 }
 
+/**
+ * Clears the persisted cart and favourites.
+ *
+ * Groups share one browser context so that persistence itself can be tested,
+ * which means any group asserting an exact count has to start from a known
+ * state rather than inheriting whatever ran before it.
+ */
+async function resetStore(page) {
+  await page.evaluate(() => {
+    try {
+      localStorage.removeItem('doggzy.shop.v1')
+    } catch {}
+  })
+  await page.reload({ waitUntil: 'load' })
+  await sleep(700)
+}
+
 /** Attaches error collectors and returns the accumulating array. */
 function watch(page, label) {
   const errors = []
@@ -211,6 +228,7 @@ await group('Prodavnica: filtriranje, pretraga, korpa', async () => {
   const watcher = watch(page, '/prodavnica')
   await page.goto(`${BASE}/prodavnica`, { waitUntil: 'load' })
   await sleep(700)
+  await resetStore(page)
 
   const initial = await page.locator('article').count()
   check('mreža prikazuje sve proizvode', initial === 12, `prikazano ${initial}`)
@@ -258,13 +276,68 @@ await group('Prodavnica: filtriranje, pretraga, korpa', async () => {
   await page.close()
 })
 
+await group('Brzi pregled: otvaranje, kupovina, zatvaranje', async () => {
+  const page = await context.newPage()
+  const watcher = watch(page, '/prodavnica')
+  await page.goto(`${BASE}/prodavnica`, { waitUntil: 'load' })
+  await sleep(900)
+  await resetStore(page)
+  await sleep(400)
+
+  const trigger = page.getByRole('button', { name: /Brzi pregled/ }).first()
+  await trigger.scrollIntoViewIfNeeded()
+  // Lenis eases scroll over about a second; clicking before it settles targets
+  // a box that has already moved.
+  await sleep(1600)
+  await trigger.click()
+  await sleep(1200)
+
+  const dialog = page.getByRole('dialog', { name: /Brzi pregled/ })
+  check('brzi pregled se otvara', await dialog.isVisible())
+
+  // Escape must close it and hand focus back to the trigger.
+  await page.keyboard.press('Escape')
+  await sleep(800)
+  check('Escape zatvara brzi pregled', (await dialog.count()) === 0)
+
+  await trigger.click()
+  await sleep(1200)
+  await dialog.getByRole('button', { name: 'Dodaj u korpu' }).click()
+  await sleep(1400)
+
+  check(
+    'kupovina iz brzog pregleda otvara korpu',
+    await page.getByRole('dialog', { name: 'Korpa' }).isVisible(),
+  )
+  check(
+    'bedž se ažurira',
+    (await page.getByRole('button', { name: /Korpa, 1 stavka/ }).count()) > 0,
+  )
+  check('brzi pregled je zatvoren', (await dialog.count()) === 0)
+
+  await page.getByRole('button', { name: 'Zatvori korpu' }).first().click()
+  await sleep(600)
+  check('brzi pregled bez grešaka', watcher.errors.length === 0, watcher.errors.join(' | '))
+  await page.close()
+})
+
 await group('Korpa: izmena količine i praznjenje', async () => {
   const page = await context.newPage()
+
+  // Start from exactly one known line so the quantity assertion is absolute.
+  await page.goto(`${BASE}/prodavnica`, { waitUntil: 'load' })
+  await sleep(800)
+  await resetStore(page)
+  await page.locator('article').first().getByRole('button', { name: 'Dodaj u korpu' }).click()
+  await sleep(900)
+  await page.getByRole('button', { name: 'Zatvori korpu' }).first().click()
+  await sleep(500)
+
   await page.goto(`${BASE}/korpa`, { waitUntil: 'load' })
   await sleep(900)
 
   const hasItem = await page.locator('main li').count()
-  check('stavka iz prethodnog testa je i dalje tu', hasItem > 0)
+  check('korpa sadrži dodatu stavku', hasItem > 0)
 
   await page
     .getByRole('button', { name: /Povećaj količinu/ })
