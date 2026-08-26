@@ -5,7 +5,7 @@ import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import type { Variants } from 'framer-motion'
 import { ArrowRight, ChevronDown, Heart } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, plural } from '@/lib/utils'
 import { duration, ease } from '@/lib/motion'
 import { routes } from '@/config/site'
 import { dogs } from '@/content/dogs'
@@ -30,7 +30,11 @@ import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 const CITIES = [...new Set(dogs.map((dog) => dog.city.split('—')[0].trim()))]
 
 const TRUST = [
-  { value: CITIES.join(', '), label: 'Gde smo sada' },
+  {
+    // Through `plural`: five takes „gradova”, two through four take „grada”.
+    value: `${CITIES.length} ${plural(CITIES.length, 'grad', 'grada', 'gradova')} u mreži`,
+    label: CITIES.join(', '),
+  },
   { value: '100%', label: 'Profita prodavnice ide u negu' },
   { value: 'Svaka stavka', label: 'Ima račun na stranici psa' },
 ]
