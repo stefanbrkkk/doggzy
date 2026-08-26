@@ -11,6 +11,8 @@ import { buttonStyles } from '@/components/ui/button'
 import { Reveal } from '@/components/motion'
 import { GenerativeArt } from '@/components/visuals/generative-art'
 import { ReadingProgress } from '@/components/ui/reading-progress'
+import { JsonLd } from '@/components/seo/json-ld'
+import { articleSchema, breadcrumbSchema } from '@/lib/structured-data'
 
 export function generateStaticParams() {
   return stories.map((story) => ({ slug: story.slug }))
@@ -50,6 +52,16 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
 
   return (
     <>
+      <JsonLd
+        data={[
+          articleSchema(story),
+          breadcrumbSchema([
+            { name: 'Priče', path: routes.stories },
+            { name: story.title, path: routes.story(story.slug) },
+          ]),
+        ]}
+      />
+
       <ReadingProgress />
 
       <article className="pb-24 pt-32 sm:pt-40">

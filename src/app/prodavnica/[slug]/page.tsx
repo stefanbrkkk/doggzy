@@ -11,6 +11,8 @@ import { ProductArt } from '@/components/shop/product-art'
 import { ProductCard } from '@/components/shop/product-card'
 import { ProductPurchase } from '@/components/shop/product-purchase'
 import { Reveal } from '@/components/motion'
+import { JsonLd } from '@/components/seo/json-ld'
+import { breadcrumbSchema, productSchema } from '@/lib/structured-data'
 
 export function generateStaticParams() {
   return products.map((product) => ({ slug: product.slug }))
@@ -44,6 +46,16 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   return (
     <>
+      <JsonLd
+        data={[
+          productSchema(product),
+          breadcrumbSchema([
+            { name: 'Prodavnica', path: routes.shop },
+            { name: product.name, path: routes.product(product.slug) },
+          ]),
+        ]}
+      />
+
       <section className="pb-16 pt-32 sm:pt-40">
         <Container>
           <Link

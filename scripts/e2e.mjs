@@ -488,6 +488,20 @@ await group('Admin: uspešna prijava, sesija i odjava', async () => {
     return
   }
 
+  // The login limiter is per-process and holds for 15 minutes, so a suite run
+  // against a long-lived server can legitimately hit it. That is correct
+  // behaviour, not a failure — but it makes the positive path unverifiable, so
+  // say so rather than reporting a false pass or a false fail.
+  const probe = await page.request.post(`${BASE}/api/admin/login`, {
+    data: { email, password: 'probe-nevalidna-lozinka' },
+    failOnStatusCode: false,
+  })
+  if (probe.status() === 429) {
+    console.log('  --   preskočeno (ograničenje pokušaja je aktivno; pokreni protiv svežeg servera)')
+    await page.close()
+    return
+  }
+
   await page.goto(`${BASE}/admin/login`, { waitUntil: 'load' })
   await sleep(500)
 
@@ -525,6 +539,46 @@ await group('Admin: uspešna prijava, sesija i odjava', async () => {
 })
 
 // ------------------------------------------------------------- misc routes ---
+await group('Strukturirani podaci su validan JSON-LD', async () => {
+  const page = await context.newPage()
+
+  const expected = {
+    '/': ['Organization', 'WebSite'],
+    '/prodavnica/gps-ogrlica': ['Product', 'BreadcrumbList'],
+    '/price/cetrdeset-minuta': ['Article', 'BreadcrumbList'],
+    '/psi/mrvica': ['Article', 'BreadcrumbList'],
+  }
+
+  for (const [route, types] of Object.entries(expected)) {
+    await page.goto(`${BASE}${route}`, { waitUntil: 'load' })
+    await sleep(400)
+
+    const blocks = await page.$$eval('script[type="application/ld+json"]', (nodes) =>
+      nodes.map((node) => node.textContent ?? ''),
+    )
+
+    let parsed = []
+    let parseError = null
+    try {
+      parsed = blocks.flatMap((block) => {
+        const value = JSON.parse(block)
+        return Array.isArray(value) ? value : [value]
+      })
+    } catch (error) {
+      parseError = error.message
+    }
+
+    check(`${route}: JSON-LD se parsira`, parseError === null, String(parseError))
+
+    const found = parsed.map((entry) => entry['@type'])
+    for (const type of types) {
+      check(`${route}: sadrži ${type}`, found.includes(type), `nađeno ${found.join(', ')}`)
+    }
+  }
+
+  await page.close()
+})
+
 await group('404, sitemap, robots, health', async () => {
   const page = await context.newPage()
 

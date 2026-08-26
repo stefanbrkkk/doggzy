@@ -13,6 +13,8 @@ import { Reveal } from '@/components/motion'
 import { DogArt } from '@/components/dogs/dog-art'
 import { DogTimeline } from '@/components/dogs/dog-timeline'
 import { NeedsProgress } from '@/components/dogs/needs-progress'
+import { JsonLd } from '@/components/seo/json-ld'
+import { breadcrumbSchema, dogSchema } from '@/lib/structured-data'
 
 export function generateStaticParams() {
   return dogs.map((dog) => ({ slug: dog.slug }))
@@ -48,6 +50,16 @@ export default async function DogPage({ params }: { params: Promise<{ slug: stri
 
   return (
     <>
+      <JsonLd
+        data={[
+          dogSchema(dog),
+          breadcrumbSchema([
+            { name: 'Psi', path: routes.dogs },
+            { name: dog.name, path: routes.dog(dog.slug) },
+          ]),
+        ]}
+      />
+
       <section className="pb-16 pt-32 sm:pt-40">
         <Container>
           <Link

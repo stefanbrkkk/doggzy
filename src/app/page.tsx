@@ -7,6 +7,8 @@ import { DogsRail } from '@/components/home/dogs-rail'
 import { ShopTeaser } from '@/components/home/shop-teaser'
 import { StoryFeature } from '@/components/home/story-feature'
 import { ClosingCta } from '@/components/home/closing-cta'
+import { JsonLd } from '@/components/seo/json-ld'
+import { organizationSchema, websiteSchema } from '@/lib/structured-data'
 
 export const metadata: Metadata = {
   alternates: { canonical: '/' },
@@ -15,6 +17,7 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <>
+      <JsonLd data={[organizationSchema(), websiteSchema()]} />
       <Hero />
       <Ticker />
       <HowItWorks />
