@@ -40,3 +40,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Scratch. One-off browser probes get written at the repo root during review
+# passes; durable checks live in scripts/, so anything loose here is throwaway.
+/*.mjs
+!/eslint.config.mjs
+!/postcss.config.mjs
+/.rev-shots/
