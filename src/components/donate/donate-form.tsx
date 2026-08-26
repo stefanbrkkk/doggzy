@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Check, Copy, Landmark, Repeat, Zap } from 'lucide-react'
 import { cn, formatRsd } from '@/lib/utils'
@@ -36,6 +36,14 @@ export function DonateForm() {
   const [target, setTarget] = useState<'opste' | string>('opste')
   const [reference, setReference] = useState<string | null>(null)
   const [copied, setCopied] = useState<string | null>(null)
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(
+    () => () => {
+      if (copyTimer.current) clearTimeout(copyTimer.current)
+    },
+    [],
+  )
 
   const effectiveAmount = custom ? Math.max(0, Number(custom.replace(/\D/g, ''))) : amount
 
@@ -55,7 +63,10 @@ export function DonateForm() {
     try {
       await navigator.clipboard.writeText(value)
       setCopied(key)
-      window.setTimeout(() => setCopied(null), 1800)
+      // Replaced rather than stacked: without clearing, copying a second field
+      // let the first field's timer cut the new confirmation short.
+      if (copyTimer.current) clearTimeout(copyTimer.current)
+      copyTimer.current = setTimeout(() => setCopied(null), 1800)
     } catch {
       // Clipboard is unavailable (insecure context, denied permission) — the
       // value is on screen and selectable, so there is nothing to recover from.

@@ -12,6 +12,7 @@ import {
   type ReactNode,
 } from 'react'
 import { getProduct, type Product } from '@/content/products'
+import { safeStorage } from '@/lib/scroll-lock'
 
 const STORAGE_KEY = 'doggzy.shop.v1'
 const MAX_QTY = 99
@@ -60,7 +61,14 @@ function reducer(state: ShopState, action: Action): ShopState {
       }
       return {
         ...state,
-        lines: [...state.lines, { productId: action.productId, quantity: action.quantity }],
+        lines: [
+          ...state.lines,
+          // Clamped here too. Only the existing-line branch clamped, so adding
+          // a large quantity to an empty cart stored an over-cap value that
+          // parsePersisted then silently trimmed on the next reload — the total
+          // dropped with no explanation.
+          { productId: action.productId, quantity: Math.min(MAX_QTY, action.quantity) },
+        ],
       }
     }
 
@@ -174,7 +182,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const flyKey = useRef(0)
 
   useEffect(() => {
-    const raw = window.localStorage.getItem(STORAGE_KEY)
+    const raw = safeStorage.get('local', STORAGE_KEY)
     const parsed = raw ? parsePersisted(raw) : null
     dispatch({ type: 'hydrate', payload: parsed ?? { lines: [], favorites: [] } })
   }, [])
@@ -182,11 +190,8 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!state.hydrated) return
     const payload: PersistedState = { lines: state.lines, favorites: state.favorites }
-    try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
-    } catch {
-      // Private mode or a full quota — the cart simply stays session-only.
-    }
+    // Private mode or a full quota: the cart simply stays session-only.
+    safeStorage.set('local', STORAGE_KEY, JSON.stringify(payload))
   }, [state.favorites, state.hydrated, state.lines])
 
   // Keep tabs in sync: a cart edited in one tab shows up in the others.

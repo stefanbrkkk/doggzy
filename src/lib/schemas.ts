@@ -33,8 +33,13 @@ export const contactSchema = z.object({
   email: z.string().trim().email('Upiši ispravan email.').max(120),
   topic: z.enum(['opste', 'saradnja', 'sklonište', 'mediji', 'donacije']),
   message: z.string().trim().min(20, 'Napiši bar 20 karaktera.').max(4000),
-  /** Honeypot: real people never fill this in. */
-  company: z.string().max(0).optional(),
+  /**
+   * Honeypot. Not length-constrained on purpose: a `max(0)` here turns a filled
+   * field into a validation failure, and the route answers 422 naming the
+   * field — which both tells a bot exactly what it tripped and dead-ends any
+   * real visitor whose password manager autofilled it.
+   */
+  company: z.string().max(200).optional(),
 })
 
 export type ContactDraft = z.infer<typeof contactSchema>

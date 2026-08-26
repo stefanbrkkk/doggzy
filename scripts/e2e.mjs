@@ -530,6 +530,8 @@ await group('404, sitemap, robots, health', async () => {
 
   const missing = await page.goto(`${BASE}/ova-stranica-ne-postoji`, { waitUntil: 'load' })
   check('nepoznata putanja vraća 404', missing?.status() === 404, `status ${missing?.status()}`)
+  // isVisible() does not auto-wait, so give hydration a beat first.
+  await sleep(600)
   check('404 stranica je na srpskom', await page.getByText('Ova stranica ne postoji').isVisible())
 
   const sitemap = await page.request.get(`${BASE}/sitemap.xml`)
@@ -572,6 +574,121 @@ await group('Ceo sajt je na latinici (uključujući formatirane datume)', async 
     check(`${route} bez ćirilice`, offending.length === 0, offending.join(' | '))
   }
 
+  await page.close()
+})
+
+await group('Zaključavanje skrola se uvek otključa', async () => {
+  const page = await context.newPage()
+  await page.goto(`${BASE}/prodavnica`, { waitUntil: 'load' })
+  await sleep(900)
+
+  const overflow = () => page.evaluate(() => getComputedStyle(document.body).overflow)
+
+  await page.locator('article').first().getByRole('button', { name: 'Dodaj u korpu' }).click()
+  await sleep(900)
+  check('korpa zaključava skrol', (await overflow()).includes('hidden'))
+
+  await page.getByRole('button', { name: 'Zatvori korpu' }).first().click()
+  await sleep(900)
+  check('zatvaranje korpe otključava skrol', !(await overflow()).includes('hidden'))
+
+  // Two overlapping locks: whichever closes last must restore, not the first.
+  const trigger = page.getByRole('button', { name: /Brzi pregled/ }).first()
+  await trigger.scrollIntoViewIfNeeded()
+  await sleep(1500)
+  await trigger.click()
+  await sleep(900)
+  await page.keyboard.press('Escape')
+  await sleep(900)
+  check('zatvaranje brzog pregleda otključava skrol', !(await overflow()).includes('hidden'))
+
+  const scrolled = await page.evaluate(() => {
+    window.scrollBy(0, 400)
+    return window.scrollY
+  })
+  check('stranica se i dalje skroluje', scrolled > 0, `scrollY ${scrolled}`)
+  await page.close()
+})
+
+await group('Smanjene animacije: sajt ostaje upotrebljiv', async () => {
+  const reducedCtx = await browser.newContext({
+    viewport: { width: 1440, height: 900 },
+    reducedMotion: 'reduce',
+  })
+  await reducedCtx.addInitScript(() => {
+    try {
+      sessionStorage.setItem('doggzy.visited', '1')
+    } catch {}
+  })
+  const page = await reducedCtx.newPage()
+  const watcher = watch(page, 'reduced')
+
+  for (const route of ['/', '/prodavnica', '/prijava', '/psi']) {
+    await page.goto(`${BASE}${route}`, { waitUntil: 'load' })
+    await sleep(900)
+    const visible = await page.locator('h1').first().isVisible()
+    check(`${route} prikazuje naslov uz smanjene animacije`, visible)
+  }
+
+  // The report flow must still advance without its transitions.
+  await page.goto(`${BASE}/prijava`, { waitUntil: 'load' })
+  await sleep(800)
+  const phone = page.locator('[aria-label="Prijava psa"]').first()
+  await phone.getByRole('button', { name: /Nestao mi je pas/ }).click()
+  await phone.getByRole('button', { name: 'Dalje' }).click()
+  await sleep(500)
+  check(
+    'prijava napreduje uz smanjene animacije',
+    await page.locator('#report-location').isVisible(),
+  )
+
+  check(
+    'bez grešaka uz smanjene animacije',
+    watcher.errors.length === 0,
+    watcher.errors.join(' | '),
+  )
+  await page.close()
+  await reducedCtx.close()
+})
+
+await group('Prijava: greška slanja se poništava povratkom', async () => {
+  const page = await context.newPage()
+  await page.goto(`${BASE}/prijava`, { waitUntil: 'load' })
+  await sleep(800)
+
+  // Force the submit to fail so the error path is exercised for real.
+  await page.route('**/api/prijava', (route) => route.fulfill({ status: 500, body: '{}' }))
+
+  const phone = page.locator('[aria-label="Prijava psa"]').first()
+  await phone.getByRole('button', { name: /Našao sam psa/ }).click()
+  await phone.getByRole('button', { name: 'Dalje' }).click()
+  await sleep(400)
+  await page.locator('#report-location').fill('Novi Beograd, blok 45')
+  await phone.getByRole('button', { name: 'Dalje' }).click()
+  await sleep(400)
+  await phone.getByRole('button', { name: 'Mali', exact: true }).click()
+  await phone.getByRole('button', { name: 'Beo', exact: true }).click()
+  await page.locator('#report-description').fill('Beo mešanac, mlad, bez ogrlice, prilazi ljudima.')
+  await phone.getByRole('button', { name: 'Dalje' }).click()
+  await sleep(400)
+  await page.locator('#report-name').fill('Ana')
+  await page.locator('#report-contact').fill('ana@example.rs')
+  await phone.getByRole('button', { name: 'Pošalji prijavu' }).click()
+  await sleep(1500)
+
+  check(
+    'neuspelo slanje prikazuje grešku',
+    await page.getByText('Slanje nije uspelo.', { exact: false }).isVisible(),
+  )
+
+  await phone.getByRole('button', { name: 'Nazad' }).click()
+  await sleep(500)
+  await phone.getByRole('button', { name: 'Dalje' }).click()
+  await sleep(500)
+  check(
+    'povratak poništava staru grešku',
+    (await page.getByText('Slanje nije uspelo.', { exact: false }).count()) === 0,
+  )
   await page.close()
 })
 

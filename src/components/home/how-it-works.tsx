@@ -1,18 +1,13 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import {
-  motion,
-  useMotionValueEvent,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from 'framer-motion'
+import { motion, useMotionValueEvent, useScroll, useTransform } from 'framer-motion'
 import { BadgeCheck, HeartPulse, Radio, Siren } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { duration, ease } from '@/lib/motion'
 import { Container, Eyebrow } from '@/components/ui/section'
 import { Reveal } from '@/components/motion'
+import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
 const STEPS = [
   {
@@ -50,7 +45,7 @@ const STEPS = [
 ]
 
 export function HowItWorks() {
-  const reduced = useReducedMotion()
+  const reduced = useReducedMotionSafe()
   const ref = useRef<HTMLDivElement>(null)
   const [active, setActive] = useState(0)
 

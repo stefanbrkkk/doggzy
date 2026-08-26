@@ -7,6 +7,7 @@ import { Minus, Plus, ShoppingBag, Trash2, X } from 'lucide-react'
 import { cn, formatRsd } from '@/lib/utils'
 import { duration, ease, spring } from '@/lib/motion'
 import { routes } from '@/config/site'
+import { lockScroll } from '@/lib/scroll-lock'
 import { useShop } from '@/lib/store/shop-store'
 import { buttonStyles } from '@/components/ui/button'
 import { ProductArt } from '@/components/shop/product-art'
@@ -33,8 +34,7 @@ export function CartDrawer() {
     if (!isCartOpen) return
 
     previouslyFocused.current = document.activeElement as HTMLElement | null
-    const overflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
+    const release = lockScroll()
 
     const panel = panelRef.current
     panel?.focus()
@@ -66,10 +66,15 @@ export function CartDrawer() {
     document.addEventListener('keydown', onKeyDown)
     return () => {
       document.removeEventListener('keydown', onKeyDown)
-      document.body.style.overflow = overflow
+      release()
       previouslyFocused.current?.focus?.()
     }
-  }, [closeCart, isCartOpen])
+    // Deliberately keyed on `isCartOpen` alone. `closeCart` is recreated by the
+    // provider on every cart mutation, and including it re-ran this effect —
+    // and its `panel.focus()` — after each quantity change, yanking focus off
+    // the stepper a keyboard user was still using.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCartOpen])
 
   const remainingForFreeShipping = Math.max(0, freeShippingThreshold - subtotal)
   const shippingProgress = Math.min(1, subtotal / freeShippingThreshold)

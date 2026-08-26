@@ -1,15 +1,10 @@
 'use client'
 
 import { type ReactNode, useRef } from 'react'
-import {
-  motion,
-  useMotionTemplate,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-} from 'framer-motion'
+import { motion, useMotionTemplate, useMotionValue, useSpring } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { spring } from '@/lib/motion'
+import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
 export interface PhoneFrameProps {
   children: ReactNode
@@ -39,7 +34,7 @@ export function PhoneFrame({
   glow = true,
   label = 'Prikaz aplikacije',
 }: PhoneFrameProps) {
-  const reduced = useReducedMotion()
+  const reduced = useReducedMotionSafe()
   const ref = useRef<HTMLDivElement>(null)
 
   const rotateX = useSpring(useMotionValue(0), spring.pointer)
@@ -101,9 +96,14 @@ export function PhoneFrame({
                 aria-label={label}
               >
                 {/* Status bar */}
-                <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between px-7 pt-3.5 text-[11px] font-medium text-ink">
+                {/* Entirely decorative chrome, including the clock — a screen
+                    reader announcing a fake 9:41 inside the demo is noise. */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between px-7 pt-3.5 text-[11px] font-medium text-ink"
+                >
                   <span data-numeric>{statusTime}</span>
-                  <span className="flex items-center gap-1" aria-hidden="true">
+                  <span className="flex items-center gap-1">
                     <SignalIcon />
                     <WifiIcon />
                     <BatteryIcon />

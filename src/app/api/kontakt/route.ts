@@ -29,6 +29,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Neispravan JSON.' }, { status: 400 })
   }
 
+  // Checked before validation: a bot that fills the honeypot should get a
+  // plain 200 and learn nothing, not a 422 naming the field it tripped.
+  if (
+    typeof json === 'object' &&
+    json !== null &&
+    typeof (json as { company?: unknown }).company === 'string' &&
+    (json as { company: string }).company.length > 0
+  ) {
+    return NextResponse.json({ ok: true })
+  }
+
   const parsed = contactSchema.safeParse(json)
   if (!parsed.success) {
     return NextResponse.json(
@@ -41,11 +52,6 @@ export async function POST(request: Request) {
       },
       { status: 422 },
     )
-  }
-
-  // A filled honeypot means a bot. Answer 200 so it has nothing to learn.
-  if (parsed.data.company) {
-    return NextResponse.json({ ok: true })
   }
 
   await deliverNotification({

@@ -484,6 +484,10 @@
   html {
     -webkit-text-size-adjust: 100%;
     scrollbar-gutter: stable;
+    /* Clears the fixed header. Without it the browser parks a newly focused
+       control at viewport y=0, directly underneath the header, so tabbing
+       forward appears to focus nothing. */
+    scroll-padding-top: 6.5rem;
   }
 
   /* Lenis drives scrolling; native smooth-scroll would fight it. The class is
@@ -635,6 +639,22 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* Windows High Contrast replaces every colour, so any state carried purely by a
+   background swap disappears. These give the same states a border to stand on. */
+@media (forced-colors: active) {
+  [aria-pressed='true'],
+  [aria-current='page'],
+  [data-state='active'] {
+    border: 2px solid Highlight !important;
+    forced-color-adjust: none;
+    color: Highlight !important;
+  }
+
+  :focus-visible {
+    outline: 3px solid Highlight !important;
   }
 }
 

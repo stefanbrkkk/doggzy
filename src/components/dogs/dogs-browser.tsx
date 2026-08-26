@@ -30,6 +30,10 @@ export function DogsBrowser({ dogs }: { dogs: Dog[] }) {
 
   return (
     <div className="space-y-8">
+      {/* The cards are h3s. Without this the page jumps h1 to h3, which breaks
+          heading-based navigation. */}
+      <h2 className="sr-only">Lista pasa</h2>
+
       <LayoutGroup id="dogs-filter">
         <ul className="flex flex-wrap gap-1.5">
           {[ALL, ...ORDER].map((option) => {

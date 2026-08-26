@@ -1,8 +1,9 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useInView, useReducedMotion } from 'framer-motion'
+import { useInView } from 'framer-motion'
 import { cn } from '@/lib/utils'
+import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
 const GLYPHS = 'ABČĆDĐEFGHIJKLMNOPRSŠTUVZŽ0123456789/\\<>[]{}#*+'
 
@@ -29,7 +30,7 @@ export function TextScramble({
   frameMs = 34,
   scrambleOnHover = true,
 }: TextScrambleProps) {
-  const reduced = useReducedMotion()
+  const reduced = useReducedMotionSafe()
   const ref = useRef<HTMLSpanElement>(null)
   const inView = useInView(ref, { once: true, margin: '0px 0px -10% 0px' })
   const [output, setOutput] = useState(children)

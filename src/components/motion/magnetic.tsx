@@ -1,9 +1,10 @@
 'use client'
 
 import { type ReactNode, useCallback, useEffect, useRef } from 'react'
-import { frame, motion, useMotionValue, useReducedMotion, useSpring } from 'framer-motion'
+import { frame, motion, useMotionValue, useSpring } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { spring } from '@/lib/motion'
+import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
 export interface MagneticProps {
   children: ReactNode
@@ -27,7 +28,7 @@ export interface MagneticProps {
  * invalidation signal.
  */
 export function Magnetic({ children, className, strength = 18, radius = 90 }: MagneticProps) {
-  const reduced = useReducedMotion()
+  const reduced = useReducedMotionSafe()
   const ref = useRef<HTMLSpanElement>(null)
   const box = useRef<DOMRect | null>(null)
 

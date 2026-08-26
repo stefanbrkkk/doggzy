@@ -1,8 +1,9 @@
 'use client'
 
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { ease, spring } from '@/lib/motion'
 import { cn } from '@/lib/utils'
+import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
 /**
  * A stylised city map for the report flow.
@@ -13,7 +14,7 @@ import { cn } from '@/lib/utils'
  * because the address input carries the real meaning.
  */
 export function MiniMap({ active = false, className }: { active?: boolean; className?: string }) {
-  const reduced = useReducedMotion()
+  const reduced = useReducedMotionSafe()
 
   return (
     <div

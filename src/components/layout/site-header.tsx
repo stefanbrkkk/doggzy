@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
@@ -14,6 +14,7 @@ import { Heart, Menu, ShoppingBag, X } from 'lucide-react'
 import { cn, plural } from '@/lib/utils'
 import { duration, ease, spring } from '@/lib/motion'
 import { primaryNav, routes, secondaryNav } from '@/config/site'
+import { lockScroll } from '@/lib/scroll-lock'
 import { useShop } from '@/lib/store/shop-store'
 import { Logo } from '@/components/ui/logo'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
@@ -28,6 +29,7 @@ export function SiteHeader() {
   const [condensed, setCondensed] = useState(false)
   const [hidden, setHidden] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   const { scrollY } = useScroll()
 
@@ -42,24 +44,53 @@ export function SiteHeader() {
     setMenuOpen(false)
   }, [pathname])
 
+  // The mobile menu is a modal overlay, so it needs the full modal contract:
+  // scroll lock, Escape, a focus trap, and focus handed back on close.
   useEffect(() => {
     if (!menuOpen) return
-    const previous = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
+
+    const release = lockScroll()
+    const opener = document.activeElement as HTMLElement | null
+    const panel = menuRef.current
+    panel?.focus()
 
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setMenuOpen(false)
-    }
-    document.addEventListener('keydown', onKey)
+      if (event.key === 'Escape') {
+        setMenuOpen(false)
+        return
+      }
+      if (event.key !== 'Tab' || !panel) return
 
+      const focusables = panel.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      )
+      if (focusables.length === 0) return
+
+      const first = focusables[0]
+      const last = focusables[focusables.length - 1]
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
+    }
+
+    document.addEventListener('keydown', onKey)
     return () => {
-      document.body.style.overflow = previous
+      release()
       document.removeEventListener('keydown', onKey)
+      opener?.focus?.()
     }
   }, [menuOpen])
 
+  // Highlighted when the section is active, but `aria-current="page"` only when
+  // this really is the page — on a detail route the section link is an ancestor,
+  // not the current page.
   const isActive = (href: string) =>
     href === routes.home ? pathname === href : pathname.startsWith(href)
+  const isCurrentPage = (href: string) => pathname === href
 
   return (
     <>
@@ -93,7 +124,7 @@ export function SiteHeader() {
                 <li key={item.href} className="relative">
                   <Link
                     href={item.href}
-                    aria-current={active ? 'page' : undefined}
+                    aria-current={isCurrentPage(item.href) ? 'page' : undefined}
                     className={cn(
                       'relative block rounded-xl px-3.5 py-2 text-sm transition-colors duration-200',
                       active ? 'text-ink' : 'text-ink-muted hover:text-ink',
@@ -166,7 +197,12 @@ export function SiteHeader() {
         {menuOpen ? (
           <motion.div
             id="mobile-menu"
-            className="fixed inset-0 z-[75] bg-canvas/97 backdrop-blur-2xl lg:hidden"
+            ref={menuRef}
+            tabIndex={-1}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Meni"
+            className="fixed inset-0 z-[75] bg-canvas/97 outline-none backdrop-blur-2xl lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

@@ -2,17 +2,19 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { AnimatePresence, motion, useAnimate, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, motion, useAnimate } from 'framer-motion'
 import { ArrowRight, Heart, ShoppingBag, Star, X } from 'lucide-react'
 import { cn, formatRsd, plural } from '@/lib/utils'
 import { duration, spring } from '@/lib/motion'
 import { routes } from '@/config/site'
 import type { Product } from '@/content/products'
+import { lockScroll } from '@/lib/scroll-lock'
 import { useShop } from '@/lib/store/shop-store'
 import { Badge } from '@/components/ui/badge'
 import { Button, buttonStyles } from '@/components/ui/button'
 import { ProductArt } from './product-art'
 import { Stepper } from './cart-drawer'
+import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
 /**
  * Quick view.
@@ -38,7 +40,7 @@ export function QuickView({
   originRect: DOMRect | null
   onClose: () => void
 }) {
-  const reduced = useReducedMotion()
+  const reduced = useReducedMotionSafe()
   const [scope, animate] = useAnimate<HTMLDivElement>()
   const { addToCart, openCart, toggleFavorite, isFavorite, hydrated } = useShop()
   const [quantity, setQuantity] = useState(1)
@@ -80,8 +82,7 @@ export function QuickView({
     if (!product) return
 
     restoreFocus.current = document.activeElement as HTMLElement | null
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
+    const release = lockScroll()
     scope.current?.focus()
 
     const onKeyDown = (event: KeyboardEvent) => {
@@ -112,7 +113,7 @@ export function QuickView({
     document.addEventListener('keydown', onKeyDown)
     return () => {
       document.removeEventListener('keydown', onKeyDown)
-      document.body.style.overflow = previousOverflow
+      release()
       restoreFocus.current?.focus?.()
     }
   }, [onClose, product, scope])

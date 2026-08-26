@@ -1,9 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { AnimatePresence, animate, motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, animate, motion } from 'framer-motion'
 import { duration, ease } from '@/lib/motion'
+import { lockScroll, safeStorage } from '@/lib/scroll-lock'
 import { LogoMark } from '@/components/ui/logo'
+import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
 const SESSION_KEY = 'doggzy.visited'
 const PANELS = 6
@@ -21,7 +23,7 @@ const PANELS = 6
  * third-party asset can never trap the visitor behind the curtain).
  */
 export function Preloader() {
-  const reduced = useReducedMotion()
+  const reduced = useReducedMotionSafe()
   const [open, setOpen] = useState(true)
   const [progress, setProgress] = useState(0)
 
@@ -35,14 +37,12 @@ export function Preloader() {
 
     if (reduced) {
       root.classList.add('preloaded')
-      sessionStorage.setItem(SESSION_KEY, '1')
+      safeStorage.set('session', SESSION_KEY, '1')
       setOpen(false)
       return
     }
 
-    // Captured, not assumed: another component may already own the scroll lock.
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
+    const releaseScroll = lockScroll()
 
     let finished = false
     const controls = animate(0, 90, {
@@ -62,8 +62,8 @@ export function Preloader() {
         onComplete: () => {
           window.setTimeout(() => {
             root.classList.add('preloaded')
-            sessionStorage.setItem(SESSION_KEY, '1')
-            document.body.style.overflow = previousOverflow
+            safeStorage.set('session', SESSION_KEY, '1')
+            releaseScroll()
             setOpen(false)
           }, 180)
         },
@@ -81,20 +81,17 @@ export function Preloader() {
       controls.stop()
       window.clearTimeout(ceiling)
       window.removeEventListener('load', finish)
-      document.body.style.overflow = previousOverflow
+      releaseScroll()
     }
   }, [reduced])
 
   return (
     <AnimatePresence>
       {open ? (
-        <div
-          data-preloader
-          className="fixed inset-0 z-[300] grid place-items-center"
-          role="status"
-          aria-live="polite"
-          aria-label="Sajt se učitava"
-        >
+        <div data-preloader className="fixed inset-0 z-[300] grid place-items-center" role="status">
+          {/* One announcement, not a stream. The counter below re-renders dozens
+              of times; a live region wrapping it would read every digit. */}
+          <span className="sr-only">Sajt se učitava</span>
           {/* The curtain itself: vertical panels that lift in a stagger. */}
           <div className="absolute inset-0 flex">
             {Array.from({ length: PANELS }).map((_, index) => (
@@ -127,7 +124,7 @@ export function Preloader() {
             <div className="flex w-[min(78vw,26rem)] flex-col gap-3">
               <div className="flex items-baseline justify-between">
                 <span className="text-2xs uppercase tracking-[0.3em] text-ink-subtle">Doggzy</span>
-                <span data-numeric className="text-sm text-ink-muted">
+                <span aria-hidden="true" data-numeric className="text-sm text-ink-muted">
                   {Math.round(progress).toString().padStart(3, '0')}
                 </span>
               </div>

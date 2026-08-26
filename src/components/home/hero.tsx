@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRef } from 'react'
-import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion'
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
 import { ArrowRight, ChevronDown, Heart } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { duration, ease, spring } from '@/lib/motion'
@@ -13,6 +13,7 @@ import { AuroraField } from '@/components/visuals/aurora-field'
 import { PhoneFrame } from '@/components/phone/phone-frame'
 import { ReportFlow } from '@/components/phone/report-flow'
 import { submitReport } from '@/lib/report-client'
+import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
 const TRUST = [
   { value: 'Beograd, Novi Sad, Niš', label: 'Gde smo sada' },
@@ -21,7 +22,7 @@ const TRUST = [
 ]
 
 export function Hero() {
-  const reduced = useReducedMotion()
+  const reduced = useReducedMotionSafe()
   const ref = useRef<HTMLElement>(null)
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })

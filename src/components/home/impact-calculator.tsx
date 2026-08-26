@@ -75,11 +75,10 @@ export function ImpactCalculator() {
                     >
                       Iznos donacije
                     </label>
-                    <p
-                      data-numeric
-                      className="mt-1 text-title leading-none text-gradient"
-                      aria-live="polite"
-                    >
+                    {/* No aria-live here: the slider's own aria-valuetext is
+                        already announced on every change, and a live region on
+                        the mirrored value made each arrow key speak twice. */}
+                    <p data-numeric className="mt-1 text-title leading-none text-gradient">
                       {formatRsd(amount)}
                     </p>
                   </div>

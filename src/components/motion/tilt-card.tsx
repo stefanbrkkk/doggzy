@@ -1,15 +1,10 @@
 'use client'
 
 import { type ReactNode, useCallback, useRef, useState } from 'react'
-import {
-  motion,
-  useMotionTemplate,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-} from 'framer-motion'
+import { motion, useMotionTemplate, useMotionValue, useSpring } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { spring } from '@/lib/motion'
+import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
 export interface TiltCardProps {
   /** Content that is NOT transformed: buttons, links, anything clickable. */
@@ -55,7 +50,7 @@ export function TiltCard({
   glare = true,
   perspective = 900,
 }: TiltCardProps) {
-  const reduced = useReducedMotion()
+  const reduced = useReducedMotionSafe()
   const ref = useRef<HTMLDivElement>(null)
   const box = useRef<DOMRect | null>(null)
   const [hovered, setHovered] = useState(false)

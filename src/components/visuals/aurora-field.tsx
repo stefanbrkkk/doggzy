@@ -1,9 +1,10 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { useReducedMotion } from 'framer-motion'
+
 import { useTheme } from 'next-themes'
 import { cn } from '@/lib/utils'
+import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
 const VERTEX_SHADER = `
 attribute vec2 aPosition;
@@ -150,7 +151,7 @@ const LIGHT_BACKGROUND: Rgb = [0.975, 0.968, 0.958]
  * device pixel ratio at 1.5 so a 4K display cannot melt a laptop GPU.
  */
 export function AuroraField({ className, intensity, palette, background }: AuroraFieldProps) {
-  const reduced = useReducedMotion()
+  const reduced = useReducedMotionSafe()
   const { resolvedTheme } = useTheme()
   const isLight = resolvedTheme === 'light'
 
@@ -223,16 +224,22 @@ export function AuroraField({ className, intensity, palette, background }: Auror
     const pointer = { x: 0.5, y: 0.5 }
     const target = { x: 0.5, y: 0.5 }
 
-    const resize = () => {
+    const resize = (force = false) => {
       const ratio = Math.min(window.devicePixelRatio || 1, 1.5)
       const width = Math.max(1, Math.floor(canvas.clientWidth * ratio))
       const height = Math.max(1, Math.floor(canvas.clientHeight * ratio))
-      if (canvas.width === width && canvas.height === height) return
+      if (!force && canvas.width === width && canvas.height === height) return
       canvas.width = width
       canvas.height = height
       gl.viewport(0, 0, width, height)
+      // Uniforms are per-program state. Switching theme rebuilds the program,
+      // and the size check would then skip the upload because the canvas
+      // dimensions had not changed — leaving uResolution at (0,0) and the
+      // shader rendering a flat wash.
       gl.uniform2f(uResolution, width, height)
     }
+
+    resize(true)
 
     const onPointerMove = (event: PointerEvent) => {
       target.x = event.clientX / window.innerWidth
@@ -262,6 +269,14 @@ export function AuroraField({ className, intensity, palette, background }: Auror
       if (!reduced && visible) frame = requestAnimationFrame(render)
     }
 
+    // Under reduced motion `render` runs once, so nothing else would ever
+    // resize the canvas and the single frame would stretch on rotation.
+    const resizeObserver = new ResizeObserver(() => {
+      resize(true)
+      if (reduced) gl.drawArrays(gl.TRIANGLES, 0, 3)
+    })
+    resizeObserver.observe(canvas)
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         const wasVisible = visible
@@ -288,6 +303,7 @@ export function AuroraField({ className, intensity, palette, background }: Auror
 
     return () => {
       cancelAnimationFrame(frame)
+      resizeObserver.disconnect()
       observer.disconnect()
       canvas.removeEventListener('webglcontextlost', onContextLost)
       window.removeEventListener('pointermove', onPointerMove)

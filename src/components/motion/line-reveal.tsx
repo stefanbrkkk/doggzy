@@ -1,9 +1,10 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { duration, ease, viewportOnce } from '@/lib/motion'
+import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
 export interface LineRevealProps {
   children: ReactNode
@@ -23,7 +24,7 @@ export interface LineRevealProps {
  * `text-gradient` should reveal with this instead.
  */
 export function LineReveal({ children, className, delay = 0, immediate = false }: LineRevealProps) {
-  const reduced = useReducedMotion()
+  const reduced = useReducedMotionSafe()
 
   if (reduced) {
     return <span className={cn('block', className)}>{children}</span>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
-import { motion, useReducedMotion, useScroll, useSpring } from 'framer-motion'
+import { motion, useScroll, useSpring } from 'framer-motion'
 import {
   BadgeCheck,
   CircleAlert,
@@ -14,6 +14,7 @@ import {
 import { cn, formatDate, formatRsd } from '@/lib/utils'
 import { duration, ease, viewportOnce } from '@/lib/motion'
 import type { TimelineEvent, TimelineType } from '@/content/dogs'
+import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
 const ICONS: Record<TimelineType, typeof Siren> = {
   prijava: Siren,
@@ -39,7 +40,7 @@ const TYPE_LABELS: Record<TimelineType, string> = {
  * dropped. Hiding the gap would defeat the point of publishing the timeline.
  */
 export function DogTimeline({ events }: { events: TimelineEvent[] }) {
-  const reduced = useReducedMotion()
+  const reduced = useReducedMotionSafe()
   const ref = useRef<HTMLOListElement>(null)
 
   const { scrollYProgress } = useScroll({

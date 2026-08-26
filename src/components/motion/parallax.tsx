@@ -1,8 +1,9 @@
 'use client'
 
 import { type ReactNode, useRef } from 'react'
-import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'framer-motion'
+import { motion, useInView, useScroll, useTransform } from 'framer-motion'
 import { cn } from '@/lib/utils'
+import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
 export interface ParallaxProps {
   children: ReactNode
@@ -36,7 +37,7 @@ export function Parallax({
   axis = 'y',
   zoom = false,
 }: ParallaxProps) {
-  const reduced = useReducedMotion()
+  const reduced = useReducedMotionSafe()
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { margin: '20% 0px 20% 0px' })
 

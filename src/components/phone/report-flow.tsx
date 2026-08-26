@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import {
   AlertTriangle,
   ArrowLeft,
@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils'
 import { duration, ease, spring } from '@/lib/motion'
 import { reportSchema, type ReportDraft, type ReportKind } from '@/lib/schemas'
 import { MiniMap } from './mini-map'
+import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
 const KINDS: {
   value: ReportKind
@@ -89,7 +90,7 @@ export interface ReportFlowProps {
  * focus follows the visible step, and nothing depends on the pointer.
  */
 export function ReportFlow({ onSubmit, className }: ReportFlowProps) {
-  const reduced = useReducedMotion()
+  const reduced = useReducedMotionSafe()
   const liveId = useId()
 
   const [step, setStep] = useState(0)
@@ -188,6 +189,9 @@ export function ReportFlow({ onSubmit, className }: ReportFlowProps) {
 
   const goBack = useCallback(() => {
     setDirection(-1)
+    // Also clears a failed send: without this, stepping back and forward again
+    // still showed the old error above an untouched form.
+    setStatus((current) => (current === 'error' ? 'idle' : current))
     setStep((current) => Math.max(0, current - 1))
   }, [])
 
@@ -384,10 +388,18 @@ function ProgressRail({ step }: { step: number }) {
   )
 }
 
-function FieldError({ children }: { children?: string }) {
+/**
+ * Field error.
+ *
+ * Carries an id so the control it belongs to can point at it with
+ * `aria-describedby`: `role="alert"` announces the message once when it
+ * appears, but a screen-reader user who tabs back to the field afterwards has
+ * no way to hear it again without the association.
+ */
+function FieldError({ id, children }: { id?: string; children?: string }) {
   if (!children) return null
   return (
-    <p role="alert" className="mt-1.5 text-xs text-critical">
+    <p id={id} role="alert" className="mt-1.5 text-xs text-critical">
       {children}
     </p>
   )
@@ -493,10 +505,11 @@ function StepLocation({
             onChange={(event) => onChange(event.target.value)}
             placeholder="Npr. Vračar, Njegoševa"
             aria-invalid={Boolean(error)}
+            aria-describedby={error ? 'report-location-error' : undefined}
             className={cn(inputClass, 'pl-9')}
           />
         </div>
-        <FieldError>{error}</FieldError>
+        <FieldError id="report-location-error">{error}</FieldError>
       </div>
 
       <button
@@ -605,7 +618,12 @@ function StepAppearance({
           accept="image/*"
           capture="environment"
           className="sr-only"
-          onChange={(event) => onPhoto(event.target.files?.[0] ?? null)}
+          onChange={(event) => {
+            onPhoto(event.target.files?.[0] ?? null)
+            // Cleared so choosing the *same* file again still fires a change
+            // event. Otherwise removing a photo and re-picking it does nothing.
+            event.target.value = ''
+          }}
         />
       </div>
 
@@ -623,9 +641,10 @@ function StepAppearance({
           onChange={(event) => onDescription(event.target.value)}
           placeholder="Rasa, ogrlica, ponašanje, kad je poslednji put viđen…"
           aria-invalid={Boolean(errors.description)}
+          aria-describedby={errors.description ? 'report-description-error' : undefined}
           className={cn(inputClass, 'resize-none')}
         />
-        <FieldError>{errors.description}</FieldError>
+        <FieldError id="report-description-error">{errors.description}</FieldError>
       </div>
     </div>
   )
@@ -658,9 +677,10 @@ function StepContact({
           onChange={(event) => onName(event.target.value)}
           autoComplete="given-name"
           aria-invalid={Boolean(errors.contactName)}
+          aria-describedby={errors.contactName ? 'report-name-error' : undefined}
           className={inputClass}
         />
-        <FieldError>{errors.contactName}</FieldError>
+        <FieldError id="report-name-error">{errors.contactName}</FieldError>
       </div>
 
       <div>
@@ -674,9 +694,10 @@ function StepContact({
           autoComplete="tel"
           inputMode="tel"
           aria-invalid={Boolean(errors.contactValue)}
+          aria-describedby={errors.contactValue ? 'report-contact-error' : undefined}
           className={inputClass}
         />
-        <FieldError>{errors.contactValue}</FieldError>
+        <FieldError id="report-contact-error">{errors.contactValue}</FieldError>
       </div>
 
       <p className="rounded-xl bg-elevated p-3 text-xs leading-relaxed text-ink-subtle">
@@ -693,19 +714,23 @@ function StepContact({
 }
 
 function StepDone({ reference, onReset }: { reference: string | null; onReset: () => void }) {
+  const reduced = useReducedMotionSafe()
+
   return (
     <div className="flex h-full flex-col items-center justify-center gap-5 pb-6 text-center">
       <div className="relative grid h-20 w-20 place-items-center">
-        <motion.span
-          className="absolute inset-0 rounded-full border border-brand/40"
-          animate={{ scale: [1, 1.9], opacity: [0.8, 0] }}
-          transition={{ duration: 2.2, repeat: Infinity, ease: ease.outQuart }}
-        />
-        <motion.span
-          className="absolute inset-0 rounded-full border border-brand/40"
-          animate={{ scale: [1, 1.9], opacity: [0.8, 0] }}
-          transition={{ duration: 2.2, repeat: Infinity, ease: ease.outQuart, delay: 0.7 }}
-        />
+        {/* MotionConfig's reduced-motion handling suppresses transforms but not
+            an infinite opacity keyframe, so the rings are skipped outright. */}
+        {reduced
+          ? null
+          : [0, 0.7].map((delay) => (
+              <motion.span
+                key={delay}
+                className="absolute inset-0 rounded-full border border-brand/40"
+                animate={{ scale: [1, 1.9], opacity: [0.8, 0] }}
+                transition={{ duration: 2.2, repeat: Infinity, ease: ease.outQuart, delay }}
+              />
+            ))}
         <motion.span
           className="grid h-14 w-14 place-items-center rounded-full bg-brand text-brand-ink"
           initial={{ scale: 0, rotate: -30 }}

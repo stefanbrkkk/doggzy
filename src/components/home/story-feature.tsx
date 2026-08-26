@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRef } from 'react'
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import { ArrowRight, Clock } from 'lucide-react'
 import { cn, formatDate } from '@/lib/utils'
 import { routes } from '@/config/site'
@@ -11,9 +11,10 @@ import { buttonStyles } from '@/components/ui/button'
 import { Container, Eyebrow } from '@/components/ui/section'
 import { GenerativeArt } from '@/components/visuals/generative-art'
 import { Reveal } from '@/components/motion'
+import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
 export function StoryFeature() {
-  const reduced = useReducedMotion()
+  const reduced = useReducedMotionSafe()
   const ref = useRef<HTMLDivElement>(null)
   const [lead, ...rest] = stories
 

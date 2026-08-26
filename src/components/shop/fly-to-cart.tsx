@@ -1,9 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { ease } from '@/lib/motion'
 import { useShop } from '@/lib/store/shop-store'
+import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
 interface Flight {
   key: number
@@ -28,7 +29,7 @@ const MAX_CONCURRENT = 3
  */
 export function FlyToCart() {
   const { flyOrigin } = useShop()
-  const reduced = useReducedMotion()
+  const reduced = useReducedMotionSafe()
   const [flights, setFlights] = useState<Flight[]>([])
 
   useEffect(() => {

@@ -31,8 +31,10 @@ export function ThemeToggle({ className }: { className?: string }) {
     <button
       type="button"
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
+      // No aria-pressed: the accessible name describes the action ("switch to
+      // dark"), and a pressed state describing the *current* theme combines
+      // with it into the opposite of what is true.
       aria-label={label}
-      aria-pressed={mounted ? !isDark : undefined}
       className={cn(
         'relative inline-flex h-9 w-16 items-center rounded-full border border-line bg-sunken px-1',
         'transition-colors duration-300 hover:border-line-strong',

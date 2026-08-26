@@ -1,9 +1,10 @@
 'use client'
 
 import { useMemo } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { duration, ease, viewportOnce } from '@/lib/motion'
+import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
 export interface SplitTextProps {
   children: string
@@ -40,7 +41,7 @@ export function SplitText({
   immediate = false,
   as: Tag = 'span',
 }: SplitTextProps) {
-  const reduced = useReducedMotion()
+  const reduced = useReducedMotionSafe()
   const step = stagger ?? (by === 'char' ? 0.018 : 0.05)
 
   // Keys are derived here, never from a counter mutated during render — that

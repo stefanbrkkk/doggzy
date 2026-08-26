@@ -1,10 +1,11 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { animate, useInView, useReducedMotion } from 'framer-motion'
+import { animate, useInView } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { duration, ease } from '@/lib/motion'
 import { formatNumber } from '@/lib/utils'
+import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
 export interface CountUpProps {
   value: number
@@ -35,17 +36,20 @@ export function CountUp({
   durationSeconds = 1.6,
   grouped = true,
 }: CountUpProps) {
-  const reduced = useReducedMotion()
+  const reduced = useReducedMotionSafe()
   const ref = useRef<HTMLSpanElement>(null)
   const inView = useInView(ref, { once: true, margin: '0px 0px -15% 0px' })
-  const [display, setDisplay] = useState(reduced ? value : 0)
+  // Always starts at 0, even for reduced motion. Seeding from `reduced` made
+  // the first client render differ from the server's, and React discards the
+  // server HTML for the whole subtree when the text does not match.
+  const [display, setDisplay] = useState(0)
 
   useEffect(() => {
-    if (!inView) return
     if (reduced) {
       setDisplay(value)
       return
     }
+    if (!inView) return
 
     const controls = animate(0, value, {
       duration: durationSeconds || duration.slow,
