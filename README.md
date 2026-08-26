@@ -61,7 +61,7 @@ i tiho bi odsekao heš.
 
 ```bash
 npm run check                  # tipovi, lint, latinica, kontrast, iznosi, build
-npm run test:e2e               # 217 provera kroz pravi pregledač
+npm run test:e2e               # 264 provere kroz pravi pregledač
 npm run test:perf              # LCP, CLS, težina, ispušteni kadrovi
 ```
 
@@ -83,6 +83,15 @@ projektu i nisu se videle na pregled:
   čipu. Sada tvrdnja proizvoda mora da izdrži množenje.
 - **`test:perf`** meri ispuštene kadrove tokom skrolovanja. Zrno preko celog
   ekrana sa `mix-blend-mode` obaralo je 67% kadrova na stranici prodavnice.
+
+Neke od tih provera postoje zato što se kvar ne vidi u izvornom kodu. Lightning
+CSS je iz `backdrop-filter` pravila izbacivao standardno svojstvo i ostavljao
+samo `-webkit-` oblik, pa nijedna staklena površina nije imala zamućenje —
+pravilo u `globals.css` je izgledalo ispravno. `body { overflow: hidden }` je
+izgledao kao brava, a Lenis je i dalje pomerao stranicu iza svakog modala.
+`transform-style: preserve-3d` je terao Chromium da testira pogotke po ravni
+koja se ne poklapa sa crtežom, pa 53% ekrana telefona nije primalo klikove. E2E
+zato čita izračunate vrednosti u pravom pregledaču, a ne tekst u stilu.
 
 ## Struktura
 
