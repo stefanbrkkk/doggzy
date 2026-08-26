@@ -15,7 +15,7 @@ const STEPS = [
     title: 'Prijaviš',
     lead: 'Jedan minut, sa telefona.',
     body: 'Tip prijave, lokacija, opis, fotografija. Bez naloga, bez registracije. Prijava odmah ide dežurnom u tvom gradu.',
-    stat: '5 koraka',
+    stat: '1 minut',
     statLabel: 'Toliko traje prijava',
   },
   {
@@ -79,7 +79,10 @@ export function HowItWorks() {
           </ol>
         </Container>
       ) : (
-        <div ref={ref} style={{ height: `${STEPS.length * 85}vh` }} className="mt-10">
+        // 55vh per step, not 85. At 85 the section ran 3.460px — 2.9x the next
+        // largest on the page and roughly a third of the whole home page — for
+        // a set piece where all four steps are readable from the first frame.
+        <div ref={ref} style={{ height: `${STEPS.length * 55}vh` }} className="mt-10">
           <div className="sticky top-0 flex min-h-svh items-center overflow-hidden py-20">
             <Container className="w-full">
               <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-20">

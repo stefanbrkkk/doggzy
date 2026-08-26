@@ -65,7 +65,7 @@ export const site = {
   name: 'Doggzy',
   tagline: 'Pomoć psima koja se može proveriti.',
   description:
-    'Doggzy povezuje skloništa, veterinare i ljude u Srbiji: prijava nestalih i ugroženih pasa, usvajanje i virtuelno starateljstvo, donacije sa javnim dokazom kako je svaki dinar potrošen.',
+    'Doggzy povezuje skloništa, veterinare i ljude u Srbiji: prijava nestalih i ugroženih pasa, udomljavanje i virtuelno starateljstvo, donacije sa javnim dokazom kako je svaki dinar potrošen.',
   locale: 'sr-Latn-RS',
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://doggzy.rs',
   email: 'zdravo@doggzy.rs',

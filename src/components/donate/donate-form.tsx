@@ -8,16 +8,27 @@ import { duration, ease, spring } from '@/lib/motion'
 import { dogs } from '@/content/dogs'
 import { createReference } from '@/lib/schemas'
 import { Button } from '@/components/ui/button'
+import { Select } from '@/components/ui/field'
 
-const AMOUNTS = [600, 1200, 2600, 5200, 8500, 18400]
+const AMOUNTS = [600, 1200, 2600, 5200, 9000, 22000]
 
+/**
+ * Each `min` is an invoice that exists on a dog's page, in the accusative so it
+ * reads after "pokriva". The figures used to be written from memory, which is
+ * how the same named item came to cost 2.600 here and 3.800 in the ledger.
+ * `scripts/check-figures.mjs` fails the build if a `min` stops matching a real
+ * ledger cost.
+ */
 const COVERS: { min: number; text: string }[] = [
-  { min: 18400, text: 'operaciju loše zaraslog preloma' },
-  { min: 8500, text: 'sterilizaciju jednog psa' },
-  { min: 5200, text: 'oftalmološki pregled' },
-  { min: 2600, text: 'vakcinu i čipovanje' },
-  { min: 1200, text: 'hranu za jednog psa na nedelju dana' },
-  { min: 600, text: 'hranu za jednog psa na tri dana' },
+  { min: 22000, text: 'previjanje rane, osam nedelja' },
+  { min: 9600, text: 'kapi za oči za godinu dana' },
+  { min: 9000, text: 'sterilizaciju jednog psa' },
+  { min: 7400, text: 'antibiotike posle operacije' },
+  { min: 6000, text: 'hranu za jednog psa do udomljenja' },
+  { min: 5200, text: 'kontrolu kod oftalmologa' },
+  { min: 4500, text: 'kontrolni pregled noge' },
+  { min: 3800, text: 'vakcinu i čipovanje' },
+  { min: 2600, text: 'drugu vakcinu' },
   { min: 0, text: 'deo troškova nege' },
 ]
 
@@ -56,7 +67,7 @@ export function DonateForm() {
   const chosenDog = sponsorable.find((dog) => dog.id === target)
 
   const purpose = chosenDog
-    ? `Donacija ${chosenDog.name}${recurring ? ' (mesečno)' : ''}`
+    ? `Donacija za ${chosenDog.nameAccusative}${recurring ? ' (mesečno)' : ''}`
     : `Donacija${recurring ? ' (mesečno)' : ''}`
 
   const copy = async (value: string, key: string) => {
@@ -155,14 +166,17 @@ export function DonateForm() {
         <label htmlFor="donate-target" className="text-sm font-medium text-ink">
           Kome?
         </label>
-        <select
+        {/* The shared control, not a hand-rolled one: this select used to keep
+            the OS arrow and a different corner radius from the other two on
+            the site. */}
+        <Select
           id="donate-target"
           value={target}
           onChange={(event) => {
             setTarget(event.target.value)
             setReference(null)
           }}
-          className="mt-3 h-12 w-full rounded-2xl border border-line-interactive bg-sunken px-4 text-sm text-ink focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/15"
+          className="mt-3 text-sm"
         >
           <option value="opste">Tamo gde je najpotrebnije</option>
           {sponsorable.map((dog) => (
@@ -170,7 +184,7 @@ export function DonateForm() {
               {dog.name} — {dog.city}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
 
       <p
@@ -179,7 +193,21 @@ export function DonateForm() {
       >
         {formatRsd(effectiveAmount)}
         {recurring ? ' mesečno' : ''} pokriva {covers}
-        {chosenDog ? ` — za ${chosenDog.name}` : ''}.
+        {chosenDog ? ` — za ${chosenDog.nameAccusative}` : ''}.
+      </p>
+
+      {/* Above the button, not inside the panel it opens. Registration is not
+          finished, so the account number below is a placeholder — a visitor
+          should know that before they decide to press anything, not after. */}
+      <p className="rounded-2xl border border-line bg-sunken px-4 py-3 text-xs leading-relaxed text-ink-muted">
+        Registracija udruženja je u toku, pa je broj računa ispod još uvek primer. Piši nam na{' '}
+        <a
+          href="mailto:zdravo@doggzy.rs"
+          className="text-ink underline decoration-line-strong underline-offset-2"
+        >
+          zdravo@doggzy.rs
+        </a>{' '}
+        pre uplate da potvrdimo aktuelne podatke.
       </p>
 
       <Button
@@ -189,7 +217,7 @@ export function DonateForm() {
         onClick={() => setReference(createReference())}
       >
         <Landmark className="h-4 w-4" />
-        {effectiveAmount < 100 ? 'Unesi iznos od bar 100 RSD' : 'Prikaži podatke za uplatu'}
+        {effectiveAmount < 100 ? 'Unesi iznos od bar 100 RSD' : 'Prikaži uputstvo za uplatu'}
       </Button>
 
       <AnimatePresence>

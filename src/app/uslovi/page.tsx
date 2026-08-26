@@ -13,7 +13,7 @@ const SECTIONS: LegalSection[] = [
     heading: 'Šta ovaj sajt jeste',
     paragraphs: [
       'Doggzy je platforma koja povezuje ljude, skloništa i veterinare u Srbiji. Prijave prosleđujemo partnerima na terenu, ali sami ne držimo pse i nismo hitna služba.',
-      'Ako je životinja u neposrednoj opasnosti, pozovi komunalnu zoohigijenu svog grada ili broj 1985 — i pošalji prijavu, da bismo mogli da pratimo slučaj.',
+      'Ako je životinja u neposrednoj opasnosti, pozovi komunalnu zoohigijenu svog grada ili broj 112 — i pošalji prijavu, da bismo mogli da pratimo slučaj.',
     ],
   },
   {

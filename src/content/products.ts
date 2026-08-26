@@ -38,8 +38,20 @@ export interface Product {
   inStock: boolean
   badges: ProductBadge[]
   art: ArtDescriptor
-  /** What the profit from one unit pays for. Shown on the card and in the cart. */
+  /**
+   * What the profit from a stated number of units pays for. Shown on the card
+   * and in the cart.
+   *
+   * The claim used to be written freehand, and several did not survive
+   * arithmetic: one hoodie was said to pay for five microchips, which needs
+   * 1.098 RSD of *profit* per chip against a 3.800 RSD invoice. The two fields
+   * below carry the sum the sentence makes, and `scripts/check-figures.mjs`
+   * fails the build when `impactUnits × price × PROFIT_SHARE` no longer covers
+   * `impactCost`, or when `impactCost` stops matching a real ledger invoice.
+   */
   impact: string
+  impactUnits: number
+  impactCost: number
   specs: { label: string; value: string }[]
   /** Sort key for "najnovije"; lower is newer. */
   releasedRank: number
@@ -55,6 +67,15 @@ export const productCategories: ProductCategory[] = [
   'Hrana',
   'Putovanje',
 ]
+
+/**
+ * Share of the retail price left after cost of goods and shipping.
+ *
+ * Deliberately conservative. Every impact claim below is arithmetic against
+ * this number rather than against revenue — the shop promises to give away
+ * profit, so a claim measured in revenue would promise more than it can pay.
+ */
+export const PROFIT_SHARE = 0.4
 
 export const products: Product[] = [
   {
@@ -73,7 +94,9 @@ export const products: Product[] = [
     inStock: true,
     badges: ['bestseler', 'eko'],
     art: { shape: 'bloom', from: 'var(--color-ember-400)', to: 'var(--color-iris-500)' },
-    impact: 'Profit od jednog ležaja pokriva jednu sterilizaciju.',
+    impact: 'Profit od dva ležaja pokriva jednu sterilizaciju.',
+    impactUnits: 2,
+    impactCost: 8500,
     specs: [
       { label: 'Dimenzije', value: '100 × 70 × 18 cm' },
       { label: 'Punjenje', value: 'Memorijska pena 8 cm' },
@@ -87,7 +110,7 @@ export const products: Product[] = [
     name: 'Am bez potezanja',
     tagline: 'Prednja kopča, nula pritiska na vrat',
     description:
-      'Am sa prednjom kopčom od recikliranog gurtne materijala. Četiri tačke podešavanja, reflektujući konac po celoj dužini, mekana postava na grudima.',
+      'Am sa prednjom kopčom od reciklirane gurtne. Četiri tačke podešavanja, reflektujući konac po celoj dužini, mekana postava na grudima.',
     price: 4290,
     category: 'Oprema',
     tags: ['bez potezanja', 'reflektujuće', 'reciklirano'],
@@ -96,7 +119,9 @@ export const products: Product[] = [
     inStock: true,
     badges: ['bestseler', 'eko'],
     art: { shape: 'trace', from: 'var(--color-signal-400)', to: 'var(--color-iris-400)' },
-    impact: 'Dva ama plaćaju jedan transport psa do veterinara.',
+    impact: 'Dva ama plaćaju drugu vakcinu za jedno štene.',
+    impactUnits: 2,
+    impactCost: 2600,
     specs: [
       { label: 'Veličine', value: 'XS – XL' },
       { label: 'Materijal', value: 'Reciklirani najlon' },
@@ -108,7 +133,7 @@ export const products: Product[] = [
     id: 'p-gps-ogrlica',
     slug: 'gps-ogrlica',
     name: 'GPS ogrlica',
-    tagline: 'Ako pobegne, znaćete gde je za 8 sekundi',
+    tagline: 'Ako pobegne, znaš gde je za 8 sekundi',
     description:
       'Ogrlica sa GPS i LTE modulom, vodootporna po IP67. Postavljanje bezbedne zone i obaveštenje čim je pas napusti. Baterija traje do 7 dana.',
     price: 12900,
@@ -119,7 +144,9 @@ export const products: Product[] = [
     inStock: true,
     badges: ['novo'],
     art: { shape: 'orbit', from: 'var(--color-signal-300)', to: 'var(--color-signal-700)' },
-    impact: 'Jedna ogrlica finansira dvodnevnu potragu za nestalim psom.',
+    impact: 'Jedna ogrlica plaća vakcinu i čipovanje jednog psa.',
+    impactUnits: 1,
+    impactCost: 3800,
     specs: [
       { label: 'Zaštita', value: 'IP67' },
       { label: 'Baterija', value: 'Do 7 dana' },
@@ -142,7 +169,9 @@ export const products: Product[] = [
     inStock: true,
     badges: ['bestseler'],
     art: { shape: 'grid', from: 'var(--color-mint-400)', to: 'var(--color-signal-500)' },
-    impact: 'Četiri slagalice plaćaju nedelju dana hrane za jedno sklonište.',
+    impact: 'Četiri slagalice plaćaju kontrolni pregled operisane noge.',
+    impactUnits: 4,
+    impactCost: 4500,
     specs: [
       { label: 'Prečnik', value: '28 cm' },
       { label: 'Nivoi', value: '3 težine' },
@@ -165,7 +194,9 @@ export const products: Product[] = [
     inStock: true,
     badges: ['eko'],
     art: { shape: 'waves', from: 'var(--color-ember-300)', to: 'var(--color-ember-600)' },
-    impact: 'Pet setova pokriva jedno vakcinisanje legla štenaca.',
+    impact: 'Sedam setova pokriva drugu vakcinu za dva štenceta.',
+    impactUnits: 7,
+    impactCost: 5200,
     specs: [
       { label: 'Sadržaj', value: '3 komada' },
       { label: 'Materijal', value: '100% organski pamuk' },
@@ -188,7 +219,9 @@ export const products: Product[] = [
     inStock: true,
     badges: ['novo'],
     art: { shape: 'ridge', from: 'var(--color-signal-300)', to: 'var(--color-mint-500)' },
-    impact: 'Šest flaša plaća jedan dan rada mobilne ambulante.',
+    impact: 'Sedam flaša plaća hranu za jednog psa do udomljenja.',
+    impactUnits: 7,
+    impactCost: 6000,
     specs: [
       { label: 'Zapremina', value: '550 ml' },
       { label: 'Materijal', value: 'Nerđajući čelik 304' },
@@ -211,7 +244,9 @@ export const products: Product[] = [
     inStock: true,
     badges: ['eko'],
     art: { shape: 'pulse', from: 'var(--color-iris-400)', to: 'var(--color-ember-500)' },
-    impact: 'Dve krofne plaćaju jedan kompletan veterinarski pregled.',
+    impact: 'Dve krofne plaćaju kontrolni pregled operisane noge.',
+    impactUnits: 2,
+    impactCost: 4500,
     specs: [
       { label: 'Prečnik', value: '70 cm' },
       { label: 'Punjenje', value: 'Reciklirana PET vlakna' },
@@ -225,16 +260,18 @@ export const products: Product[] = [
     name: 'Poslastice za obuku',
     tagline: 'Dovoljno male da ih daš stotinu puta',
     description:
-      'Meke zalogaje od 1 grama, jedan sastojak — piletina. Bez žitarica i konzervansa. Pakovanje se zatvara jednim pokretom.',
+      'Meki zalogaji od 1 grama, piletina kao jedini izvor mesa. Bez žitarica i konzervansa. Pakovanje se zatvara jednim pokretom.',
     price: 990,
     category: 'Hrana',
-    tags: ['jedan sastojak', 'bez žitarica', 'obuka'],
+    tags: ['jedan izvor mesa', 'bez žitarica', 'obuka'],
     rating: 4.9,
     reviews: 306,
     inStock: true,
     badges: ['bestseler'],
     art: { shape: 'bloom', from: 'var(--color-ember-400)', to: 'var(--color-mint-400)' },
-    impact: 'Deset pakovanja plaća jedan dan rada odgajivača u skloništu.',
+    impact: 'Deset pakovanja plaća vakcinu i čipovanje jednog psa.',
+    impactUnits: 10,
+    impactCost: 3800,
     specs: [
       { label: 'Težina', value: '200 g' },
       { label: 'Sastav', value: '98% piletina' },
@@ -257,7 +294,9 @@ export const products: Product[] = [
     inStock: true,
     badges: [],
     art: { shape: 'prism', from: 'var(--color-iris-300)', to: 'var(--color-signal-600)' },
-    impact: 'Tri seta plaćaju jedno operativno uklanjanje tumora.',
+    impact: 'Tri seta plaćaju kontrolu kod oftalmologa.',
+    impactUnits: 3,
+    impactCost: 5200,
     specs: [
       { label: 'Buka', value: '< 50 dB' },
       { label: 'Autonomija', value: '4 h' },
@@ -280,7 +319,9 @@ export const products: Product[] = [
     inStock: true,
     badges: [],
     art: { shape: 'trace', from: 'var(--color-ember-500)', to: 'var(--color-signal-400)' },
-    impact: 'Tri jakne pokrivaju jedan noćni izlazak spasilačke ekipe.',
+    impact: 'Tri jakne pokrivaju kontrolu kod oftalmologa.',
+    impactUnits: 3,
+    impactCost: 5200,
     specs: [
       { label: 'Veličine', value: 'XS – XXL' },
       { label: 'Vodootpornost', value: '5.000 mm' },
@@ -303,7 +344,9 @@ export const products: Product[] = [
     inStock: false,
     badges: [],
     art: { shape: 'ridge', from: 'var(--color-signal-400)', to: 'var(--color-iris-500)' },
-    impact: 'Četiri činije plaćaju mesečnu struju za jedno malo sklonište.',
+    impact: 'Četiri činije plaćaju kontrolni pregled operisane noge.',
+    impactUnits: 4,
+    impactCost: 4500,
     specs: [
       { label: 'Zapremina', value: '900 ml' },
       { label: 'Visina', value: '18 cm' },
@@ -317,7 +360,7 @@ export const products: Product[] = [
     name: 'Duks sa portretom',
     tagline: 'Tvoj pas, iscrtan linijom, na leđima',
     description:
-      'Pošalješ fotografiju, naš ilustrator izvuče portret u jednoj liniji i odštampamo ga na duksu od organskog pamuka. Izrada traje 7 radnih dana.',
+      'Pošalješ fotografiju, naš ilustrator izvuče portret u jednoj liniji i odštampamo ga na duksu od 85% organskog pamuka. Izrada traje 7 radnih dana.',
     price: 5490,
     compareAt: 6900,
     category: 'Odeća',
@@ -327,7 +370,9 @@ export const products: Product[] = [
     inStock: true,
     badges: ['bestseler', 'ograničeno'],
     art: { shape: 'prism', from: 'var(--color-ember-300)', to: 'var(--color-iris-600)' },
-    impact: 'Jedan duks plaća mikročipovanje pet pasa.',
+    impact: 'Dva duksa plaćaju vakcinu i čipovanje jednog psa.',
+    impactUnits: 2,
+    impactCost: 3800,
     specs: [
       { label: 'Materijal', value: '85% organski pamuk' },
       { label: 'Izrada', value: '7 radnih dana' },

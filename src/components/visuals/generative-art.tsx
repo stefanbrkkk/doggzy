@@ -97,7 +97,15 @@ export function GenerativeArt({
         <rect width="400" height="400" fill="var(--sunken)" />
         <rect width="400" height="400" fill={`url(#${glowId})`} />
 
-        <g fill="none" stroke={`url(#${gradientId})`} strokeLinecap="round">
+        <g
+          fill="none"
+          stroke={`url(#${gradientId})`}
+          strokeLinecap="round"
+          // Both driven by theme tokens: the alphas and the ramp colours were
+          // chosen against near-black, and over the light theme's near-white
+          // ground the same strokes flatten into a pale wash.
+          style={{ filter: 'var(--art-ink)' }}
+        >
           {shape === 'orbit' ? <Orbit random={random} gradientId={gradientId} /> : null}
           {shape === 'waves' ? <Waves random={random} /> : null}
           {shape === 'grid' ? <Grid random={random} gradientId={gradientId} /> : null}
@@ -137,7 +145,7 @@ function Orbit({ random, gradientId }: { random: Rand; gradientId: string }) {
           rx={ring.r}
           ry={ring.r * 0.62}
           strokeWidth={1.4}
-          strokeOpacity={0.28 + i * 0.11}
+          style={{ strokeOpacity: `calc(var(--art-alpha) * ${0.28 + i * 0.11})` }}
           strokeDasharray={`${ring.dash} ${ring.dash * 0.8}`}
           transform={`rotate(${ring.rotate} 200 200)`}
         />
@@ -156,7 +164,12 @@ function Waves({ random }: { random: Rand }) {
   return (
     <>
       {lines.map((d, i) => (
-        <path key={i} d={d} strokeWidth={1.5} strokeOpacity={0.16 + (i % 5) * 0.13} />
+        <path
+          key={i}
+          d={d}
+          strokeWidth={1.5}
+          style={{ strokeOpacity: `calc(var(--art-alpha) * ${0.16 + (i % 5) * 0.13})` }}
+        />
       ))}
     </>
   )
@@ -180,7 +193,7 @@ function Grid({ random, gradientId }: { random: Rand; gradientId: string }) {
           height={cell.size}
           rx={5}
           strokeWidth={1.3}
-          strokeOpacity={cell.filled ? 0 : 0.24}
+          style={{ strokeOpacity: `calc(var(--art-alpha) * ${cell.filled ? 0 : 0.24})` }}
           fill={cell.filled ? `url(#${gradientId})` : 'none'}
           fillOpacity={cell.filled ? 0.85 : 0}
         />
@@ -212,7 +225,7 @@ function Bloom({ random, gradientId }: { random: Rand; gradientId: string }) {
           rx={width}
           ry={petal.length / 2}
           strokeWidth={1.3}
-          strokeOpacity={0.3}
+          style={{ strokeOpacity: `calc(var(--art-alpha) * ${0.3})` }}
           fill={`url(#${gradientId})`}
           fillOpacity={0.1}
           transform={`rotate(${petal.rotate} 200 200)`}
@@ -232,9 +245,26 @@ function Pulse({ random }: { random: Rand }) {
   }).join(' ')
   return (
     <>
-      <polyline points={points} strokeWidth={2.2} strokeOpacity={0.95} strokeLinejoin="round" />
-      <polyline points={points} strokeWidth={9} strokeOpacity={0.12} strokeLinejoin="round" />
-      <line x1="0" y1="200" x2="400" y2="200" strokeWidth={1} strokeOpacity={0.14} />
+      <polyline
+        points={points}
+        strokeWidth={2.2}
+        style={{ strokeOpacity: `calc(var(--art-alpha) * ${0.95})` }}
+        strokeLinejoin="round"
+      />
+      <polyline
+        points={points}
+        strokeWidth={9}
+        style={{ strokeOpacity: `calc(var(--art-alpha) * ${0.12})` }}
+        strokeLinejoin="round"
+      />
+      <line
+        x1="0"
+        y1="200"
+        x2="400"
+        y2="200"
+        strokeWidth={1}
+        style={{ strokeOpacity: `calc(var(--art-alpha) * ${0.14})` }}
+      />
     </>
   )
 }
@@ -250,7 +280,12 @@ function Ridge({ random }: { random: Rand }) {
   return (
     <>
       {layers.map((d, i) => (
-        <path key={i} d={d} strokeWidth={1.4} strokeOpacity={0.2 + i * 0.07} />
+        <path
+          key={i}
+          d={d}
+          strokeWidth={1.4}
+          style={{ strokeOpacity: `calc(var(--art-alpha) * ${0.2 + i * 0.07})` }}
+        />
       ))}
     </>
   )
@@ -269,7 +304,7 @@ function Prism({ random, gradientId }: { random: Rand; gradientId: string }) {
           key={i}
           d={d}
           strokeWidth={1.3}
-          strokeOpacity={0.3}
+          style={{ strokeOpacity: `calc(var(--art-alpha) * ${0.3})` }}
           fill={`url(#${gradientId})`}
           fillOpacity={i % 2 === 0 ? 0.18 : 0.06}
         />
@@ -300,7 +335,7 @@ function Trace({ random }: { random: Rand }) {
   return (
     <>
       {/* Faint survey grid, so a single route does not read as an empty frame. */}
-      <g strokeWidth={1} strokeOpacity={0.09}>
+      <g strokeWidth={1} style={{ strokeOpacity: `calc(var(--art-alpha) * ${0.09})` }}>
         {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
           <line key={`h${i}`} x1="-10" y1={i * 52 + 18} x2="410" y2={i * 52 + 18} />
         ))}
@@ -309,13 +344,44 @@ function Trace({ random }: { random: Rand }) {
         ))}
       </g>
 
-      <path d={secondary.path} strokeWidth={1.4} strokeOpacity={0.28} strokeDasharray="7 8" />
-      <path d={primary.path} strokeWidth={14} strokeOpacity={0.12} />
-      <path d={primary.path} strokeWidth={2.2} strokeOpacity={0.95} />
+      <path
+        d={secondary.path}
+        strokeWidth={1.4}
+        style={{ strokeOpacity: `calc(var(--art-alpha) * ${0.28})` }}
+        strokeDasharray="7 8"
+      />
+      <path
+        d={primary.path}
+        strokeWidth={14}
+        style={{ strokeOpacity: `calc(var(--art-alpha) * ${0.12})` }}
+      />
+      <path
+        d={primary.path}
+        strokeWidth={2.2}
+        style={{ strokeOpacity: `calc(var(--art-alpha) * ${0.95})` }}
+      />
 
-      <circle cx="28" cy="356" r="4.5" strokeWidth={2} strokeOpacity={0.6} />
-      <circle cx={primary.endX} cy={primary.endY} r="8" strokeWidth={2.2} strokeOpacity={0.95} />
-      <circle cx={primary.endX} cy={primary.endY} r="17" strokeWidth={1.2} strokeOpacity={0.35} />
+      <circle
+        cx="28"
+        cy="356"
+        r="4.5"
+        strokeWidth={2}
+        style={{ strokeOpacity: `calc(var(--art-alpha) * ${0.6})` }}
+      />
+      <circle
+        cx={primary.endX}
+        cy={primary.endY}
+        r="8"
+        strokeWidth={2.2}
+        style={{ strokeOpacity: `calc(var(--art-alpha) * ${0.95})` }}
+      />
+      <circle
+        cx={primary.endX}
+        cy={primary.endY}
+        r="17"
+        strokeWidth={1.2}
+        style={{ strokeOpacity: `calc(var(--art-alpha) * ${0.35})` }}
+      />
     </>
   )
 }

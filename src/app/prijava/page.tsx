@@ -63,12 +63,12 @@ const FAQ_ITEMS = [
   {
     question: 'Pas je teško povređen upravo sada.',
     answer:
-      'Pošalji prijavu i označi je kao „pas je u opasnosti”, pa odmah pozovi i komunalnu zoohigijenu svog grada. Za Beograd je to 011 2467 111, a opšti broj za hitne službe je 1985.',
+      'Pošalji prijavu i označi je kao „pas je u opasnosti”, pa odmah pozovi i komunalnu zoohigijenu svog grada. Za Beograd je to 011 2467 111, a opšti broj za hitne službe je 112.',
   },
   {
     question: 'Mogu li da prijavim psa koji nije u Srbiji?',
     answer:
-      'Trenutno radimo u Beogradu, Novom Sadu i Nišu. Prijave iz drugih gradova primamo i prosleđujemo lokalnim udruženjima, ali ne možemo da garantujemo izlazak ekipe.',
+      'Trenutno radimo u Beogradu, Novom Sadu, Nišu, Kragujevcu i Subotici. Prijave iz drugih gradova primamo i prosleđujemo lokalnim udruženjima, ali ne možemo da garantujemo izlazak ekipe.',
   },
 ]
 
@@ -113,7 +113,7 @@ export default function ReportPage() {
                     <span>
                       <strong className="font-medium">Ako je pas u neposrednoj opasnosti</strong> —
                       na putu, teško povređen, u zatvorenom vozilu — pošalji prijavu i odmah pozovi
-                      zoohigijenu svog grada ili 1985.
+                      zoohigijenu svog grada ili 112.
                     </span>
                   </p>
                 </div>

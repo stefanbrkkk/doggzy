@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, Heart, MapPin, Siren } from 'lucide-react'
-import { cn, formatDate, formatRsd } from '@/lib/utils'
+import { cn, formatDateGenitive, formatRsd } from '@/lib/utils'
 import { routes } from '@/config/site'
-import { dogNeedTotals, dogs, getDog, statusLabels } from '@/content/dogs'
+import { dogNeedTotals, dogs, getDog, statusLabel } from '@/content/dogs'
 import { stories } from '@/content/stories'
 import { Container } from '@/components/ui/section'
 import { Badge } from '@/components/ui/badge'
@@ -31,10 +31,13 @@ export async function generateMetadata({
   if (!dog) return { title: 'Pas nije pronađen' }
 
   return {
-    title: `${dog.name} — ${statusLabels[dog.status]}`,
+    title: `${dog.name} — ${statusLabel(dog.status, dog.sex)}`,
     description: dog.summary,
     alternates: { canonical: routes.dog(dog.slug) },
-    openGraph: { title: `${dog.name} — ${statusLabels[dog.status]}`, description: dog.summary },
+    openGraph: {
+      title: `${dog.name} — ${statusLabel(dog.status, dog.sex)}`,
+      description: dog.summary,
+    },
   }
 }
 
@@ -70,11 +73,14 @@ export default async function DogPage({ params }: { params: Promise<{ slug: stri
             Svi psi
           </Link>
 
-          <div className="mt-8 grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+          <div className="mt-8 grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16 [&>*]:min-w-0">
             <Reveal direction="up">
               <div className="lg:sticky lg:top-28">
                 <div className="overflow-hidden rounded-5xl border border-line">
-                  <DogArt dog={dog} className="aspect-4/5 w-full" />
+                  <DogArt
+                    dog={dog}
+                    className="aspect-4/5 max-h-[55svh] w-full object-cover lg:max-h-none"
+                  />
                 </div>
               </div>
             </Reveal>
@@ -94,7 +100,7 @@ export default async function DogPage({ params }: { params: Promise<{ slug: stri
                     }
                     size="sm"
                   >
-                    {statusLabels[dog.status]}
+                    {statusLabel(dog.status, dog.sex)}
                   </Badge>
 
                   <h1 className="text-display text-ink">{dog.name}</h1>
@@ -109,7 +115,7 @@ export default async function DogPage({ params }: { params: Promise<{ slug: stri
 
                   <p className="flex items-center gap-1.5 text-sm text-ink-subtle">
                     <MapPin className="h-4 w-4" aria-hidden="true" />
-                    {dog.city} · {dog.shelter} · u evidenciji od {formatDate(dog.arrivedAt)}
+                    {dog.city} · {dog.shelter} · u evidenciji od {formatDateGenitive(dog.arrivedAt)}
                   </p>
                 </div>
               </Reveal>
@@ -124,14 +130,17 @@ export default async function DogPage({ params }: { params: Promise<{ slug: stri
                   ) : (
                     <Link href={routes.donate} className={cn(buttonStyles({ size: 'lg' }))}>
                       <Heart className="h-4 w-4" />
-                      Pomozi {dog.name}
+                      Pomozi {dog.nameDative}
                     </Link>
                   )}
 
                   {dog.sponsorMonthly > 0 ? (
                     <Link
                       href={routes.donate}
-                      className={cn(buttonStyles({ variant: 'secondary', size: 'lg' }))}
+                      className={cn(
+                        buttonStyles({ variant: 'secondary', size: 'lg' }),
+                        'max-sm:w-full max-sm:whitespace-normal max-sm:text-center',
+                      )}
                     >
                       Virtuelno starateljstvo · {formatRsd(dog.sponsorMonthly)}/mes
                     </Link>

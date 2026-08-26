@@ -29,22 +29,22 @@ const PARTNERS = [
   {
     icon: HandHeart,
     title: 'Ljudi',
-    body: 'Prijavljuju, doniraju, udomljavaju i kupuju. Bez njih ostalo dvoje nema od čega da radi.',
+    body: 'Prijavljuju, doniraju, udomljavaju i kupuju. Bez njih ostale dve strane nemaju od čega da rade.',
   },
 ]
 
 const TIMELINE = [
   {
     period: 'Faza 1 — sada',
-    title: 'Beograd, Novi Sad, Niš',
+    title: 'Beograd, Novi Sad, Niš, Kragujevac, Subotica',
     body: 'Prijave, evidencija pasa i javni dnevnik. Prvi krug partnerskih skloništa i ambulanti.',
     state: 'U toku',
   },
   {
-    period: 'Faza 2',
-    title: 'Virtuelno starateljstvo i prodavnica',
-    body: 'Mesečna podrška konkretnom psu sa izveštajem, i prodavnica čiji profit ulazi u isti dnevnik.',
-    state: 'U pripremi',
+    period: 'Faza 2 — u toku',
+    title: 'Naplata i mesečni izveštaj',
+    body: 'Prodavnica i starateljski nivoi već stoje na sajtu. Ostaje da povežemo naplatu i da izveštaj o svakom psu stiže automatski, umesto na zahtev.',
+    state: 'U toku',
   },
   {
     period: 'Faza 3',
@@ -63,7 +63,7 @@ const FAQ_ITEMS = [
   {
     question: 'Da li ste registrovano udruženje?',
     answer:
-      'Registracija je u toku. Dok se ne završi, ne primamo uplate na račun udruženja i to jasno pišemo na stranici za donacije.',
+      'Registracija je u toku. Broj računa na stranici za donacije je zato još uvek primer — piše to iznad samog dugmeta, i molimo te da nam pišeš pre uplate da potvrdimo aktuelne podatke.',
   },
   {
     question: 'Da li imate sopstveno sklonište?',
@@ -87,8 +87,11 @@ export default function AboutPage() {
           className="pointer-events-none absolute inset-x-0 -top-32 -z-10 h-[32rem] bg-[radial-gradient(55%_60%_at_50%_0%,var(--wash-warm),transparent_70%)] opacity-[var(--wash-opacity)]"
         />
 
-        <Container>
-          <div className="max-w-3xl">
+        {/* The narrow container, matching the prose sections below. The hero
+            used to sit in the default one, so the page had two different left
+            margins 192px apart with nothing explaining the step. */}
+        <Container size="narrow">
+          <div>
             <Reveal direction="up" amount={0.4}>
               <Eyebrow>O nama</Eyebrow>
             </Reveal>
@@ -132,7 +135,7 @@ export default function AboutPage() {
       <section className="py-16">
         <Container>
           <SectionHeader eyebrow="Ko sve učestvuje" title="Tri strane, jedan dnevnik" />
-          <ul className="mt-12 grid gap-px overflow-hidden rounded-4xl border border-line bg-line sm:grid-cols-3">
+          <ul className="mt-12 grid gap-px overflow-hidden rounded-4xl border border-line bg-rule sm:grid-cols-3">
             {PARTNERS.map((partner, index) => {
               const Icon = partner.icon
               return (

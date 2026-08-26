@@ -48,8 +48,8 @@ export function CartPage() {
 
   if (entries.length === 0) {
     return (
-      <div className="flex flex-col items-center gap-5 rounded-5xl border border-dashed border-line py-28 text-center">
-        <ShoppingBag className="h-8 w-8 text-ink-subtle" aria-hidden="true" />
+      <div className="flex flex-col items-center gap-5 rounded-5xl border border-dashed border-rule mx-auto max-w-xl py-16 text-center">
+        <ShoppingBag className="h-10 w-10 text-ink-subtle" aria-hidden="true" />
         <div className="space-y-1.5">
           <p className="text-headline text-ink">Korpa je prazna</p>
           <p className="text-sm text-ink-muted">Sav profit od prodaje ide u negu pasa.</p>

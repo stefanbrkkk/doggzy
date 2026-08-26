@@ -161,6 +161,7 @@
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
   --color-line-interactive: var(--line-interactive);
+  --color-rule: var(--rule);
   --color-ink: var(--ink);
   --color-ink-muted: var(--ink-muted);
   --color-ink-subtle: var(--ink-subtle);
@@ -201,11 +202,31 @@
   --positive: var(--color-mint-400);
   --critical: var(--color-rose-400);
 
+  /* Multiplier on every stroke alpha in the generative artwork. The alphas
+     were authored against a near-black ground; over the light theme's
+     near-white `--sunken` the same values drop to about a quarter of the local
+     contrast and the shape that identifies each dog stops reading. The UA
+     clamps the product at 1, so the few already-solid accents stay solid. */
+  --art-alpha: 1;
+  --art-ink: none;
+
+  /* The page gutter <Container> uses. Exposed as a token so a full-bleed
+     element can line its content up with the container's content edge. */
+  --container-gutter: 1.25rem;
+
   /* Three border weights, because WCAG exempts decorative hairlines but not
      the border of a form control. */
   --line: oklch(1 0 0 / 0.07);
   --line-strong: oklch(1 0 0 / 0.13);
-  --line-interactive: oklch(1 0 0 / 0.34);
+  /* 38%, not 34%. WCAG 1.4.11 wants 3:1 for a control's own border, and 34%
+     measured 2.95:1 against `--sunken` once check-contrast started compositing
+     alpha the way a browser does. */
+  --line-interactive: oklch(1 0 0 / 0.38);
+  /* A rule that has to be seen, not merely sensed: the 1px dividers between
+     grid cells and the dashed frames on empty states. `--line` at 7% lands ~3
+     sRGB levels from the cell colour here — under the amplitude of the site's
+     own grain layer, so the rule simply is not there in dark theme. */
+  --rule: oklch(1 0 0 / 0.2);
 
   /* Noise used as a mask, so the grain takes its colour from a token rather
      than from a blend mode. Shared by both themes. */
@@ -251,6 +272,13 @@
 
   --line: oklch(0.205 0.012 58 / 0.09);
   --line-strong: oklch(0.205 0.012 58 / 0.16);
+  --rule: oklch(0.205 0.012 58 / 0.14);
+  --art-alpha: 1.9;
+  /* Alpha alone is not enough over a near-white ground: the gradient stops are
+     fixed ramp steps chosen against near-black, and a light orange stays a
+     light orange however opaque it is. Darkening the whole stroke group is
+     what actually restores the linework. */
+  --art-ink: brightness(0.5) saturate(1.4);
   /* Solid, not alpha: composited over the light field background, an alpha
      border cannot reach 3:1 without looking almost black. */
   --line-interactive: oklch(0.575 0.014 58);
@@ -403,9 +431,15 @@
     var(--shadow-lift);
 
   @supports (backdrop-filter: blur(1px)) {
-    background: color-mix(in oklch, var(--elevated) 84%, transparent);
-    backdrop-filter: blur(22px) saturate(170%);
-    -webkit-backdrop-filter: blur(22px) saturate(170%);
+    /* 92%, and a much gentler saturation boost than `glass`.
+
+       This is the one glass surface that sits over the generative artwork
+       rather than over flat page ground, and `saturate(170%)` amplified the
+       chroma of whatever card was passing underneath — the panel picked up
+       green and pink blotches instead of reading as a single plane. */
+    background: color-mix(in oklch, var(--elevated) 92%, transparent);
+    backdrop-filter: blur(22px) saturate(112%);
+    -webkit-backdrop-filter: blur(22px) saturate(112%);
   }
 }
 
@@ -453,6 +487,20 @@
 @utility mask-none {
   mask-image: none;
   -webkit-mask-image: none;
+}
+
+/**
+ * Puts a full-bleed element's content on the same left edge as <Container>,
+ * while it still scrolls to the viewport edge.
+ *
+ * `100%` rather than `100vw`: the page reserves a stable scrollbar gutter, and
+ * `100vw` includes it, which would push everything using this a few pixels off
+ * the container it is meant to match. 72rem is <Container>'s default max-width.
+ */
+@utility container-inset {
+  --inset: max(var(--container-gutter), calc((100% - 72rem) / 2 + var(--container-gutter)));
+  padding-inline: var(--inset);
+  scroll-padding-inline: var(--inset);
 }
 
 @utility mask-fade-x {
@@ -644,6 +692,12 @@
       visibility: hidden;
       pointer-events: none;
     }
+  }
+}
+
+@media (min-width: 40rem) {
+  :root {
+    --container-gutter: 2rem;
   }
 }
 

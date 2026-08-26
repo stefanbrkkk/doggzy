@@ -6,7 +6,7 @@ import { ArrowUpRight, MapPin } from 'lucide-react'
 import { cn, formatRsd } from '@/lib/utils'
 import { duration, ease } from '@/lib/motion'
 import { routes } from '@/config/site'
-import { dogNeedTotals, statusLabels, type Dog } from '@/content/dogs'
+import { dogNeedTotals, statusLabel, type Dog } from '@/content/dogs'
 import { Badge } from '@/components/ui/badge'
 import { DogArt } from './dog-art'
 
@@ -43,7 +43,7 @@ export function DogCard({ dog, className }: { dog: Dog; className?: string }) {
                 <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-critical" />
               </span>
             ) : null}
-            {statusLabels[dog.status]}
+            {statusLabel(dog.status, dog.sex)}
           </Badge>
         </div>
 

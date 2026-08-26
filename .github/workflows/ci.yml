@@ -37,6 +37,9 @@ jobs:
       - name: Colour contrast (WCAG)
         run: npm run check:contrast
 
+      - name: Money claims match the ledgers
+        run: npm run check:figures
+
       - name: Formatting
         run: npm run format:check
 

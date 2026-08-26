@@ -8,6 +8,7 @@ import { ArrowRight, ChevronDown, Heart } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { duration, ease } from '@/lib/motion'
 import { routes } from '@/config/site'
+import { dogs } from '@/content/dogs'
 import { buttonStyles } from '@/components/ui/button'
 import { LineReveal, Magnetic, SplitText } from '@/components/motion'
 import { AuroraField } from '@/components/visuals/aurora-field'
@@ -17,8 +18,19 @@ import { submitReport } from '@/lib/report-client'
 import { useEntranceCue } from '@/lib/use-entrance-cue'
 import { useReducedMotionSafe } from '@/lib/use-reduced-motion-safe'
 
+/**
+ * Derived from the dog list rather than typed out.
+ *
+ * The hardcoded version said "Beograd, Novi Sad, Niš" while the list already
+ * carried dogs in Kragujevac and Subotica with named partner shelters — so a
+ * visitor from Kragujevac read "we are not there" directly above a Kragujevac
+ * shelter's dog. Reading it from the data means the claim cannot drift again.
+ * Siva's city is written "Beograd — Karaburma", hence the split.
+ */
+const CITIES = [...new Set(dogs.map((dog) => dog.city.split('—')[0].trim()))]
+
 const TRUST = [
-  { value: 'Beograd, Novi Sad, Niš', label: 'Gde smo sada' },
+  { value: CITIES.join(', '), label: 'Gde smo sada' },
   { value: '100%', label: 'Profita prodavnice ide u negu' },
   { value: 'Svaka stavka', label: 'Ima račun na stranici psa' },
 ]

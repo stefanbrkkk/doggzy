@@ -528,7 +528,11 @@ await group('Admin: uspešna prijava, sesija i odjava', async () => {
   await page.waitForURL('**/admin', { timeout: 15000 })
   await sleep(1200)
   check('tačna lozinka vodi na kontrolnu tablu', page.url().endsWith('/admin'))
-  check('kontrolna tabla se prikazuje', await page.getByText('Pregled sadržaja').isVisible())
+  // By role, not by text: "Pregled sadržaja" also appears in the page title,
+  // and a bare text locator matches more than the heading.
+  const dashboardHeading = page.getByRole('heading', { name: 'Pregled sadržaja', level: 1 })
+  check('kontrolna tabla se prikazuje', await dashboardHeading.isVisible())
+  check('tabla ima tačno jedan h1', (await page.locator('h1').count()) === 1)
 
   const me = await page.request.get(`${BASE}/api/admin/me`)
   check('sesija važi za API', me.status() === 200, `status ${me.status()}`)
@@ -848,6 +852,13 @@ await group('Preveliki zahtevi se odbijaju pre učitavanja u memoriju', async ()
     }),
     failOnStatusCode: false,
   })
+  // The contact limiter is 5 per 15 minutes and lives in the server process, so
+  // a repeat run against the same server legitimately reaches it before the
+  // size guard ever gets a look. That is correct behaviour, not a result.
+  if (oversized.status() === 429) {
+    console.log('  --   preskočeno (ograničenje poruka je aktivno; pokreni protiv svežeg servera)')
+    return
+  }
   check(
     '/api/kontakt odbija telo iznad granice sa 413',
     oversized.status() === 413,
@@ -907,20 +918,39 @@ await group('Hero čeka da se zavesa podigne', async () => {
         }).length,
     )
 
-  // While the curtain is up the headline glyphs are still under their mask.
+  // Sampled inside one evaluate: measuring the glyphs in a second round-trip
+  // leaves a window in which the curtain can lift between the two calls, which
+  // reads as "the headline was never masked" when it simply was not looked at
+  // in time.
   const early = await page.evaluate(async () => {
+    const lifted = () =>
+      [...document.querySelectorAll('h1 span')].filter((node) => {
+        const t = getComputedStyle(node).transform
+        if (!t.startsWith('matrix(')) return false
+        return Math.abs(Number(t.slice(7, -1).split(',')[5])) > 1
+      }).length
+
     const start = performance.now()
-    while (performance.now() - start < 2000) {
-      if (document.querySelector('[data-preloader]') && document.querySelector('h1 span'))
-        return true
+    let sawCurtain = false
+    let maskedWithCurtain = 0
+
+    while (performance.now() - start < 2500) {
+      if (document.querySelector('[data-preloader]') !== null) {
+        sawCurtain = true
+        maskedWithCurtain = Math.max(maskedWithCurtain, lifted())
+      } else if (sawCurtain) {
+        break
+      }
       await new Promise((resolve) => requestAnimationFrame(() => resolve()))
     }
-    return false
+    return { sawCurtain, maskedWithCurtain }
   })
-  check('zavesa se pojavljuje na prvoj poseti', early)
-
-  const maskedDuring = await liftedGlyphs()
-  check('naslov je još pod maskom dok zavesa stoji', maskedDuring > 0, `${maskedDuring} pomerenih`)
+  check('zavesa se pojavljuje na prvoj poseti', early.sawCurtain)
+  check(
+    'naslov je još pod maskom dok zavesa stoji',
+    early.maskedWithCurtain > 0,
+    `${early.maskedWithCurtain} pomerenih`,
+  )
 
   await sleep(6000)
   const curtainGone = await page.evaluate(() => document.querySelector('[data-preloader]') === null)
@@ -944,7 +974,26 @@ await group('Smanjene animacije ne ostavljaju pomerene elemente', async () => {
   })
   const page = await reduced.newPage()
   await page.goto(`${BASE}/`, { waitUntil: 'load' })
-  await sleep(600)
+  await sleep(1200)
+
+  // Checked before scrolling and before any failsafe could paper over it: the
+  // preloader retires its curtain without animating under reduced motion, and
+  // the hero's entrance is gated on the cue it fires. A path that closes the
+  // curtain without releasing the entrance leaves the whole hero 16px low.
+  const heroStranded = await page.evaluate(
+    () =>
+      [...document.querySelectorAll('h1 ~ *, [class*="text-lead"]')].filter((node) => {
+        const t = getComputedStyle(node).transform
+        if (!t.startsWith('matrix(')) return false
+        return Math.abs(Number(t.slice(7, -1).split(',')[5])) > 1
+      }).length,
+  )
+  check(
+    'hero se smesti bez čekanja na rezervni tajmer',
+    heroStranded === 0,
+    `${heroStranded} pomerenih`,
+  )
+
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
   // Lenis animates programmatic scrolls, and every reveal on the way down
   // starts as it arrives — wait for the page to actually come to rest.

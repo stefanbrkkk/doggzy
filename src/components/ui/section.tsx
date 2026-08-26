@@ -15,7 +15,9 @@ export function Container({
     <div
       className={cn(
         'mx-auto w-full px-5 sm:px-8',
-        size === 'narrow' && 'max-w-3xl',
+        // 2xl, not 3xl: at 3xl the long-form pages run 76-81 characters per
+        // line, above the 45-75 band that stays comfortable to read.
+        size === 'narrow' && 'max-w-2xl',
         size === 'default' && 'max-w-6xl',
         size === 'wide' && 'max-w-[92rem]',
         className,

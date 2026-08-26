@@ -54,7 +54,7 @@ export async function verifyPassword(password: string, stored: string): Promise<
 export async function createSession(email: string): Promise<string> {
   const secret = process.env.AUTH_SECRET
   if (!secret || secret.length < 32) {
-    throw new Error('AUTH_SECRET nije postavljen ili je kraći od 32 karaktera.')
+    throw new Error('AUTH_SECRET nije postavljen ili je kraći od 32 znaka.')
   }
 
   return new SignJWT({ role: 'admin' })

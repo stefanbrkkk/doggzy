@@ -52,7 +52,7 @@ const KINDS: {
 ]
 
 const SIZES = ['Mali', 'Srednji', 'Veliki'] as const
-const COLORS = ['Crn', 'Beo', 'Braon', 'Riđ', 'Šaren', 'Sivo'] as const
+const COLORS = ['Crn', 'Beo', 'Braon', 'Riđ', 'Šaren', 'Siv'] as const
 
 interface FormState {
   kind: ReportKind | null
@@ -261,7 +261,15 @@ export function ReportFlow({ onSubmit, className }: ReportFlowProps) {
         {STEP_TITLES[step]}
       </p>
 
-      <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-3">
+      {/* `justify-center` on the track, not `h-full` on the panel. The device is
+          a fixed 9:19.5, and on /prijava the tallest step still leaves ~340px
+          under it — top-anchored that reads as an unfinished screen, centred it
+          reads as breathing room. `my-auto` yields as soon as a step is taller
+          than the track, so the flow still scrolls on short viewports. */}
+      <div
+        ref={scrollRef}
+        className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-5 pb-3"
+      >
         <AnimatePresence mode="wait" custom={direction} initial={false}>
           <motion.div
             key={step}
@@ -270,7 +278,7 @@ export function ReportFlow({ onSubmit, className }: ReportFlowProps) {
             initial="enter"
             animate="center"
             exit="exit"
-            className="h-full"
+            className="my-auto w-full shrink-0"
           >
             {step === 0 ? (
               <StepKind
@@ -405,8 +413,20 @@ function FieldError({ id, children }: { id?: string; children?: string }) {
   )
 }
 
-const inputClass =
-  'w-full rounded-xl border border-line-interactive bg-sunken px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-subtle focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/15'
+/**
+ * The phone's own control sizing, but the design system's states.
+ *
+ * `aria-invalid` is set on every input here, and without the variant the field
+ * kept a neutral border while a red message appeared underneath it — the site's
+ * error state missing from the site's flagship interaction.
+ */
+const inputClass = [
+  'w-full rounded-xl border border-line-interactive bg-sunken px-3.5 py-2.5 text-sm text-ink',
+  'placeholder:text-ink-subtle',
+  'transition-[border-color,box-shadow] duration-200 ease-swift',
+  'focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/15',
+  'aria-invalid:border-critical aria-invalid:ring-4 aria-invalid:ring-critical/15',
+].join(' ')
 
 function StepKind({
   value,
@@ -744,7 +764,7 @@ function StepDone({ reference, onReset }: { reference: string | null; onReset: (
       <div className="space-y-1.5">
         <p className="text-base font-medium text-ink">Prijava je primljena</p>
         <p className="text-xs leading-relaxed text-ink-subtle">
-          Javljamo se u roku od 2 sata. Ako je pas u neposrednoj opasnosti, zovi i 1985.
+          Javljamo se u roku od 2 sata. Ako je pas u neposrednoj opasnosti, zovi i 112.
         </p>
       </div>
 

@@ -48,7 +48,7 @@ const FAQ_ITEMS = [
   {
     question: 'Da li dobijam potvrdu?',
     answer:
-      'Izvod iz banke je tvoja potvrda o uplati. Ako ti treba potvrda od nas za poresku svrhu, piši nam i pošaljemo je.',
+      'Izvod iz banke je tvoja potvrda o uplati. Ako ti treba potvrda od nas za poreske svrhe, piši nam i pošaljemo je.',
   },
   {
     question: 'Kako se odjavljujem sa mesečne donacije?',

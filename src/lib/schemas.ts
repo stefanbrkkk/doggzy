@@ -16,7 +16,7 @@ export const reportSchema = z.object({
   location: z.string().trim().min(3, 'Upiši bar naselje ili ulicu.').max(160),
   size: z.string().trim().min(1, 'Izaberi veličinu.').max(20),
   colors: z.array(z.string().max(20)).min(1, 'Izaberi bar jednu boju.').max(6),
-  description: z.string().trim().min(10, 'Opiši psa u bar 10 karaktera.').max(1200),
+  description: z.string().trim().min(10, 'Opiši psa u bar 10 znakova.').max(1200),
   contactName: z.string().trim().min(2, 'Upiši ime.').max(80),
   contactValue: z
     .string()
@@ -32,7 +32,7 @@ export const contactSchema = z.object({
   name: z.string().trim().min(2, 'Upiši ime.').max(80),
   email: z.string().trim().email('Upiši ispravan email.').max(120),
   topic: z.enum(['opste', 'saradnja', 'sklonište', 'mediji', 'donacije']),
-  message: z.string().trim().min(20, 'Napiši bar 20 karaktera.').max(4000),
+  message: z.string().trim().min(20, 'Napiši bar 20 znakova.').max(4000),
   /**
    * Honeypot. Not length-constrained on purpose: a `max(0)` here turns a filled
    * field into a validation failure, and the route answers 422 naming the

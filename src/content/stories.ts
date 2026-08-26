@@ -56,7 +56,7 @@ export const stories: Story[] = [
   {
     slug: 'sta-radi-jedan-lanac',
     title: 'Šta radi jedan lanac',
-    dek: 'Tesla je ostao vezan kad su se ljudi odselili. Ovo je račun za sedam nedelja lečenja.',
+    dek: 'Tesla je ostao vezan kad su se ljudi odselili. Ovo je račun za osam nedelja lečenja.',
     publishedAt: '2026-07-30',
     author: 'Redakcija Doggzy',
     readingMinutes: 6,
@@ -82,7 +82,7 @@ export const stories: Story[] = [
         heading: 'Šta sad',
         paragraphs: [
           'Rana se zatvara. Kad zaraste, Tesla traži dvorište i strpljenje.',
-          'Do tada ga drži četrdeset jedan čovek koji je uplatio u julu.',
+          'Do tada ga drži četrdeset jedan čovek koji je uplatio u junu.',
         ],
       },
     ],
@@ -108,7 +108,7 @@ export const stories: Story[] = [
       {
         heading: 'Jedan snimak',
         paragraphs: [
-          'Snimili smo trideset sekundi kako čeka kod kapice svako jutro u sedam, jer je to sat kad je nekad izlazio u šetnju.',
+          'Snimili smo trideset sekundi kako čeka kod kapije svako jutro u sedam, jer je to sat kad je nekad izlazio u šetnju.',
           'Za nedelju dana javilo se jedanaest ljudi.',
         ],
       },

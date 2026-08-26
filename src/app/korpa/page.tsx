@@ -6,7 +6,7 @@ import { Reveal } from '@/components/motion'
 
 export const metadata: Metadata = {
   title: 'Korpa',
-  description: 'Pregled korpe i završetak porudžbine.',
+  description: 'Pregled korpe i slanje porudžbine našem timu.',
   alternates: { canonical: routes.cart },
   robots: { index: false, follow: true },
 }

@@ -7,30 +7,27 @@ import { ArrowRight, Check, FileText } from 'lucide-react'
 import { cn, formatRsd } from '@/lib/utils'
 import { duration, ease, spring } from '@/lib/motion'
 import { routes } from '@/config/site'
+import { ledgerLineItems } from '@/content/dogs'
 import { buttonStyles } from '@/components/ui/button'
 import { Container, Eyebrow } from '@/components/ui/section'
 import { Reveal } from '@/components/motion'
 
 /**
- * Real unit costs from the dog ledgers on this site. If one of these changes,
- * the number on the dog's page changes with it — the calculator is not a
- * marketing estimate.
+ * The list is the dog ledgers, not a copy of them.
+ *
+ * The heading below promises these are real invoices already published on a
+ * dog's page. Typing them out separately is how the calculator came to quote a
+ * price no ledger contained, so it reads them instead.
  */
-const LINE_ITEMS = [
-  { cost: 600, label: 'Hrana za jednog psa, tri dana' },
-  { cost: 2600, label: 'Vakcina i čipovanje' },
-  { cost: 4500, label: 'Kontrolni veterinarski pregled' },
-  { cost: 5200, label: 'Oftalmološki pregled' },
-  { cost: 8500, label: 'Sterilizacija' },
-  { cost: 11200, label: 'Stomatološka intervencija' },
-  { cost: 16800, label: 'Hitna intervencija sa infuzijom' },
-  { cost: 18400, label: 'Operacija loše zaraslog preloma' },
-]
+const LINE_ITEMS = ledgerLineItems()
 
-const STEPS = [600, 1200, 2600, 4500, 5200, 8500, 11200, 16800, 18400, 25000, 40000]
+/** Slider stops: every real invoice, plus a couple of rounder figures. */
+const STEPS = [...new Set([...LINE_ITEMS.map((item) => item.cost), 1200, 25000])].sort(
+  (a, b) => a - b,
+)
 
 export function ImpactCalculator() {
-  const [index, setIndex] = useState(4)
+  const [index, setIndex] = useState(Math.floor(STEPS.length / 2))
   const amount = STEPS[index]
 
   const { covered, next } = useMemo(() => {
@@ -60,8 +57,8 @@ export function ImpactCalculator() {
             </Reveal>
             <Reveal direction="up" delay={0.12}>
               <p className="text-lead text-ink-muted">
-                Ovo nisu procene. Sve su to stvarni iznosi sa računa koji već stoje na stranicama
-                pasa.
+                Ovo nisu procene. Svaka stavka je račun koji već stoji na stranici psa pored njenog
+                imena — otvori je i proveri.
               </p>
             </Reveal>
 
@@ -92,7 +89,9 @@ export function ImpactCalculator() {
                   step={1}
                   value={index}
                   onChange={(event) => setIndex(Number(event.target.value))}
-                  aria-valuetext={`${formatRsd(amount)} — ${best?.label ?? 'ispod prve stavke'}`}
+                  aria-valuetext={`${formatRsd(amount)} — ${
+                    best ? `${best.label}, ${best.dogName}` : 'ispod prve stavke'
+                  }`}
                   className={cn(
                     'h-2 w-full cursor-pointer appearance-none rounded-full bg-sunken outline-none',
                     'focus-visible:ring-4 focus-visible:ring-brand/25',
@@ -146,7 +145,7 @@ function Receipt({
   return (
     <div className="relative">
       <div className="rounded-4xl border border-line bg-surface p-6 shadow-lift-lg sm:p-8 grain">
-        <header className="flex items-center justify-between border-b border-dashed border-line pb-4">
+        <header className="flex items-center justify-between border-b border-dashed border-rule pb-4">
           <span className="flex items-center gap-2 text-sm font-medium text-ink">
             <FileText className="h-4 w-4 text-brand" aria-hidden="true" />
             Šta {formatRsd(amount)} pokriva
@@ -161,7 +160,7 @@ function Receipt({
             const isCovered = item.cost <= amount
             return (
               <li
-                key={item.label}
+                key={`${item.dogSlug}-${item.label}`}
                 className="flex items-center gap-3 rounded-lg px-1 py-2 transition-colors"
               >
                 <span
@@ -193,7 +192,13 @@ function Receipt({
                     isCovered ? 'text-ink' : 'text-ink-subtle',
                   )}
                 >
-                  {item.label}
+                  {item.label}{' '}
+                  <Link
+                    href={routes.dog(item.dogSlug)}
+                    className="text-ink-subtle underline decoration-line-strong underline-offset-2 transition-colors hover:text-ink"
+                  >
+                    {item.dogName}
+                  </Link>
                 </span>
 
                 <span
@@ -210,10 +215,10 @@ function Receipt({
           })}
         </ul>
 
-        <footer className="border-t border-dashed border-line pt-4">
+        <footer className="border-t border-dashed border-rule pt-4">
           <AnimatePresence mode="wait">
             <motion.p
-              key={next?.label ?? 'all'}
+              key={next ? `${next.dogSlug}-${next.label}` : 'all'}
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}

@@ -49,6 +49,9 @@ export const metadata: Metadata = {
   keywords: [
     'nestao pas',
     'prijava psa',
+    // Kept as a search term only — the visible copy says "udomljavanje",
+    // because "usvajanje" is what you do with a child, not a dog.
+    'udomljavanje pasa Srbija',
     'usvajanje pasa Srbija',
     'donacije za pse',
     'skloništa Srbija',

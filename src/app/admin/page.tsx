@@ -14,7 +14,7 @@ import { formatRsd, plural } from '@/lib/utils'
 import { routes } from '@/config/site'
 import { getSession } from '@/lib/auth'
 import { isAuthConfigured } from '@/lib/auth-edge'
-import { dogs, statusLabels } from '@/content/dogs'
+import { dogs, statusLabel } from '@/content/dogs'
 import { products } from '@/content/products'
 import { stories } from '@/content/stories'
 import { Container, Eyebrow } from '@/components/ui/section'
@@ -56,7 +56,7 @@ export default async function AdminPage() {
           <LogoutButton />
         </div>
 
-        <dl className="mt-12 grid gap-px overflow-hidden rounded-4xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+        <dl className="mt-12 grid gap-px overflow-hidden rounded-4xl border border-line bg-rule sm:grid-cols-2 lg:grid-cols-4">
           <Stat icon={PawPrint} label="Pasa u evidenciji" value={String(dogs.length)} />
           <Stat icon={ShoppingBag} label="Proizvoda" value={String(products.length)} />
           <Stat icon={Sparkles} label="Priča" value={String(stories.length)} />
@@ -129,7 +129,7 @@ export default async function AdminPage() {
                   >
                     <span className="flex items-center gap-3">
                       <span className="text-sm text-ink">{dog.name}</span>
-                      <Badge size="sm">{statusLabels[dog.status]}</Badge>
+                      <Badge size="sm">{statusLabel(dog.status, dog.sex)}</Badge>
                     </span>
                     <span className="flex items-center gap-4 text-xs text-ink-subtle">
                       <span data-numeric>

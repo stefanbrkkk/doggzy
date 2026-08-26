@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import { cn, plural } from '@/lib/utils'
 import { spring } from '@/lib/motion'
-import { statusLabels, type Dog, type DogStatus } from '@/content/dogs'
+import { statusFilterLabels, type Dog, type DogStatus } from '@/content/dogs'
 import { DogCard } from './dog-card'
 
 const ALL = 'sve' as const
@@ -30,9 +30,14 @@ export function DogsBrowser({ dogs }: { dogs: Dog[] }) {
 
   return (
     <div className="space-y-8">
-      {/* The cards are h3s. Without this the page jumps h1 to h3, which breaks
-          heading-based navigation. */}
-      <h2 className="sr-only">Lista pasa</h2>
+      {/* The cards are h3s, so without a level here the page jumps h1 to h3.
+          It doubles as the filter's result announcement: the text changes with
+          the selection, so a screen-reader user hears what the list now holds
+          instead of having to go looking. */}
+      <h2 className="sr-only" aria-live="polite">
+        {filter === ALL ? 'Svi psi' : statusFilterLabels[filter]} — {visible.length}{' '}
+        {plural(visible.length, 'pas', 'psa', 'pasa')}
+      </h2>
 
       <LayoutGroup id="dogs-filter">
         <ul className="flex flex-wrap gap-1.5">
@@ -58,7 +63,7 @@ export function DogsBrowser({ dogs }: { dogs: Dog[] }) {
                     />
                   ) : null}
                   <span className="relative z-10">
-                    {option === ALL ? 'Svi' : statusLabels[option]}{' '}
+                    {option === ALL ? 'Svi' : statusFilterLabels[option]}{' '}
                     <span data-numeric className="opacity-60">
                       {count}
                     </span>
@@ -70,17 +75,8 @@ export function DogsBrowser({ dogs }: { dogs: Dog[] }) {
         </ul>
       </LayoutGroup>
 
-      {/* The cards are h3s sitting directly under the page h1, which skips a
-          level in the outline. This also gives the filter a landmark: its text
-          changes with the selection, so a screen-reader user hears what the
-          list now contains. */}
-      <h2 className="sr-only" aria-live="polite">
-        {filter === ALL ? 'Svi psi' : statusLabels[filter]} — {visible.length}{' '}
-        {plural(visible.length, 'pas', 'psa', 'pasa')}
-      </h2>
-
       {visible.length === 0 ? (
-        <p className="rounded-4xl border border-dashed border-line py-24 text-center text-sm text-ink-muted">
+        <p className="mx-auto max-w-xl rounded-4xl border border-dashed border-rule py-16 text-center text-sm text-ink-muted">
           Trenutno nema pasa u ovoj kategoriji.
         </p>
       ) : (

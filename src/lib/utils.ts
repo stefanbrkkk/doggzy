@@ -41,6 +41,35 @@ export function formatDate(value: string | Date): string {
   }).format(date)
 }
 
+/**
+ * Serbian month names in the genitive.
+ *
+ * `Intl` only ever gives the nominative ("11. maj 2026."), which is correct on
+ * its own but ungrammatical after a preposition that governs the genitive —
+ * "od 11. maj 2026." is wrong where "od 11. maja 2026." is right. The last four
+ * also drop the vowel before the `r` rather than just taking a suffix.
+ */
+const MONTHS_GENITIVE = [
+  'januara',
+  'februara',
+  'marta',
+  'aprila',
+  'maja',
+  'juna',
+  'jula',
+  'avgusta',
+  'septembra',
+  'oktobra',
+  'novembra',
+  'decembra',
+]
+
+/** A date in the form that follows `od` / `do` — "11. marta 2026." */
+export function formatDateGenitive(value: string | Date): string {
+  const date = typeof value === 'string' ? new Date(value) : value
+  return `${date.getDate()}. ${MONTHS_GENITIVE[date.getMonth()]} ${date.getFullYear()}.`
+}
+
 export function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max)
 }

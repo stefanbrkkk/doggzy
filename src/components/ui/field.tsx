@@ -1,6 +1,7 @@
 'use client'
 
 import { forwardRef, useId } from 'react'
+import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const control = [
@@ -95,12 +96,29 @@ export const Textarea = forwardRef<
   )
 })
 
+/**
+ * Select with its own indicator.
+ *
+ * `appearance-none` removes the platform arrow, so the control has to draw one
+ * — without it the reserved `pr-10` holds nothing and the select is visually
+ * identical to a text input, with nothing saying it opens.
+ */
 export const Select = forwardRef<HTMLSelectElement, React.SelectHTMLAttributes<HTMLSelectElement>>(
   function Select({ className, children, ...props }, ref) {
     return (
-      <select ref={ref} className={cn(control, 'h-12 appearance-none pr-10', className)} {...props}>
-        {children}
-      </select>
+      <span className="relative block">
+        <select
+          ref={ref}
+          className={cn(control, 'h-12 appearance-none pr-10', className)}
+          {...props}
+        >
+          {children}
+        </select>
+        <ChevronDown
+          aria-hidden="true"
+          className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-subtle"
+        />
+      </span>
     )
   },
 )

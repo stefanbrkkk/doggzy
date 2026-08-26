@@ -33,6 +33,16 @@ export interface Dog {
   id: string
   slug: string
   name: string
+  /**
+   * The name in the accusative and the dative.
+   *
+   * Serbian inflects names, and the UI puts them straight after prepositions
+   * and verbs that govern a case: "Pomozi Mrvici", "za Mrvicu". A suffix rule
+   * cannot derive these — a-stem declension plus palatalisation differs per
+   * name, and Siva declines as an adjective — so both forms are authored here.
+   */
+  nameAccusative: string
+  nameDative: string
   status: DogStatus
   ageLabel: string
   sex: 'ženka' | 'mužjak'
@@ -51,11 +61,33 @@ export interface Dog {
   timeline: TimelineEvent[]
 }
 
-export const statusLabels: Record<DogStatus, string> = {
-  'trazi-dom': 'Traži dom',
+/**
+ * Status as a badge on one dog.
+ *
+ * Two of the four are participles and agree with the dog's sex — a female dog
+ * marked `nestao` has to read "Nestala". The other two are verb phrases and are
+ * already neutral.
+ */
+export function statusLabel(status: DogStatus, sex: Dog['sex']): string {
+  const female = sex === 'ženka'
+  switch (status) {
+    case 'trazi-dom':
+      return 'Traži dom'
+    case 'u-lecenju':
+      return 'U lečenju'
+    case 'udomljen':
+      return female ? 'Udomljena' : 'Udomljen'
+    case 'nestao':
+      return female ? 'Nestala' : 'Nestao'
+  }
+}
+
+/** Status as a category over many dogs — always plural, so never gendered. */
+export const statusFilterLabels: Record<DogStatus, string> = {
+  'trazi-dom': 'Traže dom',
   'u-lecenju': 'U lečenju',
-  udomljen: 'Udomljen',
-  nestao: 'Nestao',
+  udomljen: 'Udomljeni',
+  nestao: 'Nestali',
 }
 
 export const dogs: Dog[] = [
@@ -63,6 +95,8 @@ export const dogs: Dog[] = [
     id: 'd-mrvica',
     slug: 'mrvica',
     name: 'Mrvica',
+    nameAccusative: 'Mrvicu',
+    nameDative: 'Mrvici',
     status: 'trazi-dom',
     ageLabel: '2 godine',
     sex: 'ženka',
@@ -132,6 +166,8 @@ export const dogs: Dog[] = [
     id: 'd-tesla',
     slug: 'tesla',
     name: 'Tesla',
+    nameAccusative: 'Teslu',
+    nameDative: 'Tesli',
     status: 'u-lecenju',
     ageLabel: '5 godina',
     sex: 'mužjak',
@@ -143,7 +179,7 @@ export const dogs: Dog[] = [
     summary: 'Ostao je vezan u dvorištu kad su se vlasnici odselili. Komšija ga je prijavio.',
     story: [
       'Tesla je proveo nepoznato koliko dana na lancu od metar i po. Kad je ekipa stigla, lanac je bio urastao u kožu vrata.',
-      'Vrat se leči već sedam nedelja. Uprkos svemu, Tesla ne reži ni na koga — ni na veterinara koji mu svakog dana menja zavoj.',
+      'Vrat se leči od početka juna. Uprkos svemu, Tesla ne reži ni na koga — ni na veterinara koji mu svakog dana menja zavoj.',
       'Kad zaraste, tražiće dvorište i nekoga ko razume da mu treba vremena da poveruje da niko ne odlazi.',
     ],
     traits: ['Blag', 'Uči brzo', 'Traži dvorište'],
@@ -192,14 +228,20 @@ export const dogs: Dog[] = [
     id: 'd-lima',
     slug: 'lima',
     name: 'Lima',
+    nameAccusative: 'Limu',
+    nameDative: 'Limi',
     status: 'trazi-dom',
-    ageLabel: '8 meseci',
+    // Her own story puts the litter at ~3 weeks old in early March, so she was
+    // born around mid-February. `arrivedAt` matches the first ledger entry —
+    // the page states when she entered the register, and entries about her
+    // cannot predate it.
+    ageLabel: '6 meseci',
     sex: 'ženka',
     size: 'Srednji',
     breedGuess: 'Mešanac',
     city: 'Niš',
     shelter: 'Udruženje Šapa Niš',
-    arrivedAt: '2026-05-11',
+    arrivedAt: '2026-03-08',
     summary: 'Jedna od pet iz legla nađenog u napuštenoj kućici kraj pruge. Sve su preživele.',
     story: [
       'Leglo je nađeno u martu, staro oko tri nedelje. Hranjeni su na dva sata, danonoćno, tri nedelje.',
@@ -250,6 +292,8 @@ export const dogs: Dog[] = [
     id: 'd-bora',
     slug: 'bora',
     name: 'Bora',
+    nameAccusative: 'Boru',
+    nameDative: 'Bori',
     status: 'udomljen',
     ageLabel: '7 godina',
     sex: 'mužjak',
@@ -297,6 +341,8 @@ export const dogs: Dog[] = [
     id: 'd-siva',
     slug: 'siva',
     name: 'Siva',
+    nameAccusative: 'Sivu',
+    nameDative: 'Sivoj',
     status: 'nestao',
     ageLabel: '4 godine',
     sex: 'ženka',
@@ -308,9 +354,9 @@ export const dogs: Dog[] = [
     summary:
       'Pobegla je od petarde 18. avgusta oko 21h, kod OŠ „Vuk Karadžić”. Nosi crvenu ogrlicu bez pločice.',
     story: [
-      'Siva je plaha na jake zvuke. Neće prići nepoznatoj osobi, ali se zaustavlja ako čučnete i ne gledate je direktno.',
-      'Poslednji potvrđeni trag: 19. avgusta ujutru, kod ulaza u park Ćalije.',
-      'Ako je vidiš, nemoj da je juriš — pošalji prijavu sa lokacijom i vreme.',
+      'Siva je plaha na jake zvuke. Neće prići nepoznatoj osobi, ali se zaustavlja ako čučneš i ne gledaš je direktno.',
+      'Poslednji prijavljeni trag: 19. avgusta ujutru, kod ulaza u park Ćalije.',
+      'Ako je vidiš, nemoj da je juriš — pošalji prijavu sa lokacijom i vremenom.',
     ],
     traits: ['Plaha', 'Bez pločice', 'Crvena ogrlica'],
     needs: [],
@@ -327,7 +373,10 @@ export const dogs: Dog[] = [
       {
         date: '2026-08-19',
         type: 'prijava',
-        title: 'Potvrđeno viđenje',
+        // Titled as reported, not confirmed: the badge beside it says
+        // "Nepotvrđeno", and the one place the two could disagree is exactly
+        // the row a sceptical reader checks first.
+        title: 'Prijavljeno viđenje',
         note: 'Prijava prolaznika, park Ćalije, 07:15.',
         verified: false,
       },
@@ -337,6 +386,8 @@ export const dogs: Dog[] = [
     id: 'd-pahulja',
     slug: 'pahulja',
     name: 'Pahulja',
+    nameAccusative: 'Pahulju',
+    nameDative: 'Pahulji',
     status: 'trazi-dom',
     ageLabel: '10 godina',
     sex: 'ženka',
@@ -378,7 +429,7 @@ export const dogs: Dog[] = [
         date: '2026-06-01',
         type: 'donacija',
         title: 'Virtuelni staratelji',
-        note: 'Četiri mesečne pretplate pokrivaju kapi.',
+        note: 'Mesečne pretplate pokrivaju polovinu godišnje terapije.',
         amount: 4800,
         verified: true,
       },
@@ -387,6 +438,40 @@ export const dogs: Dog[] = [
 ]
 
 const dogBySlug = new Map(dogs.map((dog) => [dog.slug, dog]))
+
+export interface LedgerLineItem {
+  label: string
+  cost: number
+  /** The dog whose public ledger carries this invoice, so the figure is checkable. */
+  dogName: string
+  dogSlug: string
+}
+
+/**
+ * Every funding line published on a dog's page, cheapest first.
+ *
+ * The impact calculator used to carry its own hardcoded list, which is how it
+ * ended up quoting 2.600 for "Vakcina i čipovanje" (the real invoice is 3.800;
+ * 2.600 is Lima's second vaccine) and offering a 600 RSD food line that appears
+ * in no ledger at all — under a heading promising these are not estimates.
+ * Reading them from the data makes that promise true by construction.
+ *
+ * Not deduplicated by label: two dogs can be quoted different prices for the
+ * same procedure, and flattening that would hide exactly the kind of detail
+ * this site exists to publish. Each entry names its dog instead.
+ */
+export function ledgerLineItems(): LedgerLineItem[] {
+  return dogs
+    .flatMap((dog) =>
+      dog.needs.map((need) => ({
+        label: need.label,
+        cost: need.cost,
+        dogName: dog.name,
+        dogSlug: dog.slug,
+      })),
+    )
+    .sort((a, b) => a.cost - b.cost)
+}
 
 export function getDog(slug: string): Dog | undefined {
   return dogBySlug.get(slug)

@@ -121,10 +121,14 @@ export function DogsRail() {
           onPointerCancel={endDrag}
           onClickCapture={onClickCapture}
           className={cn(
-            'flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth px-5 pb-6 sm:px-8',
-            // Without scroll-padding the snapport starts at the padding box, so
-            // the first card snaps flush to the viewport edge and loses its gutter.
-            'scroll-pl-5 sm:scroll-pl-8',
+            'flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth pb-6',
+            // `container-inset` rather than a plain page gutter: the rail
+            // bleeds to the viewport edge, but its first card has to start on
+            // the same left edge as the heading above it and the progress track
+            // below it, both of which sit in <Container>. It also carries the
+            // scroll-padding, without which the first card snaps flush to the
+            // viewport edge and loses its gutter.
+            'container-inset',
             '[scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
             'cursor-grab active:cursor-grabbing',
           )}

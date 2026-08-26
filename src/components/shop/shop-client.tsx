@@ -2,7 +2,7 @@
 
 import { useDeferredValue, useMemo, useState } from 'react'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
-import { Leaf, PackageCheck, Search, SlidersHorizontal, X } from 'lucide-react'
+import { ChevronDown, Leaf, PackageCheck, Search, SlidersHorizontal, X } from 'lucide-react'
 import { cn, plural } from '@/lib/utils'
 import { duration, ease, spring } from '@/lib/motion'
 import { productCategories, products, type Product, type ProductCategory } from '@/content/products'
@@ -92,8 +92,12 @@ export function ShopClient() {
   return (
     <div className="space-y-10">
       {/* One blurred surface, not two stacked: backdrop-filter re-samples the
-          page behind it every frame, and the outer layer was invisible anyway. */}
-      <div className="sticky top-20 z-40 -mx-2 rounded-3xl px-2 py-3">
+          page behind it every frame, and the outer layer was invisible anyway.
+
+          The wrapper carries the page ground. Its `py-3` gutter used to be
+          fully transparent, so product cards visibly slid past above and below
+          the glass panel instead of disappearing behind one plane. */}
+      <div className="sticky top-20 z-40 -mx-2 rounded-3xl bg-canvas px-2 py-3">
         <div className="glass-strong rounded-3xl p-3">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
             <div className="relative flex-1">
@@ -140,7 +144,7 @@ export function ShopClient() {
                   id="shop-sort"
                   value={sort}
                   onChange={(event) => setSort(event.target.value as Sort)}
-                  className="h-11 appearance-none rounded-xl border border-line-interactive bg-sunken pl-9 pr-8 text-sm text-ink focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/15"
+                  className="h-11 appearance-none rounded-xl border border-line-interactive bg-sunken pl-9 pr-9 text-sm text-ink focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/15"
                 >
                   {SORTS.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -148,12 +152,19 @@ export function ShopClient() {
                     </option>
                   ))}
                 </select>
+                {/* `appearance-none` removes the native arrow; without this the
+                    control is indistinguishable from a text input and the
+                    padding reserved for the indicator holds nothing. */}
+                <ChevronDown
+                  aria-hidden="true"
+                  className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-subtle"
+                />
               </div>
             </div>
           </div>
 
           <LayoutGroup id="shop-categories">
-            <ul className="mask-fade-x -mx-1 mt-3 flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none] sm:mask-none [&::-webkit-scrollbar]:hidden">
+            <ul className="mask-fade-x -mx-1 mt-3 flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none] lg:mask-none [&::-webkit-scrollbar]:hidden">
               {[ALL, ...productCategories].map((option) => {
                 const active = category === option
                 return (
@@ -276,7 +287,7 @@ function Toggle({
 
 function EmptyState({ onClear }: { onClear: () => void }) {
   return (
-    <div className="flex flex-col items-center gap-4 rounded-4xl border border-dashed border-line py-24 text-center">
+    <div className="flex flex-col items-center gap-4 rounded-4xl border border-dashed border-rule mx-auto max-w-xl py-16 text-center">
       <Search className="h-7 w-7 text-ink-subtle" aria-hidden="true" />
       <div className="space-y-1.5">
         <p className="text-headline text-ink">Ništa ne odgovara pretrazi</p>

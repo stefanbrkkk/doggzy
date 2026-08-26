@@ -15,7 +15,7 @@ const columns = [
     title: 'Pomoć',
     links: [
       { href: routes.report, label: 'Prijavi psa' },
-      { href: routes.dogs, label: 'Psi za usvajanje' },
+      { href: routes.dogs, label: 'Psi za udomljavanje' },
       { href: routes.donate, label: 'Doniraj' },
       { href: routes.stories, label: 'Priče' },
     ],

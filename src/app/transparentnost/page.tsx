@@ -83,7 +83,11 @@ export default function TransparencyPage() {
             </Reveal>
           </div>
 
-          <dl className="mt-14 grid gap-px overflow-hidden rounded-4xl border border-line bg-line sm:grid-cols-3">
+          {/* `grid-rows-subgrid` on the cells, so the three labels and the three
+              values share tracks. Without it, "Prikupljeno donacijama" wraps to
+              two lines in a narrow band of widths and drops its number 16px
+              below the two beside it. */}
+          <dl className="mt-14 grid gap-px overflow-hidden rounded-4xl border border-line bg-rule sm:grid-cols-3 sm:grid-rows-[auto_auto]">
             <Stat label="Potrošeno na negu" value={<CountUp value={spent} suffix=" RSD" />} />
             <Stat label="Prikupljeno donacijama" value={<CountUp value={raised} suffix=" RSD" />} />
             <Stat
@@ -96,7 +100,7 @@ export default function TransparencyPage() {
 
       <section className="py-16">
         <Container>
-          <ul className="grid gap-px overflow-hidden rounded-4xl border border-line bg-line sm:grid-cols-2">
+          <ul className="grid gap-px overflow-hidden rounded-4xl border border-line bg-rule sm:grid-cols-2">
             {PRINCIPLES.map((principle, index) => {
               const Icon = principle.icon
               return (
@@ -159,9 +163,9 @@ export default function TransparencyPage() {
 
 function Stat({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="bg-elevated p-7">
+    <div className="grid gap-2 bg-elevated p-7 sm:row-span-2 sm:grid-rows-subgrid">
       <dt className="text-2xs uppercase tracking-widest text-ink-subtle">{label}</dt>
-      <dd data-numeric className="mt-2 text-headline text-ink">
+      <dd data-numeric className="text-headline text-ink">
         {value}
       </dd>
     </div>

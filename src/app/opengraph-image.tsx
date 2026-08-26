@@ -92,7 +92,7 @@ export default async function OpengraphImage() {
 
         <div style={{ display: 'flex', gap: 40, fontSize: 24, color: '#8f8880' }}>
           <div style={{ display: 'flex' }}>doggzy.rs</div>
-          <div style={{ display: 'flex' }}>Beograd · Novi Sad · Niš</div>
+          <div style={{ display: 'flex' }}>Beograd · Novi Sad · Niš · Kragujevac · Subotica</div>
         </div>
       </div>
     ),

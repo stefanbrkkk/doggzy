@@ -41,9 +41,28 @@ function relativeLuminance([r, g, b]) {
   return 0.2126 * clamp01(r) + 0.7152 * clamp01(g) + 0.0722 * clamp01(b)
 }
 
-/** Composites `fg` (with alpha) over `bg`, both linear-light RGB triples. */
+const toGamma = (channel) => {
+  const c = clamp01(channel)
+  return c <= 0.0031308 ? c * 12.92 : 1.055 * c ** (1 / 2.4) - 0.055
+}
+
+const toLinear = (channel) =>
+  channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
+
+/**
+ * Composites `fg` (with alpha) over `bg`, both linear-light RGB triples.
+ *
+ * The blend happens in gamma-encoded sRGB, because that is where a browser
+ * does it — CSS alpha compositing is not colour-managed into linear light. The
+ * obvious version of this function interpolates the linear values directly,
+ * which reports a 7% white hairline over a near-black surface at 1.98:1 when
+ * the pixels on screen measure 1.05:1. Every alpha token in the sheet was being
+ * graded on that inflated number.
+ */
 function composite(fg, alpha, bg) {
-  return fg.map((channel, index) => channel * alpha + bg[index] * (1 - alpha))
+  return fg.map((channel, index) =>
+    toLinear(toGamma(channel) * alpha + toGamma(bg[index]) * (1 - alpha)),
+  )
 }
 
 function contrast(a, b) {
@@ -117,6 +136,12 @@ const CHECKS = [
   ['brand', 'canvas', 3, 'brend kao UI element'],
   ['accent', 'elevated', 3, 'akcenat kao UI element'],
   ['line-interactive', 'sunken', 3, 'ivica polja za unos'],
+  // Not a WCAG threshold — a hairline divider is decorative and exempt. It is
+  // a floor for "visible at all": at `--line`'s 7% the dark-theme rule landed
+  // 3 sRGB levels from the cell it separates, under the amplitude of the
+  // site's own grain, so it read as no rule at all.
+  ['rule', 'surface', 1.18, 'linija između ćelija'],
+  ['rule', 'canvas', 1.18, 'isprekidan okvir praznog stanja'],
 ]
 
 let failed = 0

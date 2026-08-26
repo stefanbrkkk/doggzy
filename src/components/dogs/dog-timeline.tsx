@@ -59,7 +59,7 @@ export function DogTimeline({ events }: { events: TimelineEvent[] }) {
 
   return (
     <div className="space-y-8">
-      <dl className="grid gap-px overflow-hidden rounded-3xl border border-line bg-line sm:grid-cols-2">
+      <dl className="grid gap-px overflow-hidden rounded-3xl border border-line bg-rule sm:grid-cols-2">
         <div className="bg-elevated p-5">
           <dt className="text-2xs uppercase tracking-widest text-ink-subtle">Potrošeno na negu</dt>
           <dd data-numeric className="mt-1.5 text-headline text-ink">

@@ -26,12 +26,13 @@ const SECTIONS: LegalSection[] = [
       'Kontakt forma: ime, email, tema i tekst poruke.',
       'Korpa i lista omiljenih: čuvaju se isključivo u tvom pregledaču (localStorage) i ne šalju se nama.',
       'Izbor teme (tamna ili svetla): takođe samo u tvom pregledaču.',
+      'Oznaka da si već posetio sajt u ovoj sesiji: čuva se u sessionStorage da ti se uvodna animacija ne prikazuje ponovo, i briše se kad zatvoriš pregledač.',
     ],
   },
   {
     heading: 'Šta je javno, a šta nije',
     paragraphs: [
-      'Kod prijave nestalog ili pronađenog psa javno objavljujemo opis, lokaciju i fotografiju — to je jedini način da potraga ima smisla.',
+      'Kod prijave nestalog ili pronađenog psa javno objavljujemo opis i lokaciju — to je jedini način da potraga ima smisla. Fotografija koju priložiš za sada stiže samo našem timu; kada povežemo skladište, objavljivaćemo je uz potragu i to ćemo prvo zapisati ovde.',
       'Tvoje ime, telefon i email nikada nisu javni. Vidi ih naš tim i sklonište koje preuzima slučaj.',
     ],
   },
@@ -61,7 +62,7 @@ const SECTIONS: LegalSection[] = [
     heading: 'Kolačići i merenje posete',
     paragraphs: [
       'Ne postavljamo kolačiće za praćenje i ne koristimo alate za analitiku koji te prate između sajtova.',
-      'Jedini podaci koje sajt čuva u tvom pregledaču su tvoja korpa, lista omiljenih i izbor teme.',
+      'Podaci koje sajt čuva u tvom pregledaču su tvoja korpa, lista omiljenih, izbor teme i oznaka da si već video uvodnu animaciju u ovoj sesiji. Poslednja se briše čim zatvoriš pregledač; ostale ostaju dok ih sam ne obrišeš.',
     ],
   },
   {

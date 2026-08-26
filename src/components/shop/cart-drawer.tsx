@@ -226,7 +226,7 @@ export function CartDrawer() {
                     onClick={closeCart}
                     className={cn(buttonStyles({ size: 'lg', full: true }))}
                   >
-                    Nastavi ka plaćanju
+                    Pregledaj korpu
                   </Link>
                   <p className="text-center text-xs text-ink-subtle">
                     Sav profit od prodaje ide u negu pasa.

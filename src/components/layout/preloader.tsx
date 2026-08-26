@@ -50,11 +50,17 @@ export function Preloader() {
   useEffect(() => {
     const root = document.documentElement
 
+    /** Lets a gated entrance start. `curtain` says whether panels are lifting. */
+    const release = (curtain: boolean) => {
+      window.dispatchEvent(new CustomEvent(ENTRANCE_CUE, { detail: { curtain } }))
+    }
+
     /** Retire the curtain without animating it. */
     const skip = () => {
       root.classList.add('preloaded')
       safeStorage.set('session', SESSION_KEY, '1')
       setOpen(false)
+      release(false)
     }
 
     if (root.classList.contains('preloaded')) {
@@ -95,7 +101,7 @@ export function Preloader() {
             setOpen(false)
             // The hero waits for this before starting its entrance, so its
             // choreography is not spent behind an opaque panel.
-            window.dispatchEvent(new Event(ENTRANCE_CUE))
+            release(true)
           }, 90)
         },
       })

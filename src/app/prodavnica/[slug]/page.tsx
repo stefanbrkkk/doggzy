@@ -70,9 +70,12 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             <Reveal direction="up">
               <div className="lg:sticky lg:top-28">
                 <div className="overflow-hidden rounded-5xl border border-line">
-                  <ProductArt product={product} className="aspect-square w-full" />
+                  <ProductArt
+                    product={product}
+                    className="aspect-square max-h-[55svh] w-full object-cover lg:max-h-none"
+                  />
                 </div>
-                <dl className="mt-6 grid gap-px overflow-hidden rounded-3xl border border-line bg-line sm:grid-cols-3">
+                <dl className="mt-6 grid gap-px overflow-hidden rounded-3xl border border-line bg-rule sm:grid-cols-3">
                   {product.specs.map((spec) => (
                     <div key={spec.label} className="bg-elevated p-4">
                       <dt className="text-2xs uppercase tracking-widest text-ink-subtle">

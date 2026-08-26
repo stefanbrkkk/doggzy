@@ -80,7 +80,7 @@ export function StoryFeature() {
           </Reveal>
         </div>
 
-        <ul className="mt-16 grid gap-px overflow-hidden rounded-4xl border border-line bg-line sm:grid-cols-2">
+        <ul className="mt-16 grid gap-px overflow-hidden rounded-4xl border border-line bg-rule sm:grid-cols-2">
           {rest.map((story, index) => (
             <li key={story.slug}>
               <Reveal delay={index * 0.06}>
