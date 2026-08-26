@@ -6,10 +6,14 @@ import type { Story } from '@/content/stories'
 /**
  * JSON-LD builders.
  *
- * Every field here is backed by something the site actually publishes. In
- * particular there is no `aggregateRating` on the organisation and no
- * `nonprofitStatus`: neither is verifiable yet, and structured data that
- * overstates is worse than none — it is the version search engines quote.
+ * Every field here is backed by something the site actually publishes.
+ *
+ * In particular: no `aggregateRating` anywhere, no `nonprofitStatus`, and no
+ * `sameAs`. The shop has never taken an order, so a rating is a number nobody
+ * gave; the association's registration is still in progress; and `sameAs`
+ * asserts ownership of profiles. Structured data that overstates is worse than
+ * none — it is the version a search engine quotes back, and on this site it
+ * would be rendered as stars.
  */
 
 const url = (path: string) => `${site.url}${path}`
@@ -25,7 +29,6 @@ export function organizationSchema() {
     email: site.email,
     areaServed: { '@type': 'Country', name: 'Srbija' },
     knowsLanguage: 'sr-Latn-RS',
-    sameAs: site.social.map((item) => item.href),
   }
 }
 
@@ -50,11 +53,6 @@ export function productSchema(product: Product) {
     category: product.category,
     url: url(routes.product(product.slug)),
     brand: { '@type': 'Brand', name: site.name },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: product.rating,
-      reviewCount: product.reviews,
-    },
     offers: {
       '@type': 'Offer',
       price: product.price,

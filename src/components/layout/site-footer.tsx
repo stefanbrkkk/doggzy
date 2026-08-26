@@ -114,20 +114,22 @@ export function SiteFooter() {
               </li>
             ))}
           </ul>
-          <ul className="flex gap-4">
-            {site.social.map((item) => (
-              <li key={item.href}>
-                <a
-                  href={item.href}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="text-sm text-ink-subtle transition-colors hover:text-ink"
-                >
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
+          {site.social.length > 0 ? (
+            <ul className="flex gap-4">
+              {site.social.map((item) => (
+                <li key={item.href}>
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="text-sm text-ink-subtle transition-colors hover:text-ink"
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </div>
       </div>
 

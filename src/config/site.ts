@@ -72,9 +72,13 @@ export const site = {
   reportEmail: 'prijava@doggzy.rs',
   phone: '+381 60 000 0000',
   city: 'Beograd, Srbija',
-  social: [
-    { label: 'Instagram', href: 'https://instagram.com/doggzy' },
-    { label: 'Facebook', href: 'https://facebook.com/doggzy' },
-    { label: 'TikTok', href: 'https://tiktok.com/@doggzy' },
-  ],
+  /**
+   * Empty until the accounts exist.
+   *
+   * These were three plausible-looking handles nobody had registered — a link
+   * to a profile that is not ours is the same kind of unverifiable claim as a
+   * review count nobody left, on a site whose one rule is not to publish those.
+   * Add real entries here and the footer renders them again.
+   */
+  social: [] as { label: string; href: string }[],
 } as const

@@ -94,6 +94,28 @@ if (productCount === 0) {
   fail('nijedan proizvod nije pronađen — provera ne bi ništa dokazala')
 }
 
+// ------------------------------------------------ tvrdnje bez pokrića -------
+// A site whose one rule is "if it cannot be checked, we do not publish it as
+// fact" had 4.9 stars from 214 reviews on a shop that has never taken an order,
+// rendered on every product page and marked up as `aggregateRating` — the form
+// a search engine turns into stars. These are the shapes that keep coming back.
+const FABRICATIONS = [
+  { pattern: /aggregateRating/, what: 'aggregateRating u strukturiranim podacima' },
+  { pattern: /\brating:\s*[\d.]+/, what: 'ocena proizvoda' },
+  { pattern: /\breviews:\s*\d+/, what: 'broj ocena' },
+  { pattern: /nonprofitStatus/, what: 'nonprofitStatus bez registracije' },
+]
+
+for (const file of ['src/content/products.ts', 'src/lib/structured-data.ts']) {
+  const source = read(file)
+  for (const { pattern, what } of FABRICATIONS) {
+    // Comments explaining why something is absent must not trip the check.
+    const code = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*/g, '')
+    if (pattern.test(code)) fail(`${file}: ${what}`)
+  }
+}
+if (failures === 0) pass('nema tvrdnji koje sajt ne može da potkrepi')
+
 console.log(
   failures === 0
     ? '\ncheck-figures: svaki iznos ima pokriće u dnevniku.'

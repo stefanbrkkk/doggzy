@@ -1004,12 +1004,22 @@ await group('Smanjene animacije ne ostavljaju pomerene elemente', async () => {
   })
   const page = await reduced.newPage()
   await page.goto(`${BASE}/`, { waitUntil: 'load' })
-  await sleep(1200)
 
-  // Checked before scrolling and before any failsafe could paper over it: the
-  // preloader retires its curtain without animating under reduced motion, and
-  // the hero's entrance is gated on the cue it fires. A path that closes the
-  // curtain without releasing the entrance leaves the whole hero 16px low.
+  // Measured from the entrance cue, not from a wall-clock window after load.
+  // The preloader retires its curtain without animating under reduced motion
+  // and fires the cue as it does, so waiting for `.preloaded` is waiting for
+  // exactly the event the hero is gated on — and the check stops depending on
+  // how fast the machine happened to hydrate.
+  await page
+    .waitForFunction(() => document.documentElement.classList.contains('preloaded'), null, {
+      timeout: 15000,
+    })
+    .catch(() => {})
+  await sleep(900)
+
+  // Checked before scrolling and before the 4s failsafe could paper over it: a
+  // path that closes the curtain without releasing the entrance leaves the
+  // whole hero 16px low.
   const heroStranded = await page.evaluate(
     () =>
       [...document.querySelectorAll('h1 ~ *, [class*="text-lead"]')].filter((node) => {

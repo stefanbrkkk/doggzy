@@ -3,8 +3,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { AnimatePresence, motion, useAnimate } from 'framer-motion'
-import { ArrowRight, Heart, ShoppingBag, Star, X } from 'lucide-react'
-import { cn, formatRsd, plural } from '@/lib/utils'
+import { ArrowRight, Heart, ShoppingBag, X } from 'lucide-react'
+import { cn, formatRsd } from '@/lib/utils'
 import { duration, spring } from '@/lib/motion'
 import { routes } from '@/config/site'
 import type { Product } from '@/content/products'
@@ -208,14 +208,6 @@ export function QuickView({
                     {formatRsd(product.compareAt)}
                   </p>
                 ) : null}
-                <p className="flex items-center gap-1.5 text-sm text-ink-muted">
-                  <Star className="h-4 w-4 fill-brand text-brand" aria-hidden="true" />
-                  <span data-numeric>{product.rating.toFixed(1)}</span>
-                  <span className="text-ink-subtle">
-                    (<span data-numeric>{product.reviews}</span>{' '}
-                    {plural(product.reviews, 'ocena', 'ocene', 'ocena')})
-                  </span>
-                </p>
               </div>
 
               <p className="rounded-2xl bg-brand/8 px-4 py-3 text-sm leading-relaxed text-brand-text">

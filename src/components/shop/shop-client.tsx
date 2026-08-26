@@ -9,14 +9,13 @@ import { productCategories, products, type Product, type ProductCategory } from 
 import { ProductCard } from './product-card'
 import { QuickView } from './quick-view'
 
-type Sort = 'popularno' | 'cena-rastuce' | 'cena-opadajuce' | 'ocena' | 'najnovije'
+type Sort = 'popularno' | 'cena-rastuce' | 'cena-opadajuce' | 'najnovije'
 
 const SORTS: { value: Sort; label: string }[] = [
   { value: 'popularno', label: 'Najpopularnije' },
   { value: 'najnovije', label: 'Najnovije' },
   { value: 'cena-rastuce', label: 'Cena: niža prvo' },
   { value: 'cena-opadajuce', label: 'Cena: viša prvo' },
-  { value: 'ocena', label: 'Najbolje ocenjeno' },
 ]
 
 const ALL = 'Sve' as const
@@ -67,12 +66,13 @@ export function ShopClient() {
           return a.price - b.price
         case 'cena-opadajuce':
           return b.price - a.price
-        case 'ocena':
-          return b.rating - a.rating
         case 'najnovije':
           return a.releasedRank - b.releasedRank
         default:
-          return b.reviews - a.reviews
+          // „Najpopularnije” is the curated order the catalogue is authored in.
+          // It used to sort by review count — on a shop that has never sold
+          // anything, and whose review numbers were invented.
+          return a.releasedRank - b.releasedRank
       }
     })
   }, [category, deferredQuery, ecoOnly, inStockOnly, sort])
