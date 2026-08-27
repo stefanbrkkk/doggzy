@@ -83,6 +83,9 @@ import { setTimeout as sleep } from 'node:timers/promises'
  *   55. Otkucana prijava se ne baca bez pitanja
  *   56. Nijedna stranica ne traži fajl koji ne postoji
  *   57. Prijava staje i na 280px, i vodi do prve greške
+ *   58. Pokvarena memorija pregledača ne ruši prodavnicu
+ *   59. Prijava se može popuniti samo tastaturom
+ *   60. Lepljivoj koloni se dno uvek može dohvatiti
  */
 
 const BASE = process.env.E2E_BASE_URL ?? `http://localhost:${process.env.PORT ?? 3000}`
@@ -2962,6 +2965,236 @@ await group('Prijava staje i na 280px, i vodi do prve greške', async () => {
     JSON.stringify(now),
   )
   await ctx.close()
+})
+
+// ------------------------------------------------ zatečena, pokvarena memorija ---
+await group('Pokvarena memorija pregledača ne ruši prodavnicu', async () => {
+  /**
+   * What a returning visitor already has in `localStorage` is not input this
+   * site controls: it may predate a schema change, have been hand-edited, or
+   * come from another tab that crashed mid-write. The store parses it
+   * defensively — this proves the defence, rather than trusting the reading of
+   * it, and pins the contract that whatever comes in, what goes back out is
+   * clean and re-readable.
+   */
+  const SEEDS = [
+    ['nije json', 'ovo nije json {{{'],
+    ['null', 'null'],
+    ['niz umesto objekta', '[]'],
+    ['pogrešni tipovi', '{"lines":"nope","favorites":42}'],
+    [
+      'nepoznat proizvod',
+      '{"lines":[{"productId":"ne-postoji","quantity":3}],"favorites":["ni-ovo"]}',
+    ],
+    [
+      'negativna količina',
+      '{"lines":[{"productId":"p-gps-ogrlica","quantity":-5}],"favorites":[]}',
+    ],
+    [
+      'ogromna količina',
+      '{"lines":[{"productId":"p-gps-ogrlica","quantity":100000}],"favorites":[]}',
+    ],
+    ['količina null', '{"lines":[{"productId":"p-gps-ogrlica","quantity":null}],"favorites":[]}'],
+    [
+      'decimalna količina',
+      '{"lines":[{"productId":"p-gps-ogrlica","quantity":2.6}],"favorites":[]}',
+    ],
+    ['smeće u omiljenima', '{"lines":[],"favorites":["p-gps-ogrlica",1,null,{"a":1}]}'],
+    ['ugnježdeno smeće', '{"lines":[[[[1]]]],"favorites":{"a":{"b":{}}}}'],
+  ]
+
+  for (const [name, seed] of SEEDS) {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } })
+    await ctx.addInitScript((value) => {
+      try {
+        sessionStorage.setItem('doggzy.visited', '1')
+        localStorage.setItem('doggzy.shop.v1', value)
+      } catch {}
+    }, seed)
+    const page = await ctx.newPage()
+    const errors = []
+    page.on('pageerror', (error) => errors.push(String(error)))
+    page.on('console', (message) => {
+      if (message.type() === 'error') errors.push(message.text())
+    })
+
+    await page.goto(`${BASE}/korpa`, { waitUntil: 'load' })
+    await sleep(1500)
+
+    const seen = await page.evaluate(() => ({
+      text: document.body.innerText.length,
+      stored: localStorage.getItem('doggzy.shop.v1'),
+    }))
+    check(`„${name}”: korpa se otvori bez greške`, errors.length === 0, errors.join(' | '))
+    check(`„${name}”: stranica nije prazna`, seen.text > 200, `${seen.text}`)
+
+    let rewritten = null
+    try {
+      rewritten = JSON.parse(seen.stored ?? 'null')
+    } catch {}
+    check(
+      `„${name}”: prepisana ispravno`,
+      rewritten !== null && Array.isArray(rewritten.lines) && Array.isArray(rewritten.favorites),
+      String(seen.stored).slice(0, 120),
+    )
+    const outOfRange = (rewritten?.lines ?? []).filter(
+      (line) =>
+        !(
+          typeof line?.productId === 'string' &&
+          Number.isInteger(line.quantity) &&
+          line.quantity >= 1 &&
+          line.quantity <= 99
+        ),
+    )
+    check(
+      `„${name}”: količine su unutar granica`,
+      outOfRange.length === 0,
+      JSON.stringify(outOfRange),
+    )
+    await ctx.close()
+  }
+})
+
+// ------------------------------------------------------- samo tastatura ---
+await group('Prijava se može popuniti samo tastaturom', async () => {
+  /**
+   * The report flow is the site's one long interaction, and the visitor most
+   * likely to need it in a hurry is the one least likely to be using a mouse.
+   * Tab has to reach it, Space has to choose, Enter has to advance — and every
+   * stop along the way has to be visible, both as a focus ring and on screen.
+   */
+  const page = await context.newPage()
+  await page.goto(`${BASE}/prijava`, { waitUntil: 'load' })
+  await sleep(1700)
+
+  const focused = () =>
+    page.evaluate(() => {
+      const el = document.activeElement
+      if (!el || el === document.body) return { tag: 'BODY', ring: false, inView: false, text: '' }
+      const style = getComputedStyle(el)
+      const rect = el.getBoundingClientRect()
+      return {
+        tag: el.tagName,
+        text: (el.getAttribute('aria-label') || el.textContent || '').trim().slice(0, 30),
+        // Either an outline or a shadow: both read as "you are here".
+        ring:
+          (style.outlineStyle !== 'none' && parseFloat(style.outlineWidth) > 0) ||
+          style.boxShadow !== 'none',
+        inView: rect.top >= 0 && rect.bottom <= window.innerHeight && rect.width > 0,
+      }
+    })
+
+  let steps = 0
+  let ringEverywhere = true
+  let at = null
+  await page.keyboard.press('Tab')
+  while (steps < 90) {
+    at = await focused()
+    if (at.tag !== 'BODY' && !at.ring) ringEverywhere = false
+    if (/Nestao mi je pas/.test(at.text)) break
+    await page.keyboard.press('Tab')
+    steps += 1
+  }
+  check('tastatura stigne do prvog izbora', steps < 90, `${steps} tabova`)
+  check('svaki fokus ima vidljiv prsten', ringEverywhere)
+  check('izbor je i u vidnom polju', at?.inView === true, JSON.stringify(at))
+
+  await page.keyboard.press('Space')
+  await sleep(320)
+  check(
+    'razmak bira vrstu prijave',
+    await page.evaluate(() => document.activeElement?.getAttribute('aria-pressed') === 'true'),
+  )
+
+  let reached = false
+  for (let i = 0; i < 12; i += 1) {
+    await page.keyboard.press('Tab')
+    if (/^Dalje/.test((await focused()).text)) {
+      reached = true
+      break
+    }
+  }
+  check('tastatura stigne do „Dalje”', reached)
+
+  await page.keyboard.press('Enter')
+  await sleep(800)
+  const after = await page.evaluate(() => ({
+    step: document.querySelector('[role="progressbar"]')?.getAttribute('aria-valuenow'),
+    tag: document.activeElement?.tagName,
+  }))
+  check('Enter prelazi na sledeći korak', after.step === '2', JSON.stringify(after))
+  // The step change moves focus to the heading; landing on <body> would drop a
+  // keyboard visitor back to the top of the document.
+  check('fokus ne padne na telo stranice', after.tag !== 'BODY', JSON.stringify(after))
+  await page.close()
+})
+
+// -------------------------------------------------------- lepljiva kolona ---
+await group('Lepljivoj koloni se dno uvek može dohvatiti', async () => {
+  /**
+   * `position: sticky` pins a column's top for as long as its containing block
+   * is on screen. Grow that column past the viewport's height and its bottom
+   * becomes unreachable — the visitor scrolls, the column does not move, and
+   * whatever is at its end can never be read. Nothing warns about this: it is a
+   * layout that works until the day someone adds a paragraph.
+   */
+  for (const route of ['/psi/mrvica', '/prodavnica/gps-ogrlica']) {
+    for (const [width, height] of [
+      [1024, 700],
+      [1280, 600],
+      [1440, 900],
+    ]) {
+      const ctx = await browser.newContext({ viewport: { width, height } })
+      await ctx.addInitScript(() => {
+        try {
+          sessionStorage.setItem('doggzy.visited', '1')
+        } catch {}
+      })
+      const page = await ctx.newPage()
+      await page.goto(`${BASE}${route}`, { waitUntil: 'load' })
+      await sleep(1400)
+
+      const seen = await page.evaluate(async () => {
+        const column = document.querySelector('[class*="lg:sticky"]')
+        if (!column) return { missing: true }
+        const header = document.querySelector('header')
+        const stickyTop = parseFloat(getComputedStyle(column).top)
+        let lowestBottom = Infinity
+        let worstGap = Infinity
+        for (let y = 0; y <= document.documentElement.scrollHeight; y += 120) {
+          window.scrollTo(0, y)
+          await new Promise((resolve) => requestAnimationFrame(resolve))
+          const box = column.getBoundingClientRect()
+          lowestBottom = Math.min(lowestBottom, box.bottom)
+          // Only while it is actually pinned: on the way past, every element
+          // on the page travels under the header, and that is just scrolling.
+          if (Math.abs(box.top - stickyTop) < 1.5) {
+            worstGap = Math.min(worstGap, box.top - header.getBoundingClientRect().bottom)
+          }
+        }
+        return {
+          bottom: Math.round(lowestBottom),
+          viewport: window.innerHeight,
+          gap: Number.isFinite(worstGap) ? Math.round(worstGap) : null,
+        }
+      })
+
+      const tag = `${route} @${width}×${height}`
+      check(
+        `${tag}: dno kolone dođe u ekran`,
+        seen.bottom <= seen.viewport + 1,
+        JSON.stringify(seen),
+      )
+      // `null` means it never pinned at this size, which is fine — sticky is an
+      // enhancement, not a promise.
+      check(
+        `${tag}: zakačena stoji ispod zaglavlja`,
+        seen.gap === null || seen.gap >= 0,
+        JSON.stringify(seen),
+      )
+      await ctx.close()
+    }
+  }
 })
 
 await context.close()
