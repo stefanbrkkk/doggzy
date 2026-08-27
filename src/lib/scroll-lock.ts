@@ -32,15 +32,18 @@ let driver: ScrollDriver | null = null
 /**
  * Asks the driver to stop, and keeps asking until it can.
  *
- * The preloader takes its lock during the same commit that creates the Lenis
- * instance, and the instance is not there yet when it does — so a single
- * `stop()` silently did nothing and the page scrolled underneath the curtain
- * for the whole of its two seconds. Re-asserting on animation frames costs
- * nothing once it lands and needs no knowledge of when the library is ready.
+ * <SmoothScroll> registers in a layout effect and every lock is taken in a
+ * passive one, so in practice the first call succeeds. The retry is for the
+ * orderings that are not guaranteed — a lock taken before the driver exists at
+ * all, or a driver that cannot reach its instance yet. It deliberately keeps
+ * going while `driver` is null too: an early return there gave a lock exactly
+ * one chance, and a page that scrolls underneath a modal is not the kind of
+ * failure to leave to luck. Re-asserting on animation frames costs nothing once
+ * it lands and needs no knowledge of when the library is ready.
  */
 function assertStopped(deadline = performance.now() + 3000): void {
-  if (holders === 0 || !driver) return
-  if (driver.stop()) return
+  if (holders === 0) return
+  if (driver?.stop()) return
   if (performance.now() > deadline) return
   requestAnimationFrame(() => assertStopped(deadline))
 }

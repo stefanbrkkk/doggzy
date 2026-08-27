@@ -423,9 +423,16 @@ function FieldError({ id, children }: { id?: string; children?: string }) {
  * `aria-invalid` is set on every input here, and without the variant the field
  * kept a neutral border while a red message appeared underneath it — the site's
  * error state missing from the site's flagship interaction.
+ *
+ * `text-base` is deliberate and not negotiable down to `text-sm`, however much
+ * the phone frame would prefer the smaller type: iOS Safari zooms the whole
+ * page when a focused control is under 16px, and this is the site's primary
+ * conversion path, reachable from both the hero and /prijava. Measured at
+ * 390×844 the screen absorbs the extra height — the flow still fits its fixed
+ * aspect with nothing clipped.
  */
 const inputClass = [
-  'w-full rounded-xl border border-line-interactive bg-sunken px-3.5 py-2.5 text-sm text-ink',
+  'w-full rounded-xl border border-line-interactive bg-sunken px-3.5 py-2.5 text-base text-ink',
   'placeholder:text-ink-subtle',
   'transition-[border-color,box-shadow] duration-200 ease-swift',
   'focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/15',

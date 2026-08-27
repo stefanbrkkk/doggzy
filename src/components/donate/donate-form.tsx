@@ -157,7 +157,10 @@ export function DonateForm() {
               setReference(null)
             }}
             placeholder="Drugi iznos (RSD)"
-            className="h-12 w-full rounded-2xl border border-line-interactive bg-sunken px-4 text-sm text-ink placeholder:text-ink-subtle focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/15"
+            // 16px: iOS Safari zooms the page whenever a focused control is
+            // smaller, and leaves the visitor pinch-zoomed for the rest of the
+            // session. Every shared `Field` on the site is already 16px.
+            className="h-12 w-full rounded-2xl border border-line-interactive bg-sunken px-4 text-base text-ink placeholder:text-ink-subtle focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/15"
           />
         </div>
       </fieldset>
@@ -199,7 +202,8 @@ export function DonateForm() {
             setTarget(event.target.value)
             setReference(null)
           }}
-          className="mt-3 text-sm"
+          // 16px for the same reason as the amount field above.
+          className="mt-3 text-base"
         >
           <option value="opste">Tamo gde je najpotrebnije</option>
           {sponsorable.map((dog) => (

@@ -152,7 +152,11 @@ export function SiteHeader() {
           className={cn(
             'mx-auto flex max-w-[92rem] items-center gap-3 rounded-2xl px-3 py-2.5 sm:gap-4 sm:px-4',
             'transition-[background-color,border-color,box-shadow,backdrop-filter] duration-500 ease-out-expo',
-            condensed
+            // Also while the menu is open: the page behind cannot move, so
+            // `condensed` never flips, and on a short screen the menu's own
+            // content scrolled up behind a fully transparent bar — the links
+            // overprinted the logo.
+            condensed || menuOpen
               ? 'glass border border-line shadow-lift'
               : 'border border-transparent bg-transparent',
           )}
@@ -250,13 +254,20 @@ export function SiteHeader() {
             role="dialog"
             aria-modal="true"
             aria-label="Meni"
-            className="fixed inset-0 z-[75] bg-canvas/97 outline-none backdrop-blur-2xl lg:hidden"
+            className="fixed inset-0 z-[75] overflow-y-auto overscroll-contain bg-canvas/97 outline-none backdrop-blur-2xl lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: duration.fast }}
           >
-            <div className="flex h-full flex-col justify-between px-6 pb-10 pt-28">
+            {/* `min-h-full`, not `h-full`: on a landscape phone this content is
+                ~300px taller than the viewport, and a fixed height simply cut
+                it off — with `lockScroll()` holding the page still behind it,
+                eight destinations were unreachable, this overlay being the
+                only navigation below `lg`. `min-h-full` still spreads the
+                block on a tall screen and grows into the panel's scroll on a
+                short one. */}
+            <div className="flex min-h-full flex-col justify-between px-6 pb-10 pt-28">
               <ul className="space-y-1">
                 {primaryNav.map((item, index) => (
                   <motion.li

@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
+// This route builds its own schema, so it needs the Serbian fallback too — a
+// body that is not an object never reaches a field rule.
+import '@/lib/zod-locale'
 import { createSession, sessionCookieOptions, verifyPassword } from '@/lib/auth'
 import { isAuthConfigured } from '@/lib/auth-edge'
 import { clientKey, rateLimit } from '@/lib/rate-limit'

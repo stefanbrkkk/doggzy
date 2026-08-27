@@ -1,6 +1,6 @@
 'use client'
 
-import { useDeferredValue, useMemo, useState } from 'react'
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import { ChevronDown, Leaf, PackageCheck, Search, SlidersHorizontal, X } from 'lucide-react'
 import { cn, plural } from '@/lib/utils'
@@ -41,6 +41,31 @@ export function ShopClient() {
 
   // Keeps typing responsive on a long list without debounce timers.
   const deferredQuery = useDeferredValue(query)
+
+  const listRef = useRef<HTMLDivElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
+
+  /**
+   * Brings the visitor back to the results when a filter empties the page under
+   * them.
+   *
+   * On a phone the grid is one column, so narrowing the catalogue collapses the
+   * document from ~9,500px to ~3,600px while `scrollY` stays put: the visitor
+   * ends up in the footer with no products and no filter bar on screen, and
+   * nothing to say the tap worked. Two details matter. It runs after the commit
+   * rather than inside the handler, because in the handler the panel is
+   * necessarily still on screen — you just tapped it — and only goes negative
+   * once the shorter list has laid out. And it scrolls `listRef`, the static
+   * wrapper, not the panel: `scrollIntoView` resolves a stuck sticky element
+   * against its stuck rect, which lands at the bottom of the sticky containing
+   * block and leaves the first card above the fold.
+   */
+  useEffect(() => {
+    const panel = panelRef.current
+    const list = listRef.current
+    if (!panel || !list) return
+    if (panel.getBoundingClientRect().top < 0) list.scrollIntoView({ block: 'start' })
+  }, [category, ecoOnly, inStockOnly, deferredQuery])
 
   const visible = useMemo(() => {
     const needle = deferredQuery.trim().toLowerCase()
@@ -90,7 +115,7 @@ export function ShopClient() {
   }
 
   return (
-    <div className="space-y-10">
+    <div ref={listRef} className="space-y-10">
       {/* `pane`, not `glass`: this bar is full container width with the whole
           product grid running behind it, and a backdrop blur there costs the
           compositor a read-back every frame — 30–48% of frames dropped through
@@ -99,8 +124,19 @@ export function ShopClient() {
 
           The sticky offset lives on this element rather than on a wrapper: a
           wrapper's own `py-3` was fully transparent, so cards slid through a
-          12px band that read as a gap in the panel. */}
-      <div className="pane sticky top-20 z-40 rounded-3xl p-3">
+          12px band that read as a gap in the panel.
+
+          Pinning stops below 35rem of viewport height, gated on height rather
+          than width because that is the axis that fails: at 844×390 the 80px
+          header offset plus the 180px panel ate 67% of the screen, against a
+          product card 378px tall — no whole card could ever be on screen. A
+          `lg:` gate would have left a 1280×400 desktop window at 51% chrome
+          and taken the pinning away from portrait phones, where the panel is a
+          comfortable 21–27%. */}
+      <div
+        ref={panelRef}
+        className="pane sticky top-20 z-40 rounded-3xl p-3 [@media(max-height:35rem)]:static"
+      >
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
           <div className="relative flex-1">
             <Search
@@ -116,7 +152,10 @@ export function ShopClient() {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Pretraži proizvode…"
-              className="h-11 w-full rounded-xl border border-line-interactive bg-sunken pl-10 pr-4 text-sm text-ink placeholder:text-ink-subtle focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/15"
+              // 16px, not `text-sm`: iOS Safari zooms the whole page when a
+              // focused control is smaller than that, and this one lives in a
+              // bar already pinned to the top of the screen.
+              className="h-11 w-full rounded-xl border border-line-interactive bg-sunken pl-10 pr-4 text-base text-ink placeholder:text-ink-subtle focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/15"
             />
           </div>
 
@@ -146,7 +185,8 @@ export function ShopClient() {
                 id="shop-sort"
                 value={sort}
                 onChange={(event) => setSort(event.target.value as Sort)}
-                className="h-11 appearance-none rounded-xl border border-line-interactive bg-sunken pl-9 pr-9 text-sm text-ink focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/15"
+                // 16px for the same reason as the search field above.
+                className="h-11 appearance-none rounded-xl border border-line-interactive bg-sunken pl-9 pr-9 text-base text-ink focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/15"
               >
                 {SORTS.map((option) => (
                   <option key={option.value} value={option.value}>

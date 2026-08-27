@@ -1490,6 +1490,275 @@ await group('Ikone i manifest stvarno postoje', async () => {
   }
 })
 
+// ------------------------------------------------- mali i položeni ekrani ---
+/** A phone-shaped context with real touch, so `isMobile` layout rules apply. */
+async function phone(width, height) {
+  const ctx = await browser.newContext({
+    viewport: { width, height },
+    hasTouch: true,
+    isMobile: true,
+    deviceScaleFactor: 3,
+  })
+  await ctx.addInitScript(() => {
+    try {
+      sessionStorage.setItem('doggzy.visited', '1')
+    } catch {}
+  })
+  return ctx
+}
+
+await group('Meni na položenom telefonu dohvata sve destinacije', async () => {
+  // Below `lg` this overlay is the only navigation, and it lays its content out
+  // ~300px taller than a landscape phone. With no overflow handling the bottom
+  // half was simply cut off — and `lockScroll()` had already frozen the page
+  // behind it, so eight destinations could not be reached at all.
+  for (const [width, height] of [
+    [844, 390],
+    [667, 375],
+    [932, 430],
+    [390, 844],
+  ]) {
+    const ctx = await phone(width, height)
+    const page = await ctx.newPage()
+    await page.goto(`${BASE}/psi`, { waitUntil: 'load' })
+    await sleep(900)
+    await page.locator('button[aria-controls="mobile-menu"]').click()
+    await sleep(700)
+
+    const reach = await page.evaluate(() => {
+      const panel = document.getElementById('mobile-menu')
+      const links = [...panel.querySelectorAll('a[href]')]
+      const onScreen = (node) => {
+        const box = node.getBoundingClientRect()
+        return box.top >= 0 && box.bottom <= window.innerHeight
+      }
+      panel.scrollTop = 0
+      const first = onScreen(links[0])
+      panel.scrollTop = panel.scrollHeight
+      const last = onScreen(links[links.length - 1])
+      return {
+        first,
+        last,
+        maxScroll: panel.scrollHeight - panel.clientHeight,
+        reached: panel.scrollTop,
+      }
+    })
+    check(
+      `meni @${width}×${height}: prva i poslednja destinacija su dohvatljive`,
+      reach.first && reach.last,
+      JSON.stringify(reach),
+    )
+    // Portrait fits, and must not gain a scrollbar it never had.
+    check(
+      `meni @${width}×${height}: skroluje se tačno kada treba`,
+      height > width ? reach.maxScroll === 0 : reach.maxScroll > 0,
+      JSON.stringify(reach),
+    )
+
+    // The bar only condenses on scroll, and the page behind cannot scroll while
+    // the menu is open — so a transparent bar let the links print over the logo.
+    const bar = await page.evaluate(
+      () =>
+        getComputedStyle(document.querySelector('nav[aria-label="Glavna navigacija"]'))
+          .backgroundColor,
+    )
+    check(`meni @${width}×${height}: traka nije providna`, !/[,/]\s*0\)$/.test(bar), bar)
+    await ctx.close()
+  }
+})
+
+await group('Brzi pregled staje na niske ekrane', async () => {
+  for (const [width, height, scrolls] of [
+    [390, 667, true],
+    [844, 390, true],
+    [390, 844, false],
+    [1280, 800, false],
+  ]) {
+    const ctx = await phone(width, height)
+    const page = await ctx.newPage()
+    await page.goto(`${BASE}/prodavnica`, { waitUntil: 'load' })
+    await sleep(1600)
+    await page
+      .locator('button[aria-label^="Brzi pregled"]')
+      .first()
+      .evaluate((node) => node.click())
+    await sleep(900)
+
+    const view = await page.evaluate(() => {
+      const panel = document.querySelector('[role="dialog"] > div:nth-child(2)')
+      const close = [...document.querySelectorAll('[role="dialog"] button')].find(
+        (node) =>
+          node.getAttribute('aria-label') === 'Zatvori brzi pregled' &&
+          node.className.includes('absolute'),
+      )
+      const panelBox = panel?.getBoundingClientRect()
+      const closeBox = close?.getBoundingClientRect()
+      return {
+        top: Math.round(panelBox?.top ?? NaN),
+        bottom: Math.round(panelBox?.bottom ?? NaN),
+        closeTop: Math.round(closeBox?.top ?? NaN),
+        closeBottom: Math.round(closeBox?.bottom ?? NaN),
+        canScroll: panel ? panel.scrollHeight > panel.clientHeight : null,
+        radius: panel ? getComputedStyle(panel).borderTopLeftRadius : null,
+        overflowX: panel ? getComputedStyle(panel).overflowX : null,
+      }
+    })
+
+    // It used to be centred and clipped equally at both ends, which put the
+    // close button above the screen and the full-page link below it — two 16px
+    // strips of backdrop were the only way out of a modal dialog.
+    check(
+      `brzi pregled @${width}×${height}: panel je u ekranu`,
+      view.top >= 0 && view.bottom <= height,
+      JSON.stringify(view),
+    )
+    check(
+      `brzi pregled @${width}×${height}: dugme za zatvaranje je dohvatljivo`,
+      view.closeTop >= 0 && view.closeBottom <= height,
+      JSON.stringify(view),
+    )
+    check(
+      `brzi pregled @${width}×${height}: skroluje se tačno kada treba`,
+      view.canScroll === scrolls,
+      `canScroll ${view.canScroll}`,
+    )
+    // `overflow-x-hidden` is explicit now, because the corner radius used to
+    // rely on the `overflow-hidden` that had to go.
+    check(
+      `brzi pregled @${width}×${height}: zaobljeni uglovi su preživeli`,
+      view.radius !== '0px' && view.overflowX === 'hidden',
+      `${view.radius} / ${view.overflowX}`,
+    )
+    await ctx.close()
+  }
+})
+
+await group('Filtriranje ne ostavlja posetioca u podnožju', async () => {
+  const ctx = await phone(390, 844)
+  const page = await ctx.newPage()
+  await page.goto(`${BASE}/prodavnica`, { waitUntil: 'load' })
+  await sleep(1600)
+
+  // One column on a phone, so narrowing the catalogue collapses the document
+  // from ~9,500px to ~3,600px while `scrollY` stays put — the visitor ended up
+  // in the footer with no products and no filter bar anywhere on screen.
+  await page.evaluate(() => window.scrollTo(0, 4800))
+  await sleep(800)
+  await page
+    .locator('button', { hasText: /^Odeća$/ })
+    .first()
+    .evaluate((node) => node.click())
+  await sleep(1400)
+
+  const after = await page.evaluate(() => ({
+    y: Math.round(window.scrollY),
+    barTop: Math.round(document.querySelector('.pane').getBoundingClientRect().top),
+    cards: [...document.querySelectorAll('main a[href^="/prodavnica/"]')].filter((node) => {
+      const box = node.getBoundingClientRect()
+      return box.top < window.innerHeight && box.bottom > 0
+    }).length,
+  }))
+  check('filter vraća posetioca na rezultate', after.barTop >= 0, JSON.stringify(after))
+  check('posle filtriranja se vidi bar jedan proizvod', after.cards > 0, JSON.stringify(after))
+
+  // And the common case — filtering from the top — must not jump at all.
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await sleep(600)
+  await page
+    .locator('button', { hasText: /^Igračke$/ })
+    .first()
+    .evaluate((node) => node.click())
+  await sleep(1000)
+  const settled = await page.evaluate(() => Math.round(window.scrollY))
+  check('filtriranje sa vrha ne pomera stranicu', settled === 0, `y=${settled}`)
+  await ctx.close()
+})
+
+await group('Lepljiva traka pušta niske ekrane', async () => {
+  // Gated on height, not width: at 844×390 the 80px header offset plus the
+  // 180px panel ate 67% of the screen, against product cards 378px tall. A
+  // `lg:` gate would have missed a 1280×400 desktop window and taken the
+  // pinning away from portrait phones, where the panel is a fine 21–27%.
+  for (const [width, height, want] of [
+    [844, 390, 'static'],
+    [1280, 400, 'static'],
+    [390, 667, 'sticky'],
+    [1440, 900, 'sticky'],
+  ]) {
+    const ctx = await browser.newContext({ viewport: { width, height } })
+    await ctx.addInitScript(() => {
+      try {
+        sessionStorage.setItem('doggzy.visited', '1')
+      } catch {}
+    })
+    const page = await ctx.newPage()
+    await page.goto(`${BASE}/prodavnica`, { waitUntil: 'load' })
+    await sleep(1200)
+    const position = await page.evaluate(
+      () => getComputedStyle(document.querySelector('.pane')).position,
+    )
+    check(`traka @${width}×${height} je ${want}`, position === want, position)
+    await ctx.close()
+  }
+})
+
+// ------------------------------------------------------------ jezik forme ---
+await group('Greške u formama su na srpskom i ne zumiraju ekran', async () => {
+  // iOS Safari zooms the page whenever a focused control is under 16px and
+  // leaves the visitor pinch-zoomed for the rest of the session.
+  for (const route of ['/prodavnica', '/doniraj', '/kontakt', '/prijava']) {
+    const ctx = await phone(390, 844)
+    const page = await ctx.newPage()
+    await page.goto(`${BASE}${route}`, { waitUntil: 'load' })
+    await sleep(1500)
+    const small = await page.evaluate(() =>
+      [...document.querySelectorAll('input, select, textarea')]
+        .filter(
+          (node) => node.type !== 'hidden' && parseFloat(getComputedStyle(node).fontSize) < 16,
+        )
+        .map((node) => `${node.id || node.tagName}:${getComputedStyle(node).fontSize}`),
+    )
+    check(`${route}: nijedna kontrola nije ispod 16px`, small.length === 0, small.join(', '))
+    await ctx.close()
+  }
+
+  // Zod's defaults are English sentences written for developers, and this app
+  // renders `issues[0].message` straight at the visitor. Every `.min()` had
+  // Serbian text and every `.max()` did not, so the English only ever showed up
+  // for someone who pasted too much.
+  const english = /Too big|Too small|Invalid input|Invalid option|expected \w+ to/i
+  const ctx = await phone(390, 844)
+  const page = await ctx.newPage()
+  await page.goto(`${BASE}/kontakt`, { waitUntil: 'load' })
+  await sleep(1400)
+  await page.getByLabel(/^Ime/).fill('A'.repeat(90))
+  await page.getByLabel(/^Email/).fill(`${'a'.repeat(115)}@x.rs`)
+  await page.getByLabel(/^Poruka/).fill('B'.repeat(4200))
+  await page.locator('form button[type="submit"]').first().click()
+  await sleep(900)
+  const shown = await page.evaluate(() =>
+    [...document.querySelectorAll('[role="alert"]')].map((node) => node.textContent.trim()),
+  )
+  check(
+    '/kontakt: poruka o grešci je na srpskom',
+    shown.length > 0 && !shown.some((text) => /Too big|Too small|Invalid input/i.test(text)),
+    shown.join(' | '),
+  )
+  await ctx.close()
+
+  const answer = await context.request.post(`${BASE}/api/kontakt`, {
+    data: {
+      name: 'A'.repeat(90),
+      email: 'a@b.rs',
+      topic: 'opste',
+      message: 'B'.repeat(4200),
+    },
+    failOnStatusCode: false,
+  })
+  const body = await answer.text()
+  check('/api/kontakt: odgovor je na srpskom', !english.test(body), body.slice(0, 160))
+})
+
 await context.close()
 await browser.close()
 

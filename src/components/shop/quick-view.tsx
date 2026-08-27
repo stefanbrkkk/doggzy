@@ -170,7 +170,13 @@ export function QuickView({
             // Hidden until the layout effect has measured and started the morph,
             // so the panel is never seen for a frame at its final position.
             style={{ opacity: ready ? undefined : 0, pointerEvents: ready ? undefined : 'none' }}
-            className="relative grid w-full max-w-3xl overflow-hidden rounded-5xl border border-line bg-elevated outline-none sm:grid-cols-2"
+            // Capped and scrollable: with `overflow-hidden` and no height the
+            // panel was centred and clipped equally top and bottom, so on a
+            // 667px-tall phone the close button sat entirely above the screen
+            // and the full-page link entirely below it, leaving two 16px
+            // strips of backdrop as the only way out. `overflow-x-hidden` is
+            // explicit because the corner radius relied on the rule removed.
+            className="relative grid max-h-full w-full max-w-3xl overflow-y-auto overflow-x-hidden overscroll-contain rounded-5xl border border-line bg-elevated outline-none sm:grid-cols-2"
             exit={{ opacity: 0, scale: 0.97, y: 12, transition: { duration: duration.fast } }}
           >
             {/* The morphing element is absolutely positioned inside a plain
