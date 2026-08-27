@@ -1,8 +1,26 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { routes } from '@/config/site'
 import { Container } from '@/components/ui/section'
 import { buttonStyles } from '@/components/ui/button'
+
+/**
+ * Its own metadata, not the layout's.
+ *
+ * Without this the 404 inherited the homepage title, description, whole social
+ * card and `canonical: '/'` — declaring itself a duplicate of the homepage —
+ * while Next's own `noindex` sat next to an inherited `googlebot: index,
+ * follow`, which is the more specific of the two.
+ */
+export const metadata: Metadata = {
+  title: 'Stranica ne postoji',
+  description: 'Traženi link ne postoji na ovom sajtu.',
+  robots: { index: false, follow: false, googleBot: { index: false, follow: false } },
+  alternates: { canonical: undefined },
+  openGraph: undefined,
+  twitter: undefined,
+}
 
 export default function NotFound() {
   return (

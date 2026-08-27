@@ -55,9 +55,27 @@ export function rateLimit(key: string, limit: number, windowMs: number): RateLim
   }
 }
 
-/** Best-effort client identity behind a proxy. Falls back to a shared bucket. */
+/**
+ * Best-effort client identity behind a proxy. Falls back to a shared bucket.
+ *
+ * The RIGHTMOST `x-forwarded-for` entry, not the leftmost. A proxy that appends
+ * (nginx's `proxy_add_x_forwarded_for`, and most CDNs) puts the address it
+ * actually observed at the end; everything to the left of it is whatever the
+ * client chose to send. Keying on the leftmost entry let one header rotate the
+ * bucket, which on the login route meant unlimited password guessing.
+ *
+ * Still best-effort — a caller with no proxy in front of it can send any header
+ * at all — so anything that must not be brute-forced needs a second bucket
+ * keyed on something the caller cannot pick. See the login route.
+ */
 export function clientKey(request: Request): string {
   const forwarded = request.headers.get('x-forwarded-for')
-  if (forwarded) return forwarded.split(',')[0]!.trim()
+  if (forwarded) {
+    const entries = forwarded
+      .split(',')
+      .map((entry) => entry.trim())
+      .filter(Boolean)
+    if (entries.length > 0) return entries[entries.length - 1]!
+  }
   return request.headers.get('x-real-ip') ?? 'unknown'
 }

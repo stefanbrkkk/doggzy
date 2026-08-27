@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, ArrowRight, Clock } from 'lucide-react'
 import { cn, formatDate } from '@/lib/utils'
+import { pageMetadata } from '@/lib/metadata'
 import { routes } from '@/config/site'
 import { getStory, stories } from '@/content/stories'
 import { getDog } from '@/content/dogs'
@@ -36,17 +37,13 @@ export async function generateMetadata({
 
   if (!story) return { title: 'Priča nije pronađena' }
 
-  return {
+  return pageMetadata({
     title: story.title,
     description: story.dek,
-    alternates: { canonical: routes.story(story.slug) },
-    openGraph: {
-      type: 'article',
-      title: story.title,
-      description: story.dek,
-      publishedTime: story.publishedAt,
-    },
-  }
+    path: routes.story(story.slug),
+    type: 'article',
+    publishedTime: story.publishedAt,
+  })
 }
 
 export default async function StoryPage({ params }: { params: Promise<{ slug: string }> }) {

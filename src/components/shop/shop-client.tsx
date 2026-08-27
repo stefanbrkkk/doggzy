@@ -91,13 +91,16 @@ export function ShopClient() {
 
   return (
     <div className="space-y-10">
-      {/* The sticky offset lives on the glass itself. It used to sit on an outer
-          wrapper whose `py-3` was fully transparent, so cards slid through a
-          12px band that read as a gap in the panel — and giving that wrapper a
-          background instead would have been worse, because `backdrop-filter`
-          samples whatever is painted directly behind the element: an opaque
-          parent turns the blur into a flat fill of the parent's own colour. */}
-      <div className="glass sticky top-20 z-40 rounded-3xl p-3">
+      {/* `pane`, not `glass`: this bar is full container width with the whole
+          product grid running behind it, and a backdrop blur there costs the
+          compositor a read-back every frame — 30–48% of frames dropped through
+          a scripted scroll, against 0–4% painted flat. See the note on `glass`
+          in globals.css.
+
+          The sticky offset lives on this element rather than on a wrapper: a
+          wrapper's own `py-3` was fully transparent, so cards slid through a
+          12px band that read as a gap in the panel. */}
+      <div className="pane sticky top-20 z-40 rounded-3xl p-3">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
           <div className="relative flex-1">
             <Search

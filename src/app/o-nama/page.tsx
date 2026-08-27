@@ -2,18 +2,19 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, Building2, HandHeart, Stethoscope } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { pageMetadata } from '@/lib/metadata'
 import { routes, site } from '@/config/site'
 import { Container, Eyebrow, SectionHeader } from '@/components/ui/section'
 import { buttonStyles } from '@/components/ui/button'
 import { Reveal } from '@/components/motion'
 import { Faq } from '@/components/ui/faq'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'O nama',
   description:
     'Ko smo, šta radimo, dokle smo stigli i šta još ne umemo. Bez zaokruživanja i bez izmišljenih brojeva.',
-  alternates: { canonical: routes.about },
-}
+  path: routes.about,
+})
 
 const PARTNERS = [
   {

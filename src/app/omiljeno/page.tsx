@@ -1,15 +1,16 @@
 import type { Metadata } from 'next'
+import { pageMetadata } from '@/lib/metadata'
 import { routes } from '@/config/site'
 import { Container, Eyebrow } from '@/components/ui/section'
 import { FavoritesList } from '@/components/shop/favorites-list'
 import { Reveal } from '@/components/motion'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Omiljeno',
   description: 'Proizvodi koje si sačuvao za kasnije.',
-  alternates: { canonical: routes.favorites },
+  path: routes.favorites,
   robots: { index: false, follow: true },
-}
+})
 
 export default function FavoritesPage() {
   return (

@@ -2,18 +2,19 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, Clock } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
+import { pageMetadata } from '@/lib/metadata'
 import { routes } from '@/config/site'
 import { stories } from '@/content/stories'
 import { Container, Eyebrow } from '@/components/ui/section'
 import { Reveal } from '@/components/motion'
 import { GenerativeArt } from '@/components/visuals/generative-art'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Priče',
   description:
     'Slučajevi ispričani od početka do kraja — sa iznosima, računima i onim što nije prošlo kako smo planirali.',
-  alternates: { canonical: routes.stories },
-}
+  path: routes.stories,
+})
 
 export default function StoriesPage() {
   return (

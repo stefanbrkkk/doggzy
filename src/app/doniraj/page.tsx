@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { FileCheck2, Receipt, Users } from 'lucide-react'
+import { pageMetadata } from '@/lib/metadata'
 import { routes } from '@/config/site'
 import { Container, Eyebrow, SectionHeader } from '@/components/ui/section'
 import { Reveal } from '@/components/motion'
@@ -9,12 +10,12 @@ import { Faq } from '@/components/ui/faq'
 import { dogs } from '@/content/dogs'
 import { DogCard } from '@/components/dogs/dog-card'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Doniraj',
   description:
     'Doniraj jednokratno ili mesečno. Svaka uplata dobija poziv na broj i upisuje se u javni dnevnik psa kojem je pomogla.',
-  alternates: { canonical: routes.donate },
-}
+  path: routes.donate,
+})
 
 const PROMISES = [
   {

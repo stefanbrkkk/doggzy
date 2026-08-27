@@ -1,16 +1,17 @@
 import type { Metadata } from 'next'
 import { Leaf, Recycle, Truck } from 'lucide-react'
+import { pageMetadata } from '@/lib/metadata'
 import { routes } from '@/config/site'
 import { Container, Eyebrow } from '@/components/ui/section'
 import { Reveal } from '@/components/motion'
 import { ShopClient } from '@/components/shop/shop-client'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Prodavnica',
   description:
     'Oprema, ležajevi i igračke za pse. Sav profit ide u negu pasa — na svakom proizvodu piše koju stavku pokriva.',
-  alternates: { canonical: routes.shop },
-}
+  path: routes.shop,
+})
 
 const PROMISES = [
   { icon: Recycle, title: '100% profita', body: 'Ide u lečenje, hranu i transport pasa.' },

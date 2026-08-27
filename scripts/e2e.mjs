@@ -610,6 +610,26 @@ await group('404, sitemap, robots, health', async () => {
   await sleep(600)
   check('404 stranica je na srpskom', await page.getByText('Ova stranica ne postoji').isVisible())
 
+  // Every unknown URL is answered with the same prerendered `/_not-found`
+  // shell, so anything in the layout that keys off `usePathname()` disagrees
+  // with the server there. The nav's section pill did, and React answered the
+  // structural mismatch by throwing away the served document — `<head>`,
+  // metadata and all — and rebuilding it on the client, on every 404 that
+  // happened to sit under a nav prefix.
+  for (const unknown of ['/psi-nesto-drugo', '/prodavnica-xyz', '/price-abc', '/psi/nema-ga']) {
+    const hydration = await context.newPage()
+    const thrown = []
+    hydration.on('pageerror', (error) => thrown.push(error.message))
+    const response = await hydration.goto(`${BASE}${unknown}`, { waitUntil: 'load' })
+    await sleep(900)
+    check(
+      `${unknown} je 404 koji se hidrira bez greške`,
+      response?.status() === 404 && thrown.length === 0,
+      `status ${response?.status()} ${thrown.join(' | ')}`,
+    )
+    await hydration.close()
+  }
+
   const sitemap = await page.request.get(`${BASE}/sitemap.xml`)
   const sitemapBody = await sitemap.text()
   check('sitemap.xml se generiše', sitemap.status() === 200)
@@ -1092,6 +1112,9 @@ await group('Staklene površine stvarno zamućuju pozadinu', async () => {
   const page = await context.newPage()
   await page.goto(`${BASE}/prodavnica`, { waitUntil: 'load' })
   await sleep(800)
+  // The nav only condenses into glass once the page has moved.
+  await page.evaluate(() => window.scrollTo(0, 600))
+  await sleep(900)
 
   // Checked as a computed value in a real browser, not as text in the
   // stylesheet. Lightning CSS collapses `backdrop-filter` and
@@ -1119,6 +1142,30 @@ await group('Staklene površine stvarno zamućuju pozadinu', async () => {
     'nijedna staklena površina nije bez zamućenja',
     flat.length === 0,
     flat.map((entry) => entry.cls).join(', '),
+  )
+
+  // The other half of the rule: a blur this wide over a region that scrolls
+  // makes the compositor re-read its backdrop every frame. One on the shop's
+  // filter bar cost 30–48% of frames through the product grid, and shrinking
+  // the radius did nothing — it is the read-back that is expensive. Glass
+  // belongs on floating chrome, which is why this only looks inside <main>.
+  const wide = await page.evaluate(() => {
+    const viewport = window.innerWidth
+    return [...document.querySelectorAll('main *')]
+      .filter((node) => {
+        const filter = getComputedStyle(node).backdropFilter
+        return filter && filter !== 'none'
+      })
+      .map((node) => ({
+        cls: typeof node.className === 'string' ? node.className.slice(0, 60) : '',
+        ratio: +(node.getBoundingClientRect().width / viewport).toFixed(2),
+      }))
+      .filter((entry) => entry.ratio > 0.5)
+  })
+  check(
+    'nijedno široko zamućenje ne stoji nad sadržajem koji se skroluje',
+    wide.length === 0,
+    wide.map((entry) => `${entry.cls} (${entry.ratio}×)`).join(', '),
   )
 
   await page.close()
@@ -1172,6 +1219,67 @@ await group('Zavesa ne pušta stranicu da se pomeri ispod nje', async () => {
   check('zavesa je još gore', state.curtain)
   check('stranica je i dalje na vrhu', state.y === 0, `y=${state.y}`)
   await fresh.close()
+})
+
+await group('Smanjene animacije: zavesa nestane umesto da se podigne', async () => {
+  const quiet = await browser.newContext({
+    viewport: { width: 1440, height: 900 },
+    reducedMotion: 'reduce',
+  })
+  const page = await quiet.newPage()
+
+  // Sampled inside the page rather than polled from Node: from the outside a
+  // slow hydration and a curtain playing its 1.4s lift look identical, and on
+  // a loaded machine the two windows overlap.
+  await page.addInitScript(() => {
+    const state = { seen: false, visible: false, lifted: false, removedAt: null }
+    window.__curtain = state
+    const identity = /^(none|matrix\(1, 0, 0, 1, 0, 0\))$/
+    const tick = () => {
+      if (performance.now() > 12000) return
+      const node = document.querySelector('[data-preloader]')
+      if (node) {
+        state.seen = true
+        if (getComputedStyle(node).display !== 'none') state.visible = true
+        for (const panel of node.querySelectorAll('[data-preloader-panel]')) {
+          if (!identity.test(getComputedStyle(panel).transform)) state.lifted = true
+        }
+      } else if (state.seen) {
+        state.removedAt = Math.round(performance.now())
+        return
+      }
+      requestAnimationFrame(tick)
+    }
+    requestAnimationFrame(tick)
+  })
+
+  const settle = () =>
+    page
+      .waitForFunction(() => window.__curtain.removedAt !== null, null, { timeout: 15000 })
+      .catch(() => {})
+
+  await page.goto(`${BASE}/`, { waitUntil: 'load' })
+  await settle()
+  const first = await page.evaluate(() => ({ ...window.__curtain }))
+  check('prva poseta: zavesa se povuče', first.removedAt !== null, JSON.stringify(first))
+  check('prva poseta: nijedan panel se ne pomera', first.lifted === false, JSON.stringify(first))
+  const flagged = await page.evaluate(() => sessionStorage.getItem('doggzy.visited'))
+  check('prva poseta: poseta je zapamćena', flagged === '1', String(flagged))
+
+  // Same session again: the inline script hides it before first paint, so it
+  // must never be painted — and must not sit there as a full-viewport node
+  // waiting out an exit that has nothing to reveal.
+  await page.goto(`${BASE}/`, { waitUntil: 'load' })
+  await settle()
+  const second = await page.evaluate(() => ({ ...window.__curtain }))
+  check(
+    'druga poseta: zavesa se nikad ne prikaže',
+    second.visible === false,
+    JSON.stringify(second),
+  )
+  check('druga poseta: čvor ne ostaje u DOM-u', second.removedAt !== null, JSON.stringify(second))
+
+  await quiet.close()
 })
 
 // ------------------------------------------------------- nagnut telefon -----

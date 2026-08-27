@@ -134,7 +134,12 @@ export function Hero() {
           <h1 className="mt-7 text-hero text-ink">
             <SplitText trigger={textTrigger} delay={lead + 0.28}>
               Svaki dinar
-            </SplitText>
+            </SplitText>{' '}
+            {/* A literal space: the second half is a block, so the words are
+                separated visually and in `innerText`, but the serialised HTML
+                had no separator at all — anything reading `textContent` (plain
+                text extractors, most link-preview and AI crawlers) received
+                "Svaki dinarima ime." */}
             <LineReveal trigger={textTrigger} delay={lead + 0.46} className="text-gradient">
               ima ime.
             </LineReveal>

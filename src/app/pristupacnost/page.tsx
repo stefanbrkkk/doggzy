@@ -1,12 +1,13 @@
 import type { Metadata } from 'next'
+import { pageMetadata } from '@/lib/metadata'
 import { routes, site } from '@/config/site'
 import { LegalPage, type LegalSection } from '@/components/ui/legal-page'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Pristupačnost',
   description: 'Šta smo uradili da sajt bude upotrebljiv svima i šta još nije rešeno.',
-  alternates: { canonical: routes.accessibility },
-}
+  path: routes.accessibility,
+})
 
 const SECTIONS: LegalSection[] = [
   {

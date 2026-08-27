@@ -67,11 +67,10 @@ export const metadata: Metadata = {
     title: `${site.name} — ${site.tagline}`,
     description: site.description,
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: `${site.name} — ${site.tagline}`,
-    description: site.description,
-  },
+  // Card type only. Naming a title and description here meant X rendered one
+  // identical card for the whole site — and on a detail page contradicted the
+  // correct `og:title` inside the same document, because X prefers `twitter:*`.
+  twitter: { card: 'summary_large_image' },
   robots: {
     index: true,
     follow: true,

@@ -1,16 +1,17 @@
 import type { Metadata } from 'next'
+import { pageMetadata } from '@/lib/metadata'
 import { routes } from '@/config/site'
 import { dogs } from '@/content/dogs'
 import { Container, Eyebrow } from '@/components/ui/section'
 import { Reveal } from '@/components/motion'
 import { DogsBrowser } from '@/components/dogs/dogs-browser'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Psi',
   description:
     'Psi koji traže dom, koji su u lečenju i oni koji se trenutno traže. Svaki ima javnu stranicu sa troškovima i nalazima.',
-  alternates: { canonical: routes.dogs },
-}
+  path: routes.dogs,
+})
 
 export default function DogsPage() {
   return (

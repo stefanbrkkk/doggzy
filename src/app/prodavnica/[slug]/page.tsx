@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import { formatRsd } from '@/lib/utils'
+import { pageMetadata } from '@/lib/metadata'
 import { routes } from '@/config/site'
 import { getProductBySlug, products, relatedProducts } from '@/content/products'
 import { Container } from '@/components/ui/section'
@@ -37,12 +38,12 @@ export async function generateMetadata({
 
   if (!product) return { title: 'Proizvod nije pronađen' }
 
-  return {
+  return pageMetadata({
     title: product.name,
     description: product.tagline,
-    alternates: { canonical: routes.product(product.slug) },
-    openGraph: { title: product.name, description: product.tagline },
-  }
+    path: routes.product(product.slug),
+    type: 'article',
+  })
 }
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {

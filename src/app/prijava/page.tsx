@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { AlertTriangle, Clock, Eye, PhoneCall, ShieldCheck } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { pageMetadata } from '@/lib/metadata'
 import { routes, site } from '@/config/site'
 import { dogs } from '@/content/dogs'
 import { Container, Eyebrow, SectionHeader } from '@/components/ui/section'
@@ -11,12 +12,12 @@ import { DogCard } from '@/components/dogs/dog-card'
 import { ReportPanel } from '@/components/phone/report-panel'
 import { Faq } from '@/components/ui/faq'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Prijavi psa',
   description:
     'Prijavi nestalog, pronađenog ili ugroženog psa. Prijava traje minut, ne traži nalog i ide direktno ekipi u tvom gradu.',
-  alternates: { canonical: routes.report },
-}
+  path: routes.report,
+})
 
 const AFTER = [
   {
@@ -92,8 +93,7 @@ export default function ReportPage() {
               </Reveal>
               <Reveal direction="up" delay={0.06}>
                 <h1 className="mt-5 text-display text-ink">
-                  Prijavi psa.
-                  <span className="mt-1 block text-gradient">Ostalo je na nama.</span>
+                  Prijavi psa. <span className="mt-1 block text-gradient">Ostalo je na nama.</span>
                 </h1>
               </Reveal>
               <Reveal direction="up" delay={0.12}>

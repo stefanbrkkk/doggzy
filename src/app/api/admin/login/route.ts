@@ -7,8 +7,18 @@ import { clientKey, rateLimit } from '@/lib/rate-limit'
 export const runtime = 'nodejs'
 
 const loginSchema = z.object({
-  email: z.string().trim().email('Upiši ispravan email.').max(120),
-  password: z.string().min(1, 'Upiši lozinku.').max(200),
+  // Every constraint carries its own Serbian message: the handler returns
+  // `issues[0].message` verbatim and the form renders it, so a rule without one
+  // put Zod's English default in front of the visitor.
+  email: z
+    .string({ error: 'Upiši email.' })
+    .trim()
+    .email('Upiši ispravan email.')
+    .max(120, 'Email je predugačak.'),
+  password: z
+    .string({ error: 'Upiši lozinku.' })
+    .min(1, 'Upiši lozinku.')
+    .max(200, 'Lozinka je predugačka.'),
 })
 
 /** One message for every rejection: never reveal which half was wrong. */
@@ -48,6 +58,19 @@ export async function POST(request: Request) {
   }
 
   const email = parsed.data.email.toLowerCase()
+
+  // A second bucket, keyed on the account rather than on the caller. The IP
+  // bucket above is best-effort by construction — `x-forwarded-for` is a header
+  // — so on its own it left password guessing unlimited to anyone willing to
+  // change one line of a request. This one cannot be rotated: there is a single
+  // admin credential, and guessing it means hitting this key.
+  const accountLimit = rateLimit(`admin-login-acct:${email}`, 8, 15 * 60 * 1000)
+  if (!accountLimit.allowed) {
+    return NextResponse.json(
+      { error: 'Previše pokušaja. Sačekaj pa probaj ponovo.' },
+      { status: 429, headers: { 'Retry-After': String(accountLimit.retryAfter) } },
+    )
+  }
   const expectedEmail = (process.env.ADMIN_EMAIL ?? '').toLowerCase()
   const storedHash = process.env.ADMIN_PASSWORD_HASH ?? ''
 

@@ -413,14 +413,14 @@
  * washes out whatever is behind it, which defeats the point. The asymmetric
  * bevel — light on the top edge, shadow on the bottom — is what actually reads
  * as a pane of glass. Slightly more opaque and less saturated than that idiom
- * too, because both surfaces using this sit over the generative artwork rather
- * than over flat page ground, so the wash coming through is already colourful.
+ * too, because this sits over the generative artwork rather than over flat page
+ * ground, so the wash coming through is already colourful.
  *
  * Never hand-write `-webkit-backdrop-filter` beside the standard property.
  * Lightning CSS (which @tailwindcss/postcss runs) treats the two spellings as
  * one property and keeps only the last one declared, so standard-then-prefixed
  * ships a rule containing ONLY `-webkit-backdrop-filter` — which Chrome no
- * longer supports. Both glass surfaces rendered completely unblurred for as
+ * longer supports. Every glass surface rendered completely unblurred for as
  * long as that ordering was in the file, and the `@supports` gate did not
  * catch it because Lightning rewrites the query to test both spellings.
  * Declaring the standard property alone makes Lightning emit both.
@@ -430,6 +430,14 @@
  * `backdrop-filter` samples what is painted directly behind the element, so
  * this must never sit inside an opaque parent — that turns the blur into a
  * flat fill of the parent's own colour.
+ *
+ * Reserved for chrome that floats over a page which is not itself moving. Over
+ * a scrolling region the compositor has to re-read the backdrop every frame,
+ * and that read-back is priced by area rather than by radius: the shop's
+ * sticky filter bar — full container width, with the product grid running
+ * behind it — dropped 30–48% of frames through a scripted scroll at 1440×900,
+ * and 22px, 10px and 6px blurs all measured the same. Use `pane` below there;
+ * `scripts/perf.mjs` fails the build if this creeps back.
  */
 @utility glass {
   background: color-mix(in oklch, var(--elevated) 94%, transparent);
@@ -443,6 +451,22 @@
     background: color-mix(in oklch, var(--elevated) 84%, transparent);
     backdrop-filter: blur(22px) saturate(140%);
   }
+}
+
+/*
+ * The same raised surface as `glass`, painted flat.
+ *
+ * For anything that sits above content which scrolls underneath it — see the
+ * note on `glass` for the measurements. Identical edge and lift, so the two
+ * read as the same material; only the wash coming through is gone.
+ */
+@utility pane {
+  background: var(--elevated);
+  border: 1px solid var(--line-strong);
+  box-shadow:
+    inset 0 1px 0 0 oklch(1 0 0 / 0.09),
+    inset 0 -1px 0 0 oklch(0 0 0 / 0.18),
+    var(--shadow-lift);
 }
 
 @utility grain {

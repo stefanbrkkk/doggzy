@@ -1,15 +1,16 @@
 import type { Metadata } from 'next'
+import { pageMetadata } from '@/lib/metadata'
 import { routes } from '@/config/site'
 import { Container, Eyebrow } from '@/components/ui/section'
 import { CartPage } from '@/components/shop/cart-page'
 import { Reveal } from '@/components/motion'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Korpa',
   description: 'Pregled korpe i slanje porudžbine našem timu.',
-  alternates: { canonical: routes.cart },
+  path: routes.cart,
   robots: { index: false, follow: true },
-}
+})
 
 export default function BasketPage() {
   return (

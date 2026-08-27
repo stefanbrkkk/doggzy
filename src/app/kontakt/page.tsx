@@ -1,17 +1,18 @@
 import type { Metadata } from 'next'
 import { Mail, MapPin, Siren } from 'lucide-react'
 import Link from 'next/link'
+import { pageMetadata } from '@/lib/metadata'
 import { routes, site } from '@/config/site'
 import { Container, Eyebrow } from '@/components/ui/section'
 import { Reveal } from '@/components/motion'
 import { ContactForm } from '@/components/contact/contact-form'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Kontakt',
   description:
     'Piši nam — za saradnju, pitanja o donacijama ili ako vodiš sklonište ili ambulantu.',
-  alternates: { canonical: routes.contact },
-}
+  path: routes.contact,
+})
 
 export default function ContactPage() {
   return (

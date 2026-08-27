@@ -8,7 +8,19 @@ const compat = new FlatCompat({
 
 const config = [
   {
-    ignores: ['node_modules/**', '.next/**', 'out/**', 'build/**', 'next-env.d.ts'],
+    ignores: [
+      'node_modules/**',
+      '.next/**',
+      'out/**',
+      'build/**',
+      'next-env.d.ts',
+      // One-off browser probes written at the repo root during review passes.
+      // Git ignores them for the same reason; linting them only ever produced
+      // noise that made a real warning easy to miss.
+      '*.mjs',
+      '!eslint.config.mjs',
+      '!postcss.config.mjs',
+    ],
   },
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
   {

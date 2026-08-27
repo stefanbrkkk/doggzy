@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useSelectedLayoutSegment } from 'next/navigation'
 import {
   AnimatePresence,
   motion,
@@ -23,6 +23,7 @@ import { Magnetic } from '@/components/motion'
 
 export function SiteHeader() {
   const pathname = usePathname()
+  const segment = useSelectedLayoutSegment()
   const reduced = useReducedMotion()
   const { itemCount, favoriteIds, hydrated, openCart, isCartOpen } = useShop()
 
@@ -43,6 +44,20 @@ export function SiteHeader() {
   useEffect(() => {
     setMenuOpen(false)
   }, [pathname])
+
+  // The panel and the hamburger are both `lg:hidden`, so crossing that
+  // breakpoint with the menu open leaves the lock held with nothing on screen
+  // to release it — an ordinary desktop page that simply will not scroll. A
+  // tablet rotation crosses it, so this is a routine gesture.
+  useEffect(() => {
+    const desktop = window.matchMedia('(min-width: 64rem)')
+    const close = () => {
+      if (desktop.matches) setMenuOpen(false)
+    }
+    close()
+    desktop.addEventListener('change', close)
+    return () => desktop.removeEventListener('change', close)
+  }, [])
 
   // The cart drawer is the topmost overlay, and the header sits above the menu
   // so its cart button stays clickable while the menu is open. Retiring the
@@ -105,12 +120,25 @@ export function SiteHeader() {
     }
   }, [menuOpen])
 
-  // Highlighted when the section is active, but `aria-current="page"` only when
-  // this really is the page — on a detail route the section link is an ancestor,
-  // not the current page.
+  /**
+   * Highlighted when the section is active, but `aria-current="page"` only when
+   * this really is the page — on a detail route the section link is an
+   * ancestor, not the current page.
+   *
+   * The section is read from the routed segment rather than from the URL,
+   * because on a 404 the two disagree. Every unknown URL is answered with the
+   * same prerendered `/_not-found` shell, so `usePathname()` there is the
+   * shell's own path on the server and the visitor's URL on the client:
+   * `/psi-nesto` made `startsWith('/psi')` true on the client only, which
+   * rendered a `<motion.span>` the server had never written. An extra child is
+   * a mismatch React cannot patch — it threw #418 and regenerated the whole
+   * document, `<head>` and all, on every 404 under a nav prefix. The segment
+   * comes out of the router tree both sides hydrate from, so it cannot
+   * disagree; on a 404 it is `/_not-found` and no section lights up.
+   */
   const isActive = (href: string) =>
-    href === routes.home ? pathname === href : pathname.startsWith(href)
-  const isCurrentPage = (href: string) => pathname === href
+    href === routes.home ? segment === null : segment === href.slice(1)
+  const isCurrentPage = (href: string) => isActive(href) && pathname === href
 
   return (
     <>

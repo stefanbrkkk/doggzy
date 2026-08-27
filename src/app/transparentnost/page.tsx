@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { BadgeCheck, CircleAlert, FileText, Scale } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { pageMetadata } from '@/lib/metadata'
 import { routes } from '@/config/site'
 import { dogs } from '@/content/dogs'
 import { Container, Eyebrow, SectionHeader } from '@/components/ui/section'
@@ -9,12 +10,12 @@ import { buttonStyles } from '@/components/ui/button'
 import { CountUp, Reveal } from '@/components/motion'
 import { LedgerTable } from '@/components/transparency/ledger-table'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Transparentnost',
   description:
     'Svaki trošak, datum i dokaz na jednom mestu. Uključujući ono što još nije potvrđeno dokumentom.',
-  alternates: { canonical: routes.transparency },
-}
+  path: routes.transparency,
+})
 
 const PRINCIPLES = [
   {

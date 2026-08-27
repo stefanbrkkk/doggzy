@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, Heart, MapPin, Siren } from 'lucide-react'
 import { cn, formatDateGenitive, formatRsd } from '@/lib/utils'
+import { pageMetadata } from '@/lib/metadata'
 import { routes } from '@/config/site'
 import { dogNeedTotals, dogs, getDog, statusLabel } from '@/content/dogs'
 import { stories } from '@/content/stories'
@@ -39,15 +40,12 @@ export async function generateMetadata({
 
   if (!dog) return { title: 'Pas nije pronađen' }
 
-  return {
+  return pageMetadata({
     title: `${dog.name} — ${statusLabel(dog.status, dog.sex)}`,
     description: dog.summary,
-    alternates: { canonical: routes.dog(dog.slug) },
-    openGraph: {
-      title: `${dog.name} — ${statusLabel(dog.status, dog.sex)}`,
-      description: dog.summary,
-    },
-  }
+    path: routes.dog(dog.slug),
+    type: 'article',
+  })
 }
 
 export default async function DogPage({ params }: { params: Promise<{ slug: string }> }) {
