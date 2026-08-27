@@ -1935,6 +1935,146 @@ await group('Greške u formama su na srpskom i ne zumiraju ekran', async () => {
   check('/api/kontakt: odgovor je na srpskom', !english.test(body), body.slice(0, 160))
 })
 
+// ------------------------------------------------------------- aurora -------
+await group('Šejder pozadine stvarno radi, i staje kad treba', async () => {
+  // `<AuroraField>` asks for a context with `failIfMajorPerformanceCaveat`, so
+  // on a software rasteriser — which is what this suite runs on — it correctly
+  // refuses and renders nothing. Correct, and it means the shader itself was
+  // never once executed by any test: a GLSL error would ship silently, every
+  // check still green, and the flagship background would simply not exist for
+  // the visitors whose machines do give it a context. Dropping that one flag is
+  // the only way to reach the code from here.
+  const context = await browser.newContext({ viewport: { width: 1440, height: 900 } })
+  await context.addInitScript(() => {
+    try {
+      sessionStorage.setItem('doggzy.visited', '1')
+    } catch {}
+  })
+  await context.addInitScript(() => {
+    window.__gl = { contexts: 0, shaderErrors: [], programErrors: [], draws: 0 }
+    const original = HTMLCanvasElement.prototype.getContext
+    HTMLCanvasElement.prototype.getContext = function (type, attributes) {
+      let options = attributes
+      if ((type === 'webgl' || type === 'webgl2') && options?.failIfMajorPerformanceCaveat) {
+        options = { ...options, failIfMajorPerformanceCaveat: false }
+      }
+      const gl = original.call(this, type, options)
+      if (gl && (type === 'webgl' || type === 'webgl2')) {
+        window.__gl.contexts += 1
+        const compile = gl.compileShader.bind(gl)
+        gl.compileShader = (shader) => {
+          compile(shader)
+          if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            window.__gl.shaderErrors.push(String(gl.getShaderInfoLog(shader)).slice(0, 300))
+          }
+        }
+        const link = gl.linkProgram.bind(gl)
+        gl.linkProgram = (program) => {
+          link(program)
+          if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+            window.__gl.programErrors.push(String(gl.getProgramInfoLog(program)).slice(0, 300))
+          }
+        }
+        const draw = gl.drawArrays.bind(gl)
+        gl.drawArrays = (...args) => {
+          window.__gl.draws += 1
+          return draw(...args)
+        }
+      }
+      return gl
+    }
+  })
+
+  const page = await context.newPage()
+  const thrown = []
+  page.on('pageerror', (error) => thrown.push(error.message.slice(0, 160)))
+  await page.goto(`${BASE}/`, { waitUntil: 'load' })
+  await sleep(3500)
+
+  const gl = await page.evaluate(() => window.__gl)
+  check('šejderi se prevode bez greške', gl.shaderErrors.length === 0, gl.shaderErrors.join(' | '))
+  check('program se linkuje', gl.programErrors.length === 0, gl.programErrors.join(' | '))
+  check('polje se stvarno crta', gl.contexts > 0 && gl.draws > 0, JSON.stringify(gl))
+  check('šejder ne baca greške', thrown.length === 0, thrown.join(' | '))
+
+  const canvas = await page.evaluate(() => {
+    const node = document.querySelector('canvas[data-decor]')
+    return node ? { w: node.width, cssW: Math.round(node.getBoundingClientRect().width) } : null
+  })
+  // The shader is four 4-octave fbm calls per pixel; the cap is what keeps it
+  // from scaling with a 3x phone display.
+  check(
+    'rezolucija je ograničena na 1.5× CSS',
+    canvas !== null && canvas.w <= Math.ceil(canvas.cssW * 1.5) + 2,
+    JSON.stringify(canvas),
+  )
+
+  // Software rasterisation is slow here, so this is a rate against the
+  // on-screen baseline rather than an absolute frame count.
+  const rate = async (ms) => {
+    const start = await page.evaluate(() => window.__gl.draws)
+    await sleep(ms)
+    const end = await page.evaluate(() => window.__gl.draws)
+    return (end - start) / (ms / 1000)
+  }
+  const visible = await rate(2000)
+  await page.evaluate(() => window.scrollTo(0, 4000))
+  await sleep(1200)
+  const hidden = await rate(2500)
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await sleep(1200)
+  const resumed = await rate(2500)
+  check('crtanje stane van vidokruga', hidden <= 0.5, `${hidden.toFixed(2)}/s`)
+  check(
+    'crtanje se nastavi po povratku',
+    resumed > 1 && resumed >= visible * 0.5,
+    `${visible.toFixed(2)} → ${hidden.toFixed(2)} → ${resumed.toFixed(2)} po sekundi`,
+  )
+  await context.close()
+
+  // Reduced motion draws the field once and then leaves it alone.
+  const quiet = await browser.newContext({
+    viewport: { width: 1440, height: 900 },
+    reducedMotion: 'reduce',
+  })
+  await quiet.addInitScript(() => {
+    try {
+      sessionStorage.setItem('doggzy.visited', '1')
+    } catch {}
+  })
+  await quiet.addInitScript(() => {
+    window.__gl = { draws: 0 }
+    const original = HTMLCanvasElement.prototype.getContext
+    HTMLCanvasElement.prototype.getContext = function (type, attributes) {
+      let options = attributes
+      if ((type === 'webgl' || type === 'webgl2') && options?.failIfMajorPerformanceCaveat) {
+        options = { ...options, failIfMajorPerformanceCaveat: false }
+      }
+      const gl = original.call(this, type, options)
+      if (gl && (type === 'webgl' || type === 'webgl2')) {
+        const draw = gl.drawArrays.bind(gl)
+        gl.drawArrays = (...args) => {
+          window.__gl.draws += 1
+          return draw(...args)
+        }
+      }
+      return gl
+    }
+  })
+  const still = await quiet.newPage()
+  await still.goto(`${BASE}/`, { waitUntil: 'load' })
+  await sleep(3000)
+  const first = await still.evaluate(() => window.__gl.draws)
+  await sleep(2500)
+  const second = await still.evaluate(() => window.__gl.draws)
+  check(
+    'uz smanjene animacije polje se zamrzne na jednom kadru',
+    first > 0 && second - first <= 1,
+    `${first} → ${second}`,
+  )
+  await quiet.close()
+})
+
 // ------------------------------------------------------------ godina --------
 await group('Godina u podnožju prati posetioca, ne build', async () => {
   // Prerendered, so reading the clock in the footer's own body would freeze the
