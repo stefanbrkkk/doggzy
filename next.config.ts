@@ -51,6 +51,25 @@ const nextConfig: NextConfig = {
   compress: true,
   reactStrictMode: true,
 
+  /**
+   * Resend is required at runtime instead of bundled.
+   *
+   * Its `render()` helper does `import('@react-email/render')` so that callers
+   * can pass a React component as the body. We never do — `notify.ts` sends a
+   * plain `text` field — but a bundler has to resolve every import it can see,
+   * and that package is an *optional* peer of resend. npm installs optional
+   * peers by default, so the build passed here and failed for anyone using
+   * pnpm, yarn, or `npm install --omit=optional`: `Module not found: Can't
+   * resolve '@react-email/render'`, from a dependency of a dependency, on a
+   * clean checkout. Reproduced by deleting the package and rebuilding.
+   *
+   * Listing it here leaves it as a runtime `require` from node_modules, so the
+   * dead branch is never resolved at build time and nothing has to be installed
+   * to satisfy code we do not call. Verified: the build succeeds with the
+   * package absent.
+   */
+  serverExternalPackages: ['resend'],
+
   compiler: {
     // Keep warn/error in production; they carry the only diagnostics we have.
     removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,

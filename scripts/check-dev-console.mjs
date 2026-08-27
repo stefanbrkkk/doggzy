@@ -227,6 +227,93 @@ console.log('\nInterakcije')
   await context.close()
 }
 
+// An extension that rewrites the DOM before React boots produces a hydration
+// mismatch no application can prevent — Bitdefender stamps `bis_skin_checked`
+// on every <div>, Grammarly, LastPass and ColorZilla do their own versions. The
+// useful question is not whether the message appears; it is whether *we* are in
+// it. Every attribute React names has to be the extension's. The bug that
+// started this suite named `cy`, `rx`, `ry` and `transform`, so this check would
+// have caught it too.
+console.log('\nSa dodatkom koji menja DOM pre hidracije')
+{
+  const context = await browser.newContext({ viewport: { width: 1440, height: 900 } })
+  await context.addInitScript(() => {
+    const stamp = () => {
+      if (!document.documentElement) return
+      for (const node of document.getElementsByTagName('div')) {
+        if (!node.hasAttribute('bis_skin_checked')) node.setAttribute('bis_skin_checked', '1')
+      }
+      if (document.body && !document.body.hasAttribute('bis_register')) {
+        document.body.setAttribute('bis_register', 'e30=')
+      }
+    }
+    const start = () => {
+      if (!document.documentElement) return requestAnimationFrame(start)
+      stamp()
+      new MutationObserver(stamp).observe(document.documentElement, {
+        childList: true,
+        subtree: true,
+      })
+    }
+    start()
+    document.addEventListener('DOMContentLoaded', stamp)
+  })
+
+  const page = await context.newPage()
+  // The attribute diff is not in `message.text()` — React passes it as a
+  // separate console argument, and reading only the text made this check pass
+  // no matter what. Verified by planting a `Math.random()` attribute: with the
+  // text alone it stayed green; with the arguments joined it names it.
+  const pending = []
+  const messages = []
+  page.on('console', (message) => {
+    if (message.type() !== 'error' && message.type() !== 'warning') return
+    pending.push(
+      Promise.all(
+        message.args().map((arg) =>
+          arg
+            .jsonValue()
+            .then((value) => String(value))
+            .catch(() => ''),
+        ),
+      )
+        .then((parts) => messages.push(parts.join('\n')))
+        .catch(() => {}),
+    )
+  })
+  page.on('pageerror', (error) => messages.push(error.message))
+
+  await page.goto(`${BASE}/`, { waitUntil: 'load', timeout: 90000 })
+  await sleep(4000)
+  await Promise.all(pending)
+
+  const stamped = await page.evaluate(() => document.querySelectorAll('[bis_skin_checked]').length)
+  report(
+    `dodatak je stvarno označio DOM (${stamped} elemenata)`,
+    stamped > 20 ? [] : ['nije označio ništa — provera ne dokazuje ništa'],
+  )
+
+  // Everything React names in a mismatch must belong to the extension.
+  const ours = new Set()
+  for (const message of messages) {
+    if (!/hydrat|didn't match/i.test(message)) continue
+    for (const line of message.split('\n')) {
+      const trimmed = line.trim()
+      // Both sides of the diff: a value React had to change is as much ours as
+      // one it had to drop. The `attr="value"` shape is what separates a diff
+      // line from the message's own bulleted prose, which also starts with `-`.
+      if (!trimmed.startsWith('-') && !trimmed.startsWith('+')) continue
+      const attribute = trimmed.match(/^[-+]\s*([a-zA-Z_][\w-]*)="/)
+      if (attribute && !attribute[1].startsWith('bis_')) ours.add(attribute[1])
+    }
+  }
+  report(
+    'nijedan naš atribut nije u neslaganju',
+    [...ours].map((name) => `naš atribut: ${name}`),
+  )
+  await context.close()
+}
+
 await browser.close()
 
 if (failed > 0) {

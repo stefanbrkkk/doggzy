@@ -59,7 +59,21 @@ and the main interactions, and fails on any console error or warning.
 
 Do not run `next build` while that dev server is up — both write `.next`.
 
-## 4. Content
+## 4. A clean install, not just this one
+
+```bash
+rm -rf node_modules .next && npm ci && npm run build
+```
+
+Your `node_modules` is not the one the next person gets. npm installs a
+dependency's *optional* peers by default; pnpm, yarn and `npm install
+--omit=optional` do not — so a build that passes here can fail on a fresh
+checkout with `Module not found` pointing at a package nobody asked for. That
+is exactly what `resend` did: it reaches for `@react-email/render` in a branch
+this site never calls, and the build resolved it anyway. `serverExternalPackages`
+in `next.config.ts` is the fix; this step is what would have caught it.
+
+## 5. Content
 
 - [ ] Every figure on the site traces to a ledger entry (`check:figures` proves
       it, but read what it prints).
@@ -71,7 +85,7 @@ Do not run `next build` while that dev server is up — both write `.next`.
       counts, no partner logos, no social profiles that do not exist.
 - [ ] Legal pages still describe what the site actually does.
 
-## 5. What to look at by hand
+## 6. What to look at by hand
 
 The scripts cover the measurable. These need a person:
 
@@ -84,7 +98,7 @@ The scripts cover the measurable. These need a person:
 - [ ] The first-visit intro: open a private window so the session flag is unset.
 - [ ] `prefers-reduced-motion: reduce` on. Nothing decorative should move.
 
-## 6. Environment before deploying
+## 7. Environment before deploying
 
 - [ ] `NEXT_PUBLIC_SITE_URL` is the production origin. Canonical URLs, the
       sitemap and every social card read from it.
@@ -93,7 +107,7 @@ The scripts cover the measurable. These need a person:
 - [ ] `RESEND_API_KEY`, `NOTIFY_TO` and `NOTIFY_FROM` are set, or you accept
       that form submissions are logged rather than mailed.
 
-## 7. After deploying
+## 8. After deploying
 
 - [ ] `/api/health` answers 200.
 - [ ] `/sitemap.xml` and `/robots.txt` render, and `robots.txt` still disallows
