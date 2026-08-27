@@ -25,7 +25,9 @@ export function MiniMap({ active = false, className }: { active?: boolean; class
         viewBox="0 0 320 200"
         className="h-full w-full"
         initial={false}
-        animate={reduced ? undefined : { x: [0, -6, 0], y: [0, 4, 0] }}
+        // An explicit rest target, not `undefined`: dropping `animate`
+        // mid-cycle leaves the element wherever the loop had got to.
+        animate={reduced ? { x: 0, y: 0 } : { x: [0, -6, 0], y: [0, 4, 0] }}
         transition={{ duration: 24, repeat: Infinity, ease: 'linear' }}
       >
         <rect width="320" height="200" className="fill-sunken" />

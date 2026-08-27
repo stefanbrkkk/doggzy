@@ -95,7 +95,7 @@ export function Hero() {
       <div aria-hidden="true" data-decor className="absolute inset-0 -z-20 bg-canvas">
         <div className="absolute inset-0 bg-[radial-gradient(120%_90%_at_78%_18%,var(--wash-warm)_0%,transparent_55%),radial-gradient(90%_70%_at_12%_82%,var(--wash-cool)_0%,transparent_60%)] opacity-[var(--wash-opacity)]" />
         <motion.div
-          style={reduced ? undefined : { scale: backdropScale }}
+          style={reduced ? { scale: 1 } : { scale: backdropScale }}
           className="absolute inset-0 opacity-70"
         >
           <AuroraField />
@@ -116,7 +116,11 @@ export function Hero() {
         className="mx-auto grid w-full max-w-[92rem] gap-16 px-5 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-10"
       >
         <motion.div
-          style={reduced ? undefined : { y: copyY, opacity: copyOpacity }}
+          // Pinned to the resting values rather than dropped. These start at
+          // rest only when the page opens at the top; a reload that restores a
+          // scroll position renders them mid-curve first, and dropping the keys
+          // then would strand the hero copy faded out. See site-footer.tsx.
+          style={reduced ? { y: '0%', opacity: 1 } : { y: copyY, opacity: copyOpacity }}
           className="max-w-2xl"
         >
           <motion.p
@@ -191,7 +195,7 @@ export function Hero() {
         </motion.div>
 
         <motion.div
-          style={reduced ? undefined : { y: phoneY }}
+          style={reduced ? { y: '0%' } : { y: phoneY }}
           variants={phoneBeat}
           custom={lead + 0.4}
           className="justify-self-center lg:justify-self-end"

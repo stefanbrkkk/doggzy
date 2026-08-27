@@ -1083,6 +1083,135 @@ await group('Smanjene animacije ne ostavljaju pomerene elemente', async () => {
   )
 
   await reduced.close()
+
+  // The check above only ever looked at translate, which is how a wordmark
+  // stranded at `opacity: 0` on all fourteen routes went unnoticed: scroll-linked
+  // styles were being handed `undefined` under reduced motion, and dropping the
+  // keys stops the driver without clearing the values it had already written.
+  for (const route of ['/', '/psi', '/prodavnica', '/transparentnost', '/kontakt']) {
+    const ctx = await browser.newContext({
+      viewport: { width: 1280, height: 900 },
+      reducedMotion: 'reduce',
+    })
+    await ctx.addInitScript(() => {
+      try {
+        sessionStorage.setItem('doggzy.visited', '1')
+      } catch {}
+    })
+    const page = await ctx.newPage()
+    await page.goto(`${BASE}${route}`, { waitUntil: 'load' })
+    await sleep(2000)
+
+    // Walked in steps, the way a person scrolls: a single programmatic jump can
+    // skip an IntersectionObserver entirely, and an entrance nobody has scrolled
+    // to yet is not a defect.
+    await page.evaluate(async () => {
+      const step = Math.round(window.innerHeight * 0.6)
+      for (let y = 0; y <= document.body.scrollHeight; y += step) {
+        window.scrollTo(0, y)
+        await new Promise((resolve) => setTimeout(resolve, 220))
+      }
+    })
+    await sleep(1800)
+
+    const invisible = await page.evaluate(() => {
+      const out = new Set()
+      for (const node of document.querySelectorAll('main *, footer *')) {
+        if (Number(getComputedStyle(node).opacity) > 0.01) continue
+        const box = node.getBoundingClientRect()
+        if (box.width < 8 || box.height < 8) continue
+        if (box.bottom < 0 || box.top > window.innerHeight) continue
+        const text = (node.textContent || '').trim()
+        if (!text) continue
+        // Anything a hover is meant to reveal is supposed to be invisible.
+        if (/group-hover|group-focus/.test(String(node.className))) continue
+        out.add(`${node.tagName} :: ${text.slice(0, 26)}`)
+      }
+      return [...out]
+    })
+    check(
+      `${route}: ništa vidljivo nije ostalo na opacity 0`,
+      invisible.length === 0,
+      invisible.join(' | ').slice(0, 200),
+    )
+    await ctx.close()
+  }
+})
+
+await group('Pokazivač i traka napretka se smire kad treba', async () => {
+  // `onMove` only releases the magnetic pull when a move lands outside the
+  // reach radius, so an exit that never crosses it left the element displaced
+  // with no further event coming. The header's donate button sits against the
+  // top edge with a 139px reach, which makes moving to the tab bar an everyday
+  // way to strand it.
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } })
+  await ctx.addInitScript(() => {
+    try {
+      sessionStorage.setItem('doggzy.visited', '1')
+    } catch {}
+  })
+  const page = await ctx.newPage()
+  await page.goto(`${BASE}/`, { waitUntil: 'load' })
+  await sleep(2600)
+
+  const target = page.locator('header a[href="/doniraj"]').first()
+  const box = await target.boundingBox()
+  const transform = () =>
+    page.evaluate(() => {
+      const node = document.querySelector('header a[href="/doniraj"]')?.closest('span')
+      return node ? getComputedStyle(node).transform : null
+    })
+
+  await page.mouse.move(box.x + box.width / 2 - 20, box.y + box.height / 2)
+  await sleep(700)
+  const pulled = await transform()
+  await page.mouse.move(box.x + box.width / 2 - 20, 1)
+  await page.evaluate(() => document.dispatchEvent(new PointerEvent('pointerleave')))
+  await sleep(1200)
+  const released = await transform()
+  const atRest = (value) => value === 'none' || /matrix\(1, 0, 0, 1, 0, 0\)/.test(value ?? '')
+
+  check('magnet uopšte privlači', !atRest(pulled), String(pulled))
+  check('magnet se vrati kad pokazivač napusti prozor', atRest(released), String(released))
+  await ctx.close()
+
+  // `MotionConfig reducedMotion="user"` governs transitions, not MotionValue
+  // springs — the reading bar went on easing for ~1.5s after the scroll stopped.
+  const quiet = await browser.newContext({
+    viewport: { width: 1440, height: 900 },
+    reducedMotion: 'reduce',
+  })
+  await quiet.addInitScript(() => {
+    try {
+      sessionStorage.setItem('doggzy.visited', '1')
+    } catch {}
+  })
+  const still = await quiet.newPage()
+  await still.goto(`${BASE}/`, { waitUntil: 'load' })
+  await sleep(2400)
+  const samples = await still.evaluate(async () => {
+    const bar = document.querySelector('[data-decor].fixed.inset-x-0.top-0')
+    const read = () => {
+      const match = getComputedStyle(bar).transform.match(/matrix\(([\d.]+)/)
+      return match ? Number(match[1]) : 0
+    }
+    window.scrollTo(0, 3000)
+    const out = []
+    for (let i = 0; i < 10; i += 1) {
+      out.push(Number(read().toFixed(4)))
+      await new Promise((resolve) => setTimeout(resolve, 100))
+    }
+    return out
+  })
+  const settled = samples.findIndex(
+    (value, index) => index > 0 && Math.abs(value - samples[index - 1]) < 0.0005,
+  )
+  check(
+    'traka napretka ne klizi posle skrola uz smanjene animacije',
+    settled >= 0 && settled <= 2,
+    JSON.stringify(samples),
+  )
+  await quiet.close()
 })
 
 // ------------------------------------------------------ jedna traka napretka

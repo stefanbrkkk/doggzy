@@ -171,7 +171,14 @@ export function SiteFooter({ year }: SiteFooterProps) {
         // by a transition, so `MotionConfig reducedMotion="user"` does not
         // touch them. Gating them here is the only thing that stops a 15rem
         // wordmark from sliding for a visitor who asked for no motion.
-        style={reduced ? undefined : { y: wordmarkY, opacity: wordmarkOpacity }}
+        //
+        // Pinned to the resting values rather than dropped. `reduced` is false
+        // on the first client render, so Motion has already written this
+        // element's starting values — `opacity: 0`, `y: 38%` — into its inline
+        // style; handing it `undefined` next render stops the driver without
+        // clearing what it wrote, and the wordmark stayed invisible on all 14
+        // routes. Same trap as the one documented in `reveal.tsx`.
+        style={reduced ? { y: '0%', opacity: 1 } : { y: wordmarkY, opacity: wordmarkOpacity }}
         className="pointer-events-none select-none px-4 text-center font-display text-[clamp(4rem,17vw,15rem)] font-bold leading-[0.78] tracking-tighter text-ink/[0.055]"
       >
         doggzy

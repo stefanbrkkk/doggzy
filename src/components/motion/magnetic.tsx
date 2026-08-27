@@ -80,14 +80,33 @@ export function Magnetic({ children, className, strength = 18, radius = 90 }: Ma
       box.current = null
     }
 
+    /**
+     * The pointer left the window while still inside the reach radius.
+     *
+     * `onMove` only releases the pull when a move lands *outside* the radius,
+     * so an exit that never crosses it leaves the element displaced with no
+     * further event coming. The header's donate button makes that an everyday
+     * gesture — it sits against the top edge with a 139px reach, so moving from
+     * it to the tab bar or the address bar strands it. Measured 4/4: held ~4.6px
+     * off-centre indefinitely, until some unrelated later move.
+     */
+    const release = () => {
+      x.set(0)
+      y.set(0)
+    }
+
     window.addEventListener('pointermove', onMove, { passive: true })
     window.addEventListener('scroll', invalidate, { passive: true })
     window.addEventListener('resize', invalidate)
+    document.addEventListener('pointerleave', release)
+    window.addEventListener('blur', release)
 
     return () => {
       window.removeEventListener('pointermove', onMove)
       window.removeEventListener('scroll', invalidate)
       window.removeEventListener('resize', invalidate)
+      document.removeEventListener('pointerleave', release)
+      window.removeEventListener('blur', release)
     }
   }, [measure, radius, reduced, strength, x, y])
 
@@ -95,7 +114,7 @@ export function Magnetic({ children, className, strength = 18, radius = 90 }: Ma
     <motion.span
       ref={ref}
       className={cn('inline-flex', className)}
-      style={reduced ? undefined : { x: springX, y: springY }}
+      style={reduced ? { x: 0, y: 0 } : { x: springX, y: springY }}
     >
       {children}
     </motion.span>

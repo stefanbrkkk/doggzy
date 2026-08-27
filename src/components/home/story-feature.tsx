@@ -66,7 +66,10 @@ export function StoryFeature() {
 
           <Reveal direction="up" delay={0.08} className="order-1 lg:order-2">
             <div className="overflow-hidden rounded-5xl border border-line">
-              <motion.div style={reduced ? undefined : { y: artY }} className="scale-110">
+              {/* Pinned, not dropped — see the note in site-footer.tsx: the
+                  first client render is never `reduced`, so Motion has already
+                  written `y: -8%` and nothing would clear it. */}
+              <motion.div style={reduced ? { y: '0%' } : { y: artY }} className="scale-110">
                 <GenerativeArt
                   seed={lead.slug}
                   shape={lead.art.shape}
