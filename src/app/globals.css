@@ -569,8 +569,11 @@
        has no margin to miss, and Motion warned about it on every route in
        development. Positioning it terminates the walk properly. Verified inert:
        all 17 routes are pixel-identical at 1440×900 and 390×844 before and
-       after, because nothing on the site resolves against the initial
-       containing block. */
+       after. That sweep looked at elements, though, and a `::after` overlay is
+       not one — `/price` had a stretched card link whose wrapper was missing
+       `relative`, so it resolved here and covered the whole document. The
+       positioning did not create that bug, it enlarged it; the E2E suite now
+       hit-tests for it directly. */
     position: relative;
   }
 

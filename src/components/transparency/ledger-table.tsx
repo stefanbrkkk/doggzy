@@ -71,6 +71,9 @@ export function LedgerTable({ events }: { events: LedgerEntry[] }) {
                 aria-pressed={active}
                 className={cn(
                   'relative rounded-full border border-line px-4 py-2 text-sm transition-colors',
+                  // 38px of visual, 44px of target — the row's own gap keeps
+                  // neighbouring areas from overlapping.
+                  "before:absolute before:-inset-1 before:content-['']",
                   active ? 'border-transparent text-brand-ink' : 'text-ink-muted hover:text-ink',
                 )}
               >

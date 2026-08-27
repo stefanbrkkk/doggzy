@@ -255,7 +255,7 @@ export function QuickView({
               type="button"
               onClick={onClose}
               aria-label="Zatvori brzi pregled"
-              className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full bg-canvas/80 text-ink-muted backdrop-blur transition-colors hover:text-ink"
+              className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full bg-canvas/80 text-ink-muted backdrop-blur transition-colors before:absolute before:-inset-1 before:content-[''] hover:text-ink"
             >
               <X className="h-4 w-4" />
             </button>

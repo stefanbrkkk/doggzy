@@ -7,11 +7,79 @@ import { setTimeout as sleep } from 'node:timers/promises'
  * End-to-end suite.
  *
  * Deliberately a plain script rather than a test-runner dependency: it needs to
- * run identically in CI and in a sandbox, and the whole surface fits in one
- * file. Assumes a production server is already listening on BASE_URL.
+ * run identically in CI and in a sandbox, with nothing to configure and no
+ * runner semantics to learn. It has grown well past the point where "one file"
+ * is self-evidently right — the trade is that every check reads top to bottom
+ * with its reasoning next to it, and the cost is this table of contents.
+ *
+ * Assumes a production server is already listening on BASE_URL, built from a
+ * clean `.next`. A server left running across a rebuild serves HTML whose
+ * chunks no longer exist: every route still answers 200, nothing hydrates, and
+ * the suite reports a hundred failures that are all the same mistake.
  *
  *   npm run build && npm run start &   # then
  *   npm run test:e2e
+ *
+ * React ships hydration diffing and StrictMode double-invocation only in
+ * development, so a whole class of defect is invisible here. `npm run
+ * check:console` covers that against a dev server.
+ *
+ * Groups, in order:
+ *
+ *    1. Rute: status, naslov, greške u konzoli
+ *    2. Bez horizontalnog prelivanja na 390px
+ *    3. Prijava psa: ceo tok do potvrde
+ *    4. Prijava psa: validacija zaustavlja prazan korak
+ *    5. Prodavnica: filtriranje, pretraga, korpa
+ *    6. Brzi pregled: otvaranje, kupovina, zatvaranje
+ *    7. Korpa: izmena količine i praznjenje
+ *    8. Omiljeno: čuvanje između stranica
+ *    9. Tema: prebacivanje i pamćenje
+ *   10. Navigacija: mobilni meni i unutrašnji linkovi
+ *   11. Svi unutrašnji linkovi vode na postojeće stranice
+ *   12. Admin: zaštita i odbijanje pogrešnih podataka
+ *   13. Admin: uspešna prijava, sesija i odjava
+ *   14. Strukturirani podaci su validan JSON-LD
+ *   15. 404, sitemap, robots, health
+ *   16. Ceo sajt je na latinici (uključujući formatirane datume)
+ *   17. Zaključavanje skrola se uvek otključa
+ *   18. Smanjene animacije: sajt ostaje upotrebljiv
+ *   19. Prijava: greška slanja se poništava povratkom
+ *   20. Pristupačnost: preskoči na sadržaj, fokus, alt tekst
+ *   21. Količina se ne može podići iznad gornje granice
+ *   22. Preveliki zahtevi se odbijaju pre učitavanja u memoriju
+ *   23. Sajt je čitljiv i kada se skripte ne izvrše
+ *   24. Hero čeka da se zavesa podigne
+ *   25. Smanjene animacije ne ostavljaju pomerene elemente
+ *   26. Pokazivač i traka napretka se smire kad treba
+ *   27. Napredak čitanja se ne dupla
+ *   28. Staklene površine stvarno zamućuju pozadinu
+ *   29. Modali stvarno zaustavljaju skrol, ne samo overflow
+ *   30. Zavesa ne pušta stranicu da se pomeri ispod nje
+ *   31. Smanjene animacije: zavesa nestane umesto da se podigne
+ *   32. Nagnut telefon ostaje kliktabilan
+ *   33. Fokus ostaje u otvorenom dijalogu
+ *   34. Brzi pregled preuzima fokus i uz smanjene animacije
+ *   35. Prazna korpa zadržava fokus
+ *   36. Trake pokrivenosti se popune na svakom rasporedu
+ *   37. Nijedno dugme ne seče sopstveni natpis
+ *   38. Ikone i manifest stvarno postoje
+ *   39. Meni na položenom telefonu dohvata sve destinacije
+ *   40. Brzi pregled staje na niske ekrane
+ *   41. Filtriranje ne ostavlja posetioca u podnožju
+ *   42. Lepljiva traka pušta niske ekrane
+ *   43. Greške u formama su na srpskom i ne zumiraju ekran
+ *   44. Mete za prst i preklopi koji ostaju u svojoj kartici
+ *   45. Bezbednosna zaglavlja i keširanje stvarno stižu
+ *   46. Šejder pozadine stvarno radi, i staje kad treba
+ *   47. Godina u podnožju prati posetioca, ne build
+ *   48. Značke ostaju čitljive i preko crteža, u obe teme
+ *   49. Tab i Shift+Tab ostaju u dijalogu
+ *   50. Potvrda slanja poruke se najavi i zadrži fokus
+ *   51. Iznos donacije se ne izvikuje na svaki znak
+ *   52. Zaglavljen zahtev se prekine umesto da se vrti zauvek
+ *   53. Traka učitavanja je živa i pre nego što React stigne
+ *   54. Otkucana prijava se ne baca bez pitanja
  */
 
 const BASE = process.env.E2E_BASE_URL ?? `http://localhost:${process.env.PORT ?? 3000}`
@@ -1933,6 +2001,196 @@ await group('Greške u formama su na srpskom i ne zumiraju ekran', async () => {
   })
   const body = await answer.text()
   check('/api/kontakt: odgovor je na srpskom', !english.test(body), body.slice(0, 160))
+})
+
+// ---------------------------------------------------------------- mete ------
+await group('Mete za prst i preklopi koji ostaju u svojoj kartici', async () => {
+  // Two things at once, because both are invisible to the eye and to a
+  // screenshot. A stretched `after:inset-0` overlay with no positioned ancestor
+  // resolves against `<html>` and covers the whole document — on /price three
+  // story cards each did that, so every click anywhere on the page opened the
+  // last story. And a control smaller than a fingertip is only findable by
+  // measuring it.
+  const audit = () => {
+    const px = (value) => (value.endsWith('px') ? Math.abs(parseFloat(value)) : 0)
+    const grow = (styles) =>
+      styles.position === 'absolute' && styles.content !== 'none'
+        ? { x: px(styles.left) + px(styles.right), y: px(styles.top) + px(styles.bottom) }
+        : { x: 0, y: 0 }
+
+    const targets = []
+    const orphans = []
+    for (const node of document.querySelectorAll(
+      'a[href], button, input, select, textarea, [role="button"]',
+    )) {
+      if (node.closest('[aria-hidden="true"]') || node.tabIndex < 0) continue
+      const box = node.getBoundingClientRect()
+      if (box.width < 4 || box.height < 4) continue
+      // A full-screen backdrop is a dismiss affordance, not a finger target.
+      if (box.width > window.innerWidth * 0.95 && box.height > window.innerHeight * 0.95) continue
+      const styles = getComputedStyle(node)
+      if (styles.visibility === 'hidden' || styles.display === 'none') continue
+
+      for (const which of ['::before', '::after']) {
+        const pseudo = getComputedStyle(node, which)
+        if (pseudo.position !== 'absolute' || pseudo.content === 'none') continue
+        const anchorEl = node.offsetParent
+        if (styles.position === 'static' && (!anchorEl || anchorEl.tagName === 'BODY')) {
+          orphans.push(
+            `${node.tagName}${which} ${(node.getAttribute('aria-label') || node.textContent || '').trim().slice(0, 24)}`,
+          )
+        }
+      }
+
+      // WCAG 2.5.8 Inline exception: a link whose height is set by the line box
+      // of the text around it. Growing those would overlap their neighbours,
+      // and an icon button is never one line-height tall, so nothing real slips
+      // through here.
+      const lineHeight =
+        styles.lineHeight === 'normal'
+          ? parseFloat(styles.fontSize) * 1.4
+          : parseFloat(styles.lineHeight)
+      const before = grow(getComputedStyle(node, '::before'))
+      const after = grow(getComputedStyle(node, '::after'))
+      targets.push({
+        name: (node.getAttribute('aria-label') || node.textContent || node.tagName)
+          .trim()
+          .slice(0, 26),
+        inlineText: node.tagName === 'A' && box.height <= lineHeight + 4,
+        cx: box.left + box.width / 2,
+        cy: box.top + box.height / 2,
+        w: box.width + Math.max(after.x, before.x),
+        h: box.height + Math.max(after.y, before.y),
+      })
+    }
+
+    // 44×44 outright, or 24×24 with the spacing the standard asks for.
+    const failing = []
+    for (const target of targets) {
+      if (target.inlineText) continue
+      if (target.w >= 43.5 && target.h >= 43.5) continue
+      const crowded = targets.some(
+        (other) => other !== target && Math.hypot(other.cx - target.cx, other.cy - target.cy) < 24,
+      )
+      if (target.w >= 23.5 && target.h >= 23.5 && !crowded) continue
+      failing.push(`${target.name} ${Math.round(target.w)}×${Math.round(target.h)}`)
+    }
+    return { failing: [...new Set(failing)], orphans: [...new Set(orphans)] }
+  }
+
+  for (const route of [
+    '/',
+    '/prodavnica',
+    '/psi',
+    '/psi/mrvica',
+    '/price',
+    '/korpa',
+    '/doniraj',
+    '/transparentnost',
+  ]) {
+    for (const width of [320, 390]) {
+      const ctx = await browser.newContext({
+        viewport: { width, height: width === 320 ? 568 : 844 },
+        hasTouch: true,
+        isMobile: true,
+      })
+      await ctx.addInitScript(() => {
+        try {
+          sessionStorage.setItem('doggzy.visited', '1')
+        } catch {}
+      })
+      const page = await ctx.newPage()
+      await page.goto(`${BASE}${route}`, { waitUntil: 'load' })
+      await sleep(2100)
+      const result = await page.evaluate(audit)
+      check(
+        `${route} @${width}: mete zadovoljavaju WCAG 2.5.8`,
+        result.failing.length === 0,
+        result.failing.slice(0, 3).join(' | '),
+      )
+      check(
+        `${route} @${width}: nijedan preklop nije bez roditelja`,
+        result.orphans.length === 0,
+        result.orphans.slice(0, 3).join(' | '),
+      )
+      await ctx.close()
+    }
+  }
+})
+
+// ------------------------------------------------------------ zaglavlja -----
+await group('Bezbednosna zaglavlja i keširanje stvarno stižu', async () => {
+  // Every one of these lives in `next.config.ts` and none of them was covered:
+  // deleting a line there broke nothing any suite could see, which is a poor
+  // arrangement for the headers that decide whether the site can be framed or
+  // whether a script from anywhere else may run.
+  const response = await context.request.get(`${BASE}/`, { failOnStatusCode: false })
+  const headers = response.headers()
+  const required = {
+    'content-security-policy': /default-src 'self'/,
+    'x-content-type-options': /^nosniff$/,
+    'x-frame-options': /^DENY$/,
+    'referrer-policy': /strict-origin-when-cross-origin/,
+    'strict-transport-security': /max-age=\d{7,}/,
+    'cross-origin-opener-policy': /same-origin/,
+    'permissions-policy': /geolocation=\(self\)/,
+  }
+  for (const [name, pattern] of Object.entries(required)) {
+    check(`${name} je postavljeno`, pattern.test(headers[name] ?? ''), headers[name] ?? '(nema)')
+  }
+  // The report flow offers "use my location" and previews a chosen photo from a
+  // blob URL, so those two allowances are load-bearing; the rest must stay shut.
+  const csp = headers['content-security-policy'] ?? ''
+  check("object-src je 'none'", /object-src 'none'/.test(csp), csp.slice(0, 80))
+  check("frame-ancestors je 'none'", /frame-ancestors 'none'/.test(csp))
+  check('img-src dozvoljava blob za pregled fotografije', /img-src [^;]*blob:/.test(csp))
+  check('nema X-Powered-By', !('x-powered-by' in headers), headers['x-powered-by'] ?? '')
+
+  // Hashed output is immutable by construction; anything session-dependent must
+  // never be stored.
+  const homepage = await response.text()
+  const chunk = homepage.match(/\/_next\/static\/chunks\/[A-Za-z0-9._-]+\.js/)?.[0]
+  if (chunk) {
+    const asset = await context.request.get(`${BASE}${chunk}`, { failOnStatusCode: false })
+    check(
+      'statički resursi se keširaju zauvek',
+      /max-age=31536000/.test(asset.headers()['cache-control'] ?? ''),
+      asset.headers()['cache-control'] ?? '(nema)',
+    )
+    check(
+      'statički resursi se serviraju kao JavaScript',
+      /javascript/.test(asset.headers()['content-type'] ?? ''),
+      asset.headers()['content-type'] ?? '(nema)',
+    )
+  } else {
+    check('nađen bar jedan chunk za proveru keširanja', false, 'nijedan')
+  }
+
+  for (const path of ['/admin', '/admin/login', '/api/admin/me']) {
+    const guarded = await context.request.get(`${BASE}${path}`, {
+      failOnStatusCode: false,
+      maxRedirects: 0,
+    })
+    check(
+      `${path} se ne kešira`,
+      /no-store/.test(guarded.headers()['cache-control'] ?? ''),
+      guarded.headers()['cache-control'] ?? '(nema)',
+    )
+  }
+  // `Vary` survives on the redirect and the API route; on a rendered page Next
+  // replaces it with its own RSC list, and `no-store` above is what protects
+  // that one. Asserting it where it does land keeps the middleware honest.
+  for (const path of ['/admin', '/api/admin/me']) {
+    const guarded = await context.request.get(`${BASE}${path}`, {
+      failOnStatusCode: false,
+      maxRedirects: 0,
+    })
+    check(
+      `${path} vari po kolačiću`,
+      /cookie/i.test(guarded.headers()['vary'] ?? ''),
+      guarded.headers()['vary'] ?? '(nema)',
+    )
+  }
 })
 
 // ------------------------------------------------------------- aurora -------

@@ -184,7 +184,11 @@ function FavoriteButton({
       onClick={onToggle}
       aria-pressed={active}
       aria-label={active ? `Ukloni ${productName} iz omiljenih` : `Dodaj ${productName} u omiljene`}
-      className="absolute right-4 top-4 z-20 grid h-9 w-9 place-items-center rounded-full bg-canvas/80 text-ink-muted backdrop-blur transition-colors hover:text-critical focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+      // The pill reads 36px by design; the pseudo-element grows the touch
+      // target to 44 without changing a pixel of the layout. Same technique the
+      // report flow's chips use. It sits above the quick-view overlay (`z-20`
+      // over `z-10`), so a thumb aiming at the heart gets the heart.
+      className="absolute right-4 top-4 z-20 grid h-9 w-9 place-items-center rounded-full bg-canvas/80 text-ink-muted backdrop-blur transition-colors hover:text-critical focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand before:absolute before:-inset-1 before:content-['']"
     >
       <motion.span
         animate={active ? { scale: [1, 1.35, 1] } : { scale: 1 }}

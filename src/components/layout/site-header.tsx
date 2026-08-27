@@ -153,7 +153,11 @@ export function SiteHeader() {
         >
           <Link
             href={routes.home}
-            className="shrink-0 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand"
+            // Grown to a 44px target without changing the mark's size.
+            // `relative` is load-bearing: an absolute pseudo-element with no
+            // positioned ancestor resolves against `<html>` and covers the
+            // whole document — which is exactly what went wrong on /price.
+            className="relative shrink-0 rounded-lg before:absolute before:inset-x-0 before:-inset-y-0.5 before:content-[''] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand"
             aria-label="Doggzy — početna"
           >
             <Logo animated={!reduced} />
@@ -206,7 +210,7 @@ export function SiteHeader() {
                   ? `Korpa, ${itemCount} ${plural(itemCount, 'stavka', 'stavke', 'stavki')}`
                   : 'Korpa, prazna'
               }
-              className="relative grid h-10 w-10 place-items-center rounded-xl text-ink-muted transition-colors hover:bg-elevated hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+              className="relative grid h-10 w-10 place-items-center rounded-xl text-ink-muted transition-colors before:absolute before:-inset-0.5 before:content-[''] hover:bg-elevated hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
             >
               <ShoppingBag className="h-[18px] w-[18px]" />
               <CountBadge count={hydrated ? itemCount : 0} />
@@ -343,7 +347,7 @@ function IconLink({
     <Link
       href={href}
       aria-label={count ? `${label}, ${count}` : label}
-      className="relative grid h-10 w-10 place-items-center rounded-xl text-ink-muted transition-colors hover:bg-elevated hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+      className="relative grid h-10 w-10 place-items-center rounded-xl text-ink-muted transition-colors before:absolute before:-inset-0.5 before:content-[''] hover:bg-elevated hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
     >
       {children}
       <CountBadge count={count} />

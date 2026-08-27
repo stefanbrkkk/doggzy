@@ -86,6 +86,11 @@ projektu i nisu se videle na pregled:
   zamućena lepljiva traka nad istom mrežom 30–48%. Zamućenje pozadine se plaća
   po površini, ne po poluprečniku: 22px, 10px i 6px mere isto.
 
+- **`check:console`** vozi razvojni server, a ne produkcijski build. React šalje
+  poređenje hidracije i StrictMode duplo iscrtavanje samo u razvoju, pa je cela
+  klasa kvarova nevidljiva svemu ostalom. Traži i razvojni server: `npm run dev
+-- -p 3100`, pa `npm run check:console`.
+
 Neke od tih provera postoje zato što se kvar ne vidi u izvornom kodu. Lightning
 CSS je iz `backdrop-filter` pravila izbacivao standardno svojstvo i ostavljao
 samo `-webkit-` oblik, pa nijedna staklena površina nije imala zamućenje —
@@ -100,6 +105,16 @@ koja se ne poklapa sa crtežom, pa 53% ekrana telefona nije primalo klikove. A
 React je odbacivao ceo dokument. Nijedan od tih kvarova ne postoji u izvornom
 kodu — E2E zato čita izračunate vrednosti u pravom pregledaču, a ne tekst u
 stilu.
+
+Tri poslednja su naučila po jednu stvar više. Generator slučajnih brojeva za
+crteže predavao se detetu kao svojstvo, pa se niz trošio u drugom iscrtavanju
+nego što je nastao — a React garantuje samo da će telo komponente pozvati _bar_
+jednom po komitu. Ista greška u prozirnosti: `style={reduced ? undefined : …}`
+oduzme Motionu upravljanje ali ne obriše ono što je već upisao, pa je reč u
+podnožju stajala nevidljiva na svih 14 ruta. I `resend` poseže za opcionim
+peer-om u grani koju ovaj sajt nikad ne pozove: npm ga instalira podrazumevano,
+pa je ovde prolazilo, a pucalo svakome ko koristi pnpm ili yarn — zato spisak
+pred izdanje traži `npm ci` na čisto pre nego što se išta zapakuje.
 
 ## Struktura
 

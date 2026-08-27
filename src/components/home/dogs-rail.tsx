@@ -161,7 +161,7 @@ export function DogsRail() {
             onClick={() => scrollByCard(-1)}
             disabled={atStart}
             aria-label="Prethodni psi"
-            className="grid h-10 w-10 place-items-center rounded-full border border-line text-ink-muted transition-colors hover:border-line-strong hover:text-ink disabled:opacity-30"
+            className="relative grid h-10 w-10 place-items-center rounded-full border border-line text-ink-muted transition-colors before:absolute before:-inset-0.5 before:content-[''] hover:border-line-strong hover:text-ink disabled:opacity-30"
           >
             <ArrowLeft className="h-4 w-4" />
           </button>
@@ -170,7 +170,7 @@ export function DogsRail() {
             onClick={() => scrollByCard(1)}
             disabled={atEnd}
             aria-label="Sledeći psi"
-            className="grid h-10 w-10 place-items-center rounded-full border border-line text-ink-muted transition-colors hover:border-line-strong hover:text-ink disabled:opacity-30"
+            className="relative grid h-10 w-10 place-items-center rounded-full border border-line text-ink-muted transition-colors before:absolute before:-inset-0.5 before:content-[''] hover:border-line-strong hover:text-ink disabled:opacity-30"
           >
             <ArrowRight className="h-4 w-4" />
           </button>

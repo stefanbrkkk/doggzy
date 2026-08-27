@@ -50,7 +50,15 @@ export default function StoriesPage() {
             {stories.map((story, index) => (
               <li key={story.slug}>
                 <Reveal delay={index * 0.06} className="h-full">
-                  <article className="group flex h-full flex-col overflow-hidden rounded-4xl border border-line bg-elevated transition-[border-color,transform] duration-500 ease-out-expo hover:-translate-y-1 hover:border-line-strong">
+                  {/* `relative` is load-bearing, not decoration. The title link
+                      below stretches an `after:inset-0` overlay to make the
+                      whole card clickable, and without a positioned ancestor
+                      that overlay resolves against the nearest one there is —
+                      which is `<html>`. Every card then covered the entire
+                      document, and since they stack, the last story in the list
+                      swallowed every click on the page. Invisible to the eye and
+                      to a screenshot; only hit-testing finds it. */}
+                  <article className="group relative flex h-full flex-col overflow-hidden rounded-4xl border border-line bg-elevated transition-[border-color,transform] duration-500 ease-out-expo hover:-translate-y-1 hover:border-line-strong">
                     <div className="aspect-16/10 overflow-hidden">
                       <GenerativeArt
                         seed={story.slug}

@@ -9,6 +9,12 @@ import { SESSION_COOKIE, verifySession } from '@/lib/auth-edge'
  * browser filed the pre-login 307 in its history entry and replayed it after
  * the session existed, dropping a logged-in admin back onto the login form.
  * With a longer history the replay deadlocks into ERR_TOO_MANY_REDIRECTS.
+ *
+ * `Vary` reaches the browser on the redirect and on the API routes; on a
+ * rendered page Next replaces it with its own RSC list, so `/admin/login` ships
+ * without `Cookie` in it. That costs nothing — `no-store` forbids storing the
+ * response at all, which is strictly stronger than varying on it — but it is
+ * worth knowing that only one of these two headers is load-bearing everywhere.
  */
 function perSession(response: NextResponse): NextResponse {
   response.headers.set('Cache-Control', 'no-store, must-revalidate')

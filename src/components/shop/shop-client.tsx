@@ -227,6 +227,9 @@ export function ShopClient() {
                     aria-pressed={active}
                     className={cn(
                       'relative shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm transition-colors',
+                      // 36px of visual, 44px of target. The row's `gap-2`
+                      // means 4px per side makes neighbours meet, never overlap.
+                      "before:absolute before:-inset-1 before:content-['']",
                       active ? 'text-brand-ink' : 'text-ink-muted hover:text-ink',
                     )}
                   >

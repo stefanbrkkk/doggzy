@@ -93,9 +93,25 @@ export function ImpactCalculator() {
                     best ? `${best.label}, ${best.dogName}` : 'ispod prve stavke'
                   }`}
                   className={cn(
-                    'h-2 w-full cursor-pointer appearance-none rounded-full bg-sunken outline-none',
+                    // 44px of drag target, 8px of visible track. The element's
+                    // own box is what captures the pointer, and at `h-2` that
+                    // was an 8px band — the 24px thumb overflows it visually but
+                    // does not extend the box, so on a phone this slider was a
+                    // hairline to catch. The rail is drawn on the track
+                    // pseudo-element instead, which is the only way to grow the
+                    // box without stretching the rail with it: clipping the
+                    // background to the content box turns `rounded-full` into a
+                    // lens, because the inner radius is reduced per axis.
+                    'h-11 w-full cursor-pointer appearance-none bg-transparent outline-none',
+                    '[&::-webkit-slider-runnable-track]:h-2 [&::-webkit-slider-runnable-track]:rounded-full',
+                    '[&::-webkit-slider-runnable-track]:bg-[image:var(--rail)]',
+                    '[&::-moz-range-track]:h-2 [&::-moz-range-track]:rounded-full',
+                    '[&::-moz-range-track]:bg-[image:var(--rail)]',
                     'focus-visible:ring-4 focus-visible:ring-brand/25',
                     '[&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:appearance-none',
+                    // Against a runnable track the thumb sits on the track's top
+                    // edge; half the difference pulls it back to centre.
+                    '[&::-webkit-slider-thumb]:-mt-2',
                     '[&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-brand',
                     '[&::-webkit-slider-thumb]:shadow-[0_0_0_4px_var(--canvas),0_4px_14px_oklch(0_0_0/0.45)]',
                     '[&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:duration-200',
@@ -103,9 +119,13 @@ export function ImpactCalculator() {
                     '[&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:rounded-full',
                     '[&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-brand',
                   )}
-                  style={{
-                    background: `linear-gradient(to right, var(--brand) ${(index / (STEPS.length - 1)) * 100}%, var(--sunken) ${(index / (STEPS.length - 1)) * 100}%)`,
-                  }}
+                  style={
+                    {
+                      // Handed to the track pseudo-element through a custom
+                      // property — inline styles cannot address a pseudo.
+                      '--rail': `linear-gradient(to right, var(--brand) ${(index / (STEPS.length - 1)) * 100}%, var(--sunken) ${(index / (STEPS.length - 1)) * 100}%)`,
+                    } as React.CSSProperties
+                  }
                 />
 
                 <div className="flex items-center justify-between text-2xs text-ink-subtle">

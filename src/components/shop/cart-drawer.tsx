@@ -119,7 +119,7 @@ export function CartDrawer() {
                 type="button"
                 onClick={closeCart}
                 aria-label="Zatvori korpu"
-                className="grid h-9 w-9 place-items-center rounded-lg text-ink-muted transition-colors hover:bg-elevated hover:text-ink"
+                className="relative grid h-9 w-9 place-items-center rounded-lg text-ink-muted transition-colors before:absolute before:-inset-1 before:content-[''] hover:bg-elevated hover:text-ink"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -197,7 +197,7 @@ export function CartDrawer() {
                               type="button"
                               onClick={() => removeFromCart(entry.product.id)}
                               aria-label={`Ukloni ${entry.product.name} iz korpe`}
-                              className="grid h-8 w-8 place-items-center rounded-lg text-ink-subtle transition-colors hover:bg-critical/10 hover:text-critical"
+                              className="relative grid h-8 w-8 place-items-center rounded-lg text-ink-subtle transition-colors before:absolute before:-inset-1.5 before:content-[''] hover:bg-critical/10 hover:text-critical"
                             >
                               <Trash2 className="h-4 w-4" />
                             </button>
@@ -283,7 +283,9 @@ export function Stepper({
         onClick={() => onChange(Math.max(min, value - 1))}
         disabled={atMin}
         aria-label={`Smanji količinu — ${label}`}
-        className="grid h-8 w-8 place-items-center rounded-l-lg text-ink-muted transition-colors hover:bg-sunken hover:text-ink disabled:pointer-events-none disabled:opacity-40"
+        // 32px of visual, 44px of target. `relative` anchors the pseudo; the
+        // 32px value between the two buttons keeps their grown areas apart.
+        className="relative grid h-8 w-8 place-items-center rounded-l-lg text-ink-muted transition-colors before:absolute before:-inset-1.5 before:content-[''] hover:bg-sunken hover:text-ink disabled:pointer-events-none disabled:opacity-40"
       >
         <Minus className="h-3.5 w-3.5" />
       </button>
@@ -295,7 +297,7 @@ export function Stepper({
         onClick={() => onChange(Math.min(MAX_QTY, value + 1))}
         disabled={atMax}
         aria-label={`Povećaj količinu — ${label}`}
-        className="grid h-8 w-8 place-items-center rounded-r-lg text-ink-muted transition-colors hover:bg-sunken hover:text-ink disabled:pointer-events-none disabled:opacity-40"
+        className="relative grid h-8 w-8 place-items-center rounded-r-lg text-ink-muted transition-colors before:absolute before:-inset-1.5 before:content-[''] hover:bg-sunken hover:text-ink disabled:pointer-events-none disabled:opacity-40"
       >
         <Plus className="h-3.5 w-3.5" />
       </button>
