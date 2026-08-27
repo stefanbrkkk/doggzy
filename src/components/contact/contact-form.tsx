@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Check, Loader2, Send } from 'lucide-react'
 import { duration, ease, spring } from '@/lib/motion'
@@ -28,6 +28,14 @@ export function ContactForm() {
   })
   const [errors, setErrors] = useState<Errors>({})
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const sentRef = useRef<HTMLHeadingElement>(null)
+
+  // The submit button unmounts with the form, so focus has nowhere to go and
+  // lands on <body>. `preventScroll` because the confirmation replaces the form
+  // in place — the page does not need to move for it.
+  useEffect(() => {
+    if (status === 'sent') sentRef.current?.focus({ preventScroll: true })
+  }, [status])
 
   const set = <K extends keyof ContactDraft>(key: K, value: ContactDraft[K]) => {
     setValues((previous) => ({ ...previous, [key]: value }))
@@ -76,7 +84,17 @@ export function ContactForm() {
 
   if (status === 'sent') {
     return (
-      <div className="flex flex-col items-center gap-5 rounded-5xl border border-line bg-elevated px-8 py-20 text-center">
+      // The form unmounts on success, so without this the visitor's focus fell
+      // to <body> and nothing was announced at all: no live region, no alert,
+      // and the confirmation was a plain <p>, so heading navigation could not
+      // find it either. Someone using a screen reader got no signal that the
+      // message had sent. `role="status"` announces it, the heading makes it
+      // navigable, and focus lands on it — the same contract the report flow
+      // already keeps.
+      <div
+        role="status"
+        className="flex flex-col items-center gap-5 rounded-5xl border border-line bg-elevated px-8 py-20 text-center"
+      >
         <motion.span
           className="grid h-16 w-16 place-items-center rounded-full bg-brand text-brand-ink"
           initial={{ scale: 0, rotate: -30 }}
@@ -86,7 +104,9 @@ export function ContactForm() {
           <Check className="h-7 w-7" />
         </motion.span>
         <div className="space-y-2">
-          <p className="text-headline text-ink">Poruka je poslata</p>
+          <h2 ref={sentRef} tabIndex={-1} className="text-headline text-ink outline-none">
+            Poruka je poslata
+          </h2>
           <p className="text-sm text-ink-muted">Javljamo se u roku od dva radna dana.</p>
         </div>
         <button

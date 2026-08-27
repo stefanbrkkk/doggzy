@@ -214,10 +214,15 @@ export function DonateForm() {
         </Select>
       </div>
 
-      <p
-        className="rounded-2xl bg-brand/8 px-4 py-3 text-sm leading-relaxed text-brand-text"
-        aria-live="polite"
-      >
+      {/* No `aria-live` here. It fired once per keystroke: typing "12500" into
+          the amount field queued five full sentences — "1 RSD pokriva…",
+          "12 RSD pokriva…", "125 RSD…" — all of which a polite region reads out
+          after the visitor stops typing, burying the character echo they
+          actually need. Only the last one ever meant anything. The amount is
+          already announced by the field itself, and the preset buttons carry
+          their own labels; <ImpactCalculator> makes the same choice for the
+          same reason. */}
+      <p className="rounded-2xl bg-brand/8 px-4 py-3 text-sm leading-relaxed text-brand-text">
         {formatRsd(effectiveAmount)}
         {recurring ? ' mesečno' : ''} pokriva {covers}
         {chosenDog ? ` — za ${chosenDog.nameAccusative}` : ''}.

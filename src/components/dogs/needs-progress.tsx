@@ -30,7 +30,7 @@ export function NeedsProgress({ needs }: { needs: DogNeed[] }) {
               aria-label={`${need.label}: pokriveno ${percent}%`}
             >
               <motion.div
-                className="h-full rounded-full bg-linear-to-r from-brand to-iris-400"
+                className="h-full rounded-full bg-linear-to-r from-brand to-[var(--gradient-3)]"
                 initial={{ scaleX: 0 }}
                 whileInView={{ scaleX: ratio }}
                 viewport={viewportOnce}

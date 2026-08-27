@@ -95,7 +95,7 @@ export function DogCard({ dog, className }: { dog: Dog; className?: string }) {
                   next to a label reading 59%. */}
               <div ref={trackRef} className="h-1.5 overflow-hidden rounded-full bg-sunken">
                 <motion.div
-                  className="h-full rounded-full bg-linear-to-r from-brand to-iris-400"
+                  className="h-full rounded-full bg-linear-to-r from-brand to-[var(--gradient-3)]"
                   initial={false}
                   animate={{ scaleX: trackInView ? progress : 0 }}
                   style={{ originX: 0 }}

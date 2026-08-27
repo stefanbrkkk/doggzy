@@ -9,6 +9,7 @@ import { duration, spring } from '@/lib/motion'
 import { routes } from '@/config/site'
 import type { Product } from '@/content/products'
 import { lockScroll } from '@/lib/scroll-lock'
+import { trapTab } from '@/lib/focus-trap'
 import { useShop } from '@/lib/store/shop-store'
 import { Badge } from '@/components/ui/badge'
 import { Button, buttonStyles } from '@/components/ui/button'
@@ -58,6 +59,8 @@ export function QuickView({
    */
   const [ready, setReady] = useState(false)
   const artRef = useRef<HTMLDivElement>(null)
+  /** The `role="dialog"` element — what Tab is trapped against. */
+  const dialogRef = useRef<HTMLDivElement>(null)
   const restoreFocus = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
@@ -107,24 +110,9 @@ export function QuickView({
         onClose()
         return
       }
-      if (event.key !== 'Tab') return
-
-      const panel = scope.current
-      if (!panel) return
-      const focusables = panel.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])',
-      )
-      if (focusables.length === 0) return
-
-      const first = focusables[0]
-      const last = focusables[focusables.length - 1]
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault()
-        last.focus()
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault()
-        first.focus()
-      }
+      // Trapped against the dialog, not the panel: the backdrop is a labelled
+      // close button inside the dialog and outside the panel. See focus-trap.ts.
+      trapTab(dialogRef.current, event)
     }
 
     document.addEventListener('keydown', onKeyDown)
@@ -148,6 +136,7 @@ export function QuickView({
     <AnimatePresence>
       {product ? (
         <div
+          ref={dialogRef}
           className="fixed inset-0 z-[130] grid place-items-center p-4 sm:p-8"
           role="dialog"
           aria-modal="true"

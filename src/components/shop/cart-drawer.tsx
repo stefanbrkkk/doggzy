@@ -8,6 +8,7 @@ import { cn, formatRsd } from '@/lib/utils'
 import { duration, ease, spring } from '@/lib/motion'
 import { routes } from '@/config/site'
 import { lockScroll } from '@/lib/scroll-lock'
+import { trapTab } from '@/lib/focus-trap'
 import { MAX_QTY, useShop } from '@/lib/store/shop-store'
 import { buttonStyles } from '@/components/ui/button'
 import { ProductArt } from '@/components/shop/product-art'
@@ -27,6 +28,8 @@ export function CartDrawer() {
   } = useShop()
 
   const panelRef = useRef<HTMLDivElement>(null)
+  /** The `role="dialog"` element — what Tab is trapped against. */
+  const dialogRef = useRef<HTMLDivElement>(null)
   const previouslyFocused = useRef<HTMLElement | null>(null)
 
   // Focus management: trap Tab inside the panel, restore focus on close.
@@ -44,23 +47,9 @@ export function CartDrawer() {
         closeCart()
         return
       }
-      if (event.key !== 'Tab' || !panel) return
-
-      const focusables = panel.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])',
-      )
-      if (focusables.length === 0) return
-
-      const first = focusables[0]
-      const last = focusables[focusables.length - 1]
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault()
-        last.focus()
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault()
-        first.focus()
-      }
+      // Trapped against the dialog, not the panel: the backdrop is a labelled
+      // close button inside the dialog and outside the panel. See focus-trap.ts.
+      trapTab(dialogRef.current, event)
     }
 
     document.addEventListener('keydown', onKeyDown)
@@ -89,7 +78,13 @@ export function CartDrawer() {
   return (
     <AnimatePresence>
       {isCartOpen ? (
-        <div className="fixed inset-0 z-[120]" role="dialog" aria-modal="true" aria-label="Korpa">
+        <div
+          ref={dialogRef}
+          className="fixed inset-0 z-[120]"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Korpa"
+        >
           <motion.button
             type="button"
             aria-label="Zatvori korpu"
@@ -148,7 +143,7 @@ export function CartDrawer() {
                   </p>
                   <div className="mt-2 h-1 overflow-hidden rounded-full bg-sunken">
                     <motion.div
-                      className="h-full rounded-full bg-linear-to-r from-brand to-iris-400"
+                      className="h-full rounded-full bg-linear-to-r from-brand to-[var(--gradient-3)]"
                       initial={false}
                       animate={{ scaleX: shippingProgress }}
                       style={{ originX: 0 }}

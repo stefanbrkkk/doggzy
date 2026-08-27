@@ -136,6 +136,14 @@ const CHECKS = [
   ['brand', 'canvas', 3, 'brend kao UI element'],
   ['accent', 'elevated', 3, 'akcenat kao UI element'],
   ['line-interactive', 'sunken', 3, 'ivica polja za unos'],
+  // The end stop of every progress gradient, which is the part that encodes the
+  // value. Six components used to hard-code `iris-400`/`signal-400` here — the
+  // dark ramp — so on a white page the leading edge of a coverage bar measured
+  // 1.97:1 against its own track and the reading hairline faded to 1.73:1 at
+  // exactly the tip that tracks your position.
+  ['gradient-3', 'sunken', 3, 'vrh trake pokrivenosti'],
+  ['gradient-3', 'canvas', 3, 'vrh trake napretka čitanja'],
+  ['gradient-4', 'canvas', 3, 'kraj trake napretka čitanja'],
   // Not a WCAG threshold — a hairline divider is decorative and exempt. It is
   // a floor for "visible at all": at `--line`'s 7% the dark-theme rule landed
   // 3 sRGB levels from the cell it separates, under the amplitude of the

@@ -250,7 +250,7 @@ export function Preloader() {
               <div className="h-px w-full overflow-hidden bg-line-strong">
                 <motion.div
                   data-progress
-                  className="h-full origin-left bg-linear-to-r from-brand to-iris-400"
+                  className="h-full origin-left bg-linear-to-r from-brand to-[var(--gradient-3)]"
                   style={{ scaleX: progress / 100 }}
                 />
               </div>

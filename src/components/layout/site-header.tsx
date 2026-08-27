@@ -15,6 +15,7 @@ import { cn, plural } from '@/lib/utils'
 import { duration, ease, spring } from '@/lib/motion'
 import { primaryNav, routes, secondaryNav } from '@/config/site'
 import { lockScroll } from '@/lib/scroll-lock'
+import { trapTab } from '@/lib/focus-trap'
 import { useShop } from '@/lib/store/shop-store'
 import { Logo } from '@/components/ui/logo'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
@@ -90,22 +91,11 @@ export function SiteHeader() {
         setMenuOpen(false)
         return
       }
-      if (event.key !== 'Tab' || !panel) return
-
-      const focusables = panel.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])',
-      )
-      if (focusables.length === 0) return
-
-      const first = focusables[0]
-      const last = focusables[focusables.length - 1]
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault()
-        last.focus()
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault()
-        first.focus()
-      }
+      // The panel is itself the `role="dialog"` element here. Focus starts on
+      // it, and it is `tabindex="-1"` — so the old `activeElement === first`
+      // test was false and the very first Shift+Tab left the dialog. See
+      // focus-trap.ts.
+      trapTab(panel, event)
     }
 
     document.addEventListener('keydown', onKey)

@@ -1806,6 +1806,235 @@ await group('Greške u formama su na srpskom i ne zumiraju ekran', async () => {
   check('/api/kontakt: odgovor je na srpskom', !english.test(body), body.slice(0, 160))
 })
 
+// ------------------------------------------------- kontrast na crtežu -------
+await group('Značke ostaju čitljive i preko crteža, u obe teme', async () => {
+  // `check-contrast.mjs` reads the tokens; this reads what is painted. A badge
+  // usually sits on a card's generative artwork, and while the fills were 10%
+  // tints that artwork *was* the background — so the pair the tokens promise
+  // was never the pair on screen. Measured then, in the light theme: "Traži
+  // dom" 3.55:1, "Udomljen" 3.51:1, "bestseler" 3.44:1, against the 4.5:1 that
+  // 11px type needs. "Nestala" failed in the dark theme too, at 4.20:1.
+  const resolveColours = () => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 1
+    canvas.height = 1
+    const cx = canvas.getContext('2d', { willReadFrequently: true })
+    // Through a canvas, because computed colours here are `oklch()` and
+    // `lab()`; reading the numbers out of those strings as if they were sRGB
+    // gives nonsense ratios that look like failures.
+    const rgb = (color) => {
+      cx.clearRect(0, 0, 1, 1)
+      cx.fillStyle = '#000000'
+      cx.fillStyle = color
+      cx.fillRect(0, 0, 1, 1)
+      const data = cx.getImageData(0, 0, 1, 1).data
+      return [data[0], data[1], data[2]]
+    }
+    const luminance = (color) => {
+      const channels = rgb(color).map((value) => {
+        const scaled = value / 255
+        return scaled <= 0.03928 ? scaled / 12.92 : Math.pow((scaled + 0.055) / 1.055, 2.4)
+      })
+      return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2]
+    }
+    window.__ratio = (a, b) => {
+      const [high, low] = [luminance(a), luminance(b)].sort((x, y) => y - x)
+      return (high + 0.05) / (low + 0.05)
+    }
+  }
+
+  for (const theme of ['light', 'dark']) {
+    const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } })
+    await ctx.addInitScript((value) => {
+      try {
+        sessionStorage.setItem('doggzy.visited', '1')
+        localStorage.setItem('theme', value)
+      } catch {}
+    }, theme)
+    await ctx.addInitScript(resolveColours)
+    const page = await ctx.newPage()
+
+    for (const route of ['/prodavnica', '/psi']) {
+      await page.goto(`${BASE}${route}`, { waitUntil: 'load' })
+      await sleep(1800)
+      const failing = await page.evaluate(() => {
+        const out = []
+        for (const node of document.querySelectorAll('span[class*="rounded-full"], li > span')) {
+          const text = node.textContent.trim()
+          if (!text || text.length > 14) continue
+          if (node.getBoundingClientRect().width < 20) continue
+          const styles = getComputedStyle(node)
+          if (styles.backgroundColor === 'rgba(0, 0, 0, 0)') continue
+          const size = parseFloat(styles.fontSize)
+          const large = size >= 24 || (size >= 18.66 && Number(styles.fontWeight) >= 700)
+          const value = window.__ratio(styles.color, styles.backgroundColor)
+          if (value < (large ? 3 : 4.5)) out.push(`${text} ${value.toFixed(2)}:1`)
+        }
+        return out
+      })
+      check(
+        `${theme} ${route}: značke prolaze AA preko crteža`,
+        failing.length === 0,
+        failing.join(', '),
+      )
+    }
+
+    // The leading edge is the part of a bar that carries the value.
+    await page.goto(`${BASE}/psi/mrvica`, { waitUntil: 'load' })
+    await sleep(1500)
+    await page.evaluate(() =>
+      document.querySelector('[role="progressbar"]')?.scrollIntoView({ block: 'center' }),
+    )
+    await sleep(2200)
+    const bars = await page.evaluate(() => {
+      const end = getComputedStyle(document.documentElement).getPropertyValue('--gradient-3').trim()
+      return [...document.querySelectorAll('[role="progressbar"]')]
+        .filter((bar) => {
+          const fill = bar.firstElementChild
+          if (!fill) return false
+          const width = fill.getBoundingClientRect().width
+          return width > 12 && width < bar.getBoundingClientRect().width - 8
+        })
+        .map((bar) => ({
+          label: bar.getAttribute('aria-label')?.slice(0, 28) ?? '',
+          ratio: Number(window.__ratio(end, getComputedStyle(bar).backgroundColor).toFixed(2)),
+        }))
+    })
+    check(`${theme}: nađena delimično popunjena traka`, bars.length > 0, `${bars.length}`)
+    check(
+      `${theme}: vrh trake ima bar 3:1 prema stazi`,
+      bars.length > 0 && bars.every((bar) => bar.ratio >= 3),
+      JSON.stringify(bars),
+    )
+    await ctx.close()
+  }
+})
+
+// ------------------------------------------------- tastatura u dijalozima ---
+await group('Tab i Shift+Tab ostaju u dijalogu', async () => {
+  // The trap used to query the *panel* and test `activeElement === first`. The
+  // backdrop is a labelled close button inside the dialog but outside the
+  // panel, and focus on open sits on the panel itself, which is `tabindex="-1"`
+  // and so in no list at all — so two Shift+Tabs walked out of the cart drawer
+  // into the footer, with the ring invisible underneath the scrim.
+  const dialogs = [
+    ['korpa', 1280, 900, 'button[aria-label^="Korpa"]'],
+    ['brzi pregled', 1280, 900, 'button[aria-label^="Brzi pregled"]'],
+    ['meni', 390, 844, 'button[aria-controls="mobile-menu"]'],
+  ]
+
+  const where = (page) =>
+    page.evaluate(() => {
+      const dialog = document.querySelector('[role="dialog"]')
+      const active = document.activeElement
+      return {
+        open: Boolean(dialog),
+        inside: Boolean(dialog && active && dialog.contains(active)),
+        tag: active?.tagName ?? null,
+        label: (active?.getAttribute('aria-label') || active?.textContent || '')
+          .trim()
+          .slice(0, 28),
+      }
+    })
+
+  for (const [name, width, height, trigger] of dialogs) {
+    const ctx = await browser.newContext({
+      viewport: { width, height },
+      hasTouch: width < 500,
+      isMobile: width < 500,
+    })
+    await ctx.addInitScript(() => {
+      try {
+        sessionStorage.setItem('doggzy.visited', '1')
+      } catch {}
+    })
+    const page = await ctx.newPage()
+    await page.goto(`${BASE}/prodavnica`, { waitUntil: 'load' })
+    await sleep(1600)
+    await page
+      .locator(trigger)
+      .first()
+      .evaluate((node) => node.click())
+    await sleep(900)
+
+    for (const [direction, key, presses] of [
+      ['Shift+Tab', 'Shift+Tab', 12],
+      ['Tab', 'Tab', 14],
+    ]) {
+      let escaped = null
+      for (let press = 1; press <= presses; press += 1) {
+        await page.keyboard.press(key)
+        await sleep(90)
+        const state = await where(page)
+        if (state.open && !state.inside) {
+          escaped = `${press}. pritisak → ${state.tag} "${state.label}"`
+          break
+        }
+      }
+      check(`${name}: ${direction} ne izlazi iz dijaloga`, escaped === null, String(escaped))
+    }
+
+    await page.keyboard.press('Escape')
+    await sleep(600)
+    check(`${name}: Escape i dalje zatvara`, (await where(page)).open === false)
+    await ctx.close()
+  }
+})
+
+await group('Potvrda slanja poruke se najavi i zadrži fokus', async () => {
+  // The form unmounts on success, so focus fell to <body> and nothing was
+  // announced: no live region, no alert, and a plain <p> that heading
+  // navigation could not find either. A screen-reader user got no signal at all
+  // that the message had sent.
+  const page = await context.newPage()
+  await page.route('**/api/kontakt', (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' }),
+  )
+  await page.goto(`${BASE}/kontakt`, { waitUntil: 'load' })
+  await sleep(1400)
+  await page.getByLabel(/^Ime/).fill('Ana Anić')
+  await page.getByLabel(/^Email/).fill('ana@example.rs')
+  await page.getByLabel(/^Poruka/).fill('x'.repeat(60))
+  await page.locator('form button[type="submit"]').first().click()
+  await sleep(1200)
+
+  const sent = await page.evaluate(() => ({
+    active: document.activeElement?.tagName ?? null,
+    announced: document.querySelectorAll('[role="status"], [aria-live]').length,
+    heading: document.querySelector('h2')?.textContent?.trim() ?? null,
+    headings: [...document.querySelectorAll('h1')].length,
+  }))
+  check('potvrda je u živom regionu', sent.announced > 0, JSON.stringify(sent))
+  check('fokus je na potvrdi, ne na <body>', sent.active === 'H2', JSON.stringify(sent))
+  check('potvrda je naslov, pa je dohvatljiva navigacijom', sent.heading === 'Poruka je poslata')
+  check('stranica i dalje ima tačno jedan <h1>', sent.headings === 1, `${sent.headings}`)
+  await page.close()
+})
+
+await group('Iznos donacije se ne izvikuje na svaki znak', async () => {
+  // `aria-live="polite"` on the "what this covers" line queued a full sentence
+  // per keystroke — typing "12500" announced five of them after the visitor
+  // stopped, burying the character echo. Only the last one meant anything.
+  const page = await context.newPage()
+  await page.goto(`${BASE}/doniraj`, { waitUntil: 'load' })
+  await sleep(1500)
+  await page.locator('#donate-custom').click()
+  await page.keyboard.type('12500', { delay: 90 })
+  await sleep(600)
+
+  const live = await page.evaluate(() => document.querySelectorAll('[aria-live]').length)
+  const covers = await page.evaluate(
+    () =>
+      [...document.querySelectorAll('p')]
+        .map((node) => node.textContent)
+        .find((text) => text?.includes('pokriva'))
+        ?.trim() ?? '',
+  )
+  check('nema živog regiona na iznosu', live === 0, `${live}`)
+  check('tekst se i dalje ažurira', /12\.500/.test(covers), covers.slice(0, 60))
+  await page.close()
+})
+
 // --------------------------------------------------- kad mreža zataji ------
 await group('Zaglavljen zahtev se prekine umesto da se vrti zauvek', async () => {
   // A refused connection rejects at once and a 500 comes back, but a server

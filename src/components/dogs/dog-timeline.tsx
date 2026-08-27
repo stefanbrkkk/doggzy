@@ -85,7 +85,7 @@ export function DogTimeline({ events }: { events: TimelineEvent[] }) {
         {!reduced ? (
           <motion.span
             aria-hidden="true"
-            className="absolute left-[15px] top-2 h-[calc(100%-1rem)] w-px origin-top bg-linear-to-b from-brand to-iris-400"
+            className="absolute left-[15px] top-2 h-[calc(100%-1rem)] w-px origin-top bg-linear-to-b from-brand to-[var(--gradient-3)]"
             style={{ scaleY: lineScale }}
           />
         ) : null}

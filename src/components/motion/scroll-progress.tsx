@@ -17,7 +17,7 @@ export function ScrollProgress() {
     <motion.div
       aria-hidden="true"
       data-decor
-      className="pointer-events-none fixed inset-x-0 top-0 z-[70] h-px origin-left bg-linear-to-r from-brand via-iris-400 to-signal-400"
+      className="pointer-events-none fixed inset-x-0 top-0 z-[70] h-px origin-left bg-linear-to-r from-brand via-[var(--gradient-3)] to-[var(--gradient-4)]"
       style={{ scaleX }}
     />
   )
