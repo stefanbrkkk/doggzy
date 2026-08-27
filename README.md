@@ -82,16 +82,24 @@ projektu i nisu se videle na pregled:
   duks je „plaćao mikročipovanje pet pasa” — što traži 1.098 RSD profita po
   čipu. Sada tvrdnja proizvoda mora da izdrži množenje.
 - **`test:perf`** meri ispuštene kadrove tokom skrolovanja. Zrno preko celog
-  ekrana sa `mix-blend-mode` obaralo je 67% kadrova na stranici prodavnice.
+  ekrana sa `mix-blend-mode` obaralo je 67% kadrova na stranici prodavnice, a
+  zamućena lepljiva traka nad istom mrežom 30–48%. Zamućenje pozadine se plaća
+  po površini, ne po poluprečniku: 22px, 10px i 6px mere isto.
 
 Neke od tih provera postoje zato što se kvar ne vidi u izvornom kodu. Lightning
 CSS je iz `backdrop-filter` pravila izbacivao standardno svojstvo i ostavljao
 samo `-webkit-` oblik, pa nijedna staklena površina nije imala zamućenje —
 pravilo u `globals.css` je izgledalo ispravno. `body { overflow: hidden }` je
-izgledao kao brava, a Lenis je i dalje pomerao stranicu iza svakog modala.
+izgledao kao brava, a Lenis je i dalje pomerao stranicu iza svakog modala — a
+kad je i to sređeno, `<ReactLenis>` je instancu držao u stanju React-a, pa je
+za vreme hidracije 300ms postojala a nije se mogla zaustaviti.
 `transform-style: preserve-3d` je terao Chromium da testira pogotke po ravni
-koja se ne poklapa sa crtežom, pa 53% ekrana telefona nije primalo klikove. E2E
-zato čita izračunate vrednosti u pravom pregledaču, a ne tekst u stilu.
+koja se ne poklapa sa crtežom, pa 53% ekrana telefona nije primalo klikove. A
+404 je jedna unapred izgrađena ljuska za sve nepoznate putanje, pa je
+`usePathname()` u zaglavlju značio jedno na serveru a drugo u pregledaču i
+React je odbacivao ceo dokument. Nijedan od tih kvarova ne postoji u izvornom
+kodu — E2E zato čita izračunate vrednosti u pravom pregledaču, a ne tekst u
+stilu.
 
 ## Struktura
 
