@@ -1806,6 +1806,158 @@ await group('Greške u formama su na srpskom i ne zumiraju ekran', async () => {
   check('/api/kontakt: odgovor je na srpskom', !english.test(body), body.slice(0, 160))
 })
 
+// --------------------------------------------------- kad mreža zataji ------
+await group('Zaglavljen zahtev se prekine umesto da se vrti zauvek', async () => {
+  // A refused connection rejects at once and a 500 comes back, but a server
+  // that accepts and then never answers leaves `fetch` pending for as long as
+  // the browser allows. Measured before the timeout: 15s after submit the
+  // button still read "Šaljem…" and was still disabled, with no error and no
+  // way to retry.
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } })
+  await ctx.addInitScript(() => {
+    try {
+      sessionStorage.setItem('doggzy.visited', '1')
+    } catch {}
+  })
+  const page = await ctx.newPage()
+  await page.route('**/api/kontakt', () => {})
+  await page.goto(`${BASE}/kontakt`, { waitUntil: 'load' })
+  await sleep(1400)
+
+  await page.getByLabel(/^Ime/).fill('Ana Anić')
+  await page.getByLabel(/^Email/).fill('ana@example.rs')
+  await page.getByLabel(/^Poruka/).fill('x'.repeat(60))
+  await page.locator('form button[type="submit"]').first().click()
+  await sleep(1200)
+
+  const sending = await page.evaluate(
+    () => document.querySelector('form button[type="submit"]').disabled,
+  )
+  check('dugme se zaključa dok šalje', sending === true)
+
+  await sleep(21000)
+  const settled = await page.evaluate(() => ({
+    disabled: document.querySelector('form button[type="submit"]').disabled,
+    alert: document.querySelector('[role="alert"]')?.textContent?.trim() ?? null,
+  }))
+  check(
+    'zahtev se prekine i dozvoli ponovni pokušaj',
+    settled.disabled === false,
+    JSON.stringify(settled),
+  )
+  check(
+    'greška je na srpskom, sa alternativom',
+    Boolean(settled.alert) && !/Too |Invalid|expected/i.test(settled.alert ?? ''),
+    String(settled.alert),
+  )
+  await ctx.close()
+})
+
+await group('Traka učitavanja je živa i pre nego što React stigne', async () => {
+  // Progress is React state, so until the bundle has hydrated nothing moves it.
+  // On a slow link that is the full failsafe window spent looking at a stalled
+  // bar reading "000". The CSS sweep starts at first paint; the component's
+  // effect hands the bar back.
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } })
+  const page = await ctx.newPage()
+  await page.addInitScript(() => {
+    window.__bar = []
+    const tick = () => {
+      const fill = document.querySelector('[data-preloader] [data-progress]')
+      const count = document.querySelector('[data-preloader] [data-count]')
+      if (fill) {
+        window.__bar.push({
+          live: document.documentElement.classList.contains('preloader-live'),
+          anim: getComputedStyle(fill).animationName,
+          count: count ? getComputedStyle(count).opacity : null,
+          text: count ? count.textContent.trim() : null,
+        })
+      }
+      if (performance.now() < 8000) requestAnimationFrame(tick)
+    }
+    requestAnimationFrame(tick)
+  })
+  await page.goto(`${BASE}/`, { waitUntil: 'load' })
+  await sleep(6000)
+
+  const bar = await page.evaluate(() => window.__bar)
+  const before = bar.filter((entry) => !entry.live)
+  const after = bar.filter((entry) => entry.live)
+
+  if (before.length === 0) {
+    console.log('  --   preskočeno (hidracija je stigla pre prvog kadra)')
+  } else {
+    check(
+      'pre hidracije traka se kreće sama',
+      before.every((entry) => entry.anim === 'preloader-sweep'),
+      `${before.length} uzoraka, ${before[0]?.anim}`,
+    )
+    // A number is a claim, and before hydration there is not one to make.
+    check(
+      'pre hidracije brojač je sakriven',
+      before.every((entry) => entry.count === '0'),
+      String(before[0]?.count),
+    )
+  }
+
+  check(
+    'posle hidracije CSS animacija se gasi',
+    after.length > 0 && after.every((entry) => entry.anim === 'none'),
+    `${after.length} uzoraka, ${after[0]?.anim}`,
+  )
+  const counted = after.map((entry) => Number(entry.text)).filter((value) => !Number.isNaN(value))
+  check(
+    'posle hidracije brojač broji do 100',
+    counted.length > 5 && Math.max(...counted) === 100,
+    `max ${counted.length ? Math.max(...counted) : 'n/a'}`,
+  )
+  await ctx.close()
+})
+
+await group('Otkucana prijava se ne baca bez pitanja', async () => {
+  // Nothing is written to storage on purpose — the last two steps are a
+  // stranger's name and phone number. So the answer to an accidental reload is
+  // to ask, not to cache it.
+  const ctx = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    hasTouch: true,
+    isMobile: true,
+  })
+  await ctx.addInitScript(() => {
+    try {
+      sessionStorage.setItem('doggzy.visited', '1')
+    } catch {}
+  })
+  const page = await ctx.newPage()
+  await page.goto(`${BASE}/prijava`, { waitUntil: 'load' })
+  await sleep(1800)
+
+  // Playwright cannot observe the native dialog, so the event itself is the
+  // assertion: a cancelled `beforeunload` is what makes the browser ask.
+  const fire = () =>
+    page.evaluate(() => {
+      const event = new Event('beforeunload', { cancelable: true })
+      window.dispatchEvent(event)
+      return event.defaultPrevented
+    })
+
+  check('prazan obrazac pušta posetioca da ode', (await fire()) === false)
+
+  await page.locator('button', { hasText: 'Nestao mi je pas' }).first().click()
+  await sleep(400)
+  check('sam izbor vrste još ne postavlja prepreku', (await fire()) === false)
+
+  await page
+    .locator('button', { hasText: /^Dalje/ })
+    .first()
+    .click()
+  await sleep(700)
+  await page.locator('#report-location').fill('Zemun, kod pijace')
+  await sleep(500)
+  check('otkucana prijava upozorava pre odlaska', (await fire()) === true)
+  await ctx.close()
+})
+
 await context.close()
 await browser.close()
 

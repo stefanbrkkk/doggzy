@@ -125,6 +125,37 @@ export function ReportFlow({ onSubmit, className }: ReportFlowProps) {
     scrollRef.current?.scrollTo({ top: 0 })
   }, [step])
 
+  /**
+   * Warns before a reload or a close throws away a report in progress.
+   *
+   * The flow holds everything in component state and nothing is written to
+   * storage — deliberately, because the last two steps are a stranger's name
+   * and phone number, and quietly caching those in the browser is the
+   * operators' decision to make, not this component's. So the answer to an
+   * accidental reload is to ask, not to squirrel the data away: measured, a
+   * reload on step four dropped the location, the description and the contact
+   * details with no prompt of any kind.
+   *
+   * Gated on text actually typed rather than on the step, so choosing "Nestao
+   * mi je pas" and changing your mind still lets you leave without an argument.
+   */
+  useEffect(() => {
+    const typed =
+      form.location.trim() !== '' ||
+      form.description.trim() !== '' ||
+      form.contactName.trim() !== '' ||
+      form.contactValue.trim() !== ''
+    if (!typed || status === 'sent') return
+
+    const onBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault()
+      // Older engines still read this; the string itself is never shown.
+      event.returnValue = ''
+    }
+    window.addEventListener('beforeunload', onBeforeUnload)
+    return () => window.removeEventListener('beforeunload', onBeforeUnload)
+  }, [form.contactName, form.contactValue, form.description, form.location, status])
+
   const set = useCallback(<K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm((previous) => ({ ...previous, [key]: value }))
     setErrors((previous) => (previous[key] ? { ...previous, [key]: undefined } : previous))

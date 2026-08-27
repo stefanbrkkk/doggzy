@@ -93,6 +93,10 @@ export function Preloader() {
 
   useEffect(() => {
     const root = document.documentElement
+    // Hands the bar back from the CSS sweep that has been running since first
+    // paint. See the note in globals.css: until this class lands there is no
+    // progress to report, so the bar is indeterminate and the counter hidden.
+    root.classList.add('preloader-live')
 
     /** Lets a gated entrance start. `curtain` says whether panels are lifting. */
     const release = (curtain: boolean) => {
@@ -239,12 +243,13 @@ export function Preloader() {
             <div className="flex w-[min(78vw,26rem)] flex-col gap-3">
               <div className="flex items-baseline justify-between">
                 <span className="text-2xs uppercase tracking-[0.3em] text-ink-subtle">Doggzy</span>
-                <span data-numeric className="text-sm text-ink-muted">
+                <span data-numeric data-count className="text-sm text-ink-muted">
                   {Math.round(progress).toString().padStart(3, '0')}
                 </span>
               </div>
               <div className="h-px w-full overflow-hidden bg-line-strong">
                 <motion.div
+                  data-progress
                   className="h-full origin-left bg-linear-to-r from-brand to-iris-400"
                   style={{ scaleX: progress / 100 }}
                 />

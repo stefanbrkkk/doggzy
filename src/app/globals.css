@@ -707,6 +707,46 @@
     display: none !important;
   }
 
+  /* The bar is alive before React is.
+
+     Progress is React state, so until the bundle has downloaded, parsed and
+     hydrated there is nothing to move it. On a fast link that is 300ms and
+     nobody notices; on a slow 3G link it is the full 5.5s the failsafe below
+     allows, and the visitor spends all of it looking at a stalled bar reading
+     "000" — the one moment a loading screen has a job to do, spent proving it
+     is broken. This sweep starts at first paint and needs no JavaScript at all.
+
+     `preloader-live` is stamped on <html> by the component's own effect, which
+     hands the bar back: a running CSS animation on `transform` overrides the
+     inline value Motion writes, so it has to be cancelled rather than merely
+     overridden. The counter fades in with it, because a number is a claim and
+     before hydration we do not have one to make. */
+  [data-preloader] [data-progress] {
+    animation: preloader-sweep 1.4s var(--ease-in-out-quart, ease-in-out) infinite;
+  }
+
+  [data-preloader] [data-count] {
+    opacity: 0;
+    transition: opacity 0.3s var(--ease-swift, ease-out);
+  }
+
+  html.preloader-live [data-preloader] [data-progress] {
+    animation: none;
+  }
+
+  html.preloader-live [data-preloader] [data-count] {
+    opacity: 1;
+  }
+
+  @keyframes preloader-sweep {
+    from {
+      transform: translate3d(-120%, 0, 0) scaleX(0.3);
+    }
+    to {
+      transform: translate3d(340%, 0, 0) scaleX(0.3);
+    }
+  }
+
   /* Last-resort escape hatch for the curtain.
 
      The overlay is server-rendered and normally removed by React. If the

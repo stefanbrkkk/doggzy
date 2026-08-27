@@ -55,10 +55,17 @@ export function ContactForm() {
 
     setStatus('sending')
     try {
+      // A refused connection rejects at once and a 500 comes back, but a
+      // server that accepts and then never answers leaves `fetch` pending for
+      // as long as the browser allows — measured at 15s the button still read
+      // "Šaljem…" and was still disabled, with no error and no way to retry.
+      // The timeout aborts into the same catch, which already restores the
+      // form and shows the Serbian retry message.
       const response = await fetch('/api/kontakt', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(parsed.data),
+        signal: AbortSignal.timeout(20000),
       })
       if (!response.ok) throw new Error(String(response.status))
       setStatus('sent')
