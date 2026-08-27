@@ -121,7 +121,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           <main id="sadrzaj">{children}</main>
 
-          <SiteFooter />
+          {/* Resolved here, in a server component, so the markup the browser
+              hydrates carries the same year the server wrote. */}
+          <SiteFooter year={new Date().getFullYear()} />
           <CartDrawer />
           <FlyToCart />
         </Providers>

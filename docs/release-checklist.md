@@ -42,7 +42,24 @@ scroll drops more than 20% of its frames.
 
 Neither can run against `next dev`. Build first.
 
-## 3. Content
+## 3. The console, in development
+
+```bash
+npm run dev -- -p 3100 &
+npm run check:console
+```
+
+React only ships its hydration diffing in development, and StrictMode only
+double-invokes render there — so a whole class of defect is invisible to the
+suite above. The generative artwork consumed a mutable pseudo-random sequence
+inside a child component, and the second StrictMode pass drew from further along
+than the server had; production said nothing while every dog card hydrated as a
+different flower. This suite walks every route, a first visit with the curtain,
+and the main interactions, and fails on any console error or warning.
+
+Do not run `next build` while that dev server is up — both write `.next`.
+
+## 4. Content
 
 - [ ] Every figure on the site traces to a ledger entry (`check:figures` proves
       it, but read what it prints).
@@ -54,7 +71,7 @@ Neither can run against `next dev`. Build first.
       counts, no partner logos, no social profiles that do not exist.
 - [ ] Legal pages still describe what the site actually does.
 
-## 4. What to look at by hand
+## 5. What to look at by hand
 
 The scripts cover the measurable. These need a person:
 
@@ -67,7 +84,7 @@ The scripts cover the measurable. These need a person:
 - [ ] The first-visit intro: open a private window so the session flag is unset.
 - [ ] `prefers-reduced-motion: reduce` on. Nothing decorative should move.
 
-## 5. Environment before deploying
+## 6. Environment before deploying
 
 - [ ] `NEXT_PUBLIC_SITE_URL` is the production origin. Canonical URLs, the
       sitemap and every social card read from it.
@@ -76,7 +93,7 @@ The scripts cover the measurable. These need a person:
 - [ ] `RESEND_API_KEY`, `NOTIFY_TO` and `NOTIFY_FROM` are set, or you accept
       that form submissions are logged rather than mailed.
 
-## 6. After deploying
+## 7. After deploying
 
 - [ ] `/api/health` answers 200.
 - [ ] `/sitemap.xml` and `/robots.txt` render, and `robots.txt` still disallows

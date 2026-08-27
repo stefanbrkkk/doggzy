@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -39,9 +39,39 @@ const columns = [
   },
 ]
 
-export function SiteFooter() {
+export interface SiteFooterProps {
+  /**
+   * The copyright year, resolved on the server so both sides render the same
+   * one. See the note on `current` below for why this is not read here.
+   */
+  year: number
+}
+
+export function SiteFooter({ year }: SiteFooterProps) {
   const reduced = useReducedMotionSafe()
   const ref = useRef<HTMLElement>(null)
+
+  /**
+   * The year, handed in by the server and corrected after mount.
+   *
+   * Reading the clock in this body instead looks obvious and is wrong twice
+   * over. The footer is prerendered, so it would run at build time — a site
+   * that is not redeployed over New Year goes on claiming the previous year
+   * indefinitely. And the browser reads its own clock, so the two disagree,
+   * which is a hydration mismatch of exactly the kind that made React discard
+   * the whole document over the generative artwork.
+   *
+   * `suppressHydrationWarning` is not the fix: it suppresses the *patch* as
+   * well as the warning, so the stale text stays on screen — measured, a client
+   * whose clock said 2031 kept showing the build's 2026. Taking the year as a
+   * prop makes both sides render the same thing, so there is nothing to
+   * suppress, and the effect updates it for anyone whose year has since turned.
+   */
+  const [current, setCurrent] = useState(year)
+  useEffect(() => {
+    const now = new Date().getFullYear()
+    setCurrent((previous) => (previous === now ? previous : now))
+  }, [])
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end end'] })
 
   // The wordmark rises out of the bottom edge as the footer comes into view.
@@ -100,7 +130,7 @@ export function SiteFooter() {
 
         <div className="mt-16 flex flex-col gap-6 border-t border-line pt-8 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-ink-subtle">
-            © {new Date().getFullYear()} {site.name}. Sva prava zadržana.
+            © {current} {site.name}. Sva prava zadržana.
           </p>
           <ul className="flex flex-wrap gap-x-6 gap-y-2">
             {secondaryNav.map((item) => (

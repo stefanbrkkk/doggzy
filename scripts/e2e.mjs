@@ -1806,6 +1806,34 @@ await group('Greške u formama su na srpskom i ne zumiraju ekran', async () => {
   check('/api/kontakt: odgovor je na srpskom', !english.test(body), body.slice(0, 160))
 })
 
+// ------------------------------------------------------------ godina --------
+await group('Godina u podnožju prati posetioca, ne build', async () => {
+  // Prerendered, so reading the clock in the footer's own body would freeze the
+  // year at build time — a site not redeployed over New Year goes on claiming
+  // the previous one. It is also a hydration mismatch, and
+  // `suppressHydrationWarning` is not a fix for it: that suppresses the patch
+  // as well as the warning, so the stale text stays on screen.
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } })
+  await ctx.addInitScript(() => {
+    try {
+      sessionStorage.setItem('doggzy.visited', '1')
+    } catch {}
+  })
+  const page = await ctx.newPage()
+  await page.clock.setFixedTime(new Date('2031-03-05T10:00:00Z'))
+  await page.goto(`${BASE}/`, { waitUntil: 'load' })
+  await sleep(2600)
+  const line = await page.evaluate(
+    () =>
+      [...document.querySelectorAll('p')]
+        .map((node) => node.textContent)
+        .find((text) => text?.includes('Sva prava'))
+        ?.trim() ?? '',
+  )
+  check('godina se ispravi na klijentovu', line.includes('2031'), line)
+  await ctx.close()
+})
+
 // ------------------------------------------------- kontrast na crtežu -------
 await group('Značke ostaju čitljive i preko crteža, u obe teme', async () => {
   // `check-contrast.mjs` reads the tokens; this reads what is painted. A badge

@@ -17,6 +17,9 @@ import { setTimeout as sleep } from 'node:timers/promises'
  *
  *   npm run dev -- -p 3100 &   # then
  *   npm run check:console
+ *
+ * Do not run `next build` while that dev server is up: both write `.next`, and
+ * the build pulls the ground out from under it mid-run.
  */
 
 const BASE = process.env.DEV_BASE_URL ?? `http://localhost:${process.env.DEV_PORT ?? 3100}`
@@ -49,6 +52,20 @@ const IGNORED = [
   // The 404 route answers 404 by design; the browser logs the document itself.
   /Failed to load resource.*404/i,
 ]
+
+// A clear message beats a stack trace: this suite needs a server the other one
+// does not, and forgetting that is the likeliest way to run it wrong.
+try {
+  const probe = await fetch(BASE, { signal: AbortSignal.timeout(4000) })
+  if (!probe.ok) throw new Error(`status ${probe.status}`)
+} catch (error) {
+  console.error(
+    `check-dev-console: nema razvojnog servera na ${BASE} (${error.message}).\n` +
+      '  Pokreni ga prvo:  npm run dev -- -p 3100\n' +
+      '  I ne gradi produkciju dok radi — oba pišu u .next.',
+  )
+  process.exit(1)
+}
 
 let failed = 0
 const record = (page, sink) => {
