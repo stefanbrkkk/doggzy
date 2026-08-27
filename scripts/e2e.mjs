@@ -1675,6 +1675,17 @@ await group('Filtriranje ne ostavlja posetioca u podnožju', async () => {
   await page.goto(`${BASE}/prodavnica`, { waitUntil: 'load' })
   await sleep(1600)
 
+  // First: a reload keeps you where you were. The effect that fixes the defect
+  // below must not fire on mount, or it races the browser's own scroll
+  // restoration and throws the visitor back to the top of a list they had left
+  // halfway down.
+  await page.evaluate(() => window.scrollTo(0, 4000))
+  await sleep(900)
+  await page.reload({ waitUntil: 'load' })
+  await sleep(2500)
+  const restored = await page.evaluate(() => Math.round(window.scrollY))
+  check('ponovno učitavanje čuva poziciju u listi', restored > 3000, `y=${restored}`)
+
   // One column on a phone, so narrowing the catalogue collapses the document
   // from ~9,500px to ~3,600px while `scrollY` stays put — the visitor ended up
   // in the footer with no products and no filter bar anywhere on screen.

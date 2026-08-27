@@ -44,6 +44,7 @@ export function ShopClient() {
 
   const listRef = useRef<HTMLDivElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
+  const filtered = useRef(false)
 
   /**
    * Brings the visitor back to the results when a filter empties the page under
@@ -59,8 +60,17 @@ export function ShopClient() {
    * wrapper, not the panel: `scrollIntoView` resolves a stuck sticky element
    * against its stuck rect, which lands at the bottom of the sticky containing
    * block and leaves the first card above the fold.
+   *
+   * The mount run is skipped. Nothing has been filtered yet at that point, and
+   * the browser restores the previous scroll position on a reload or a back
+   * navigation — a race this would sometimes win, throwing the visitor back to
+   * the top of a list they had left halfway down.
    */
   useEffect(() => {
+    if (!filtered.current) {
+      filtered.current = true
+      return
+    }
     const panel = panelRef.current
     const list = listRef.current
     if (!panel || !list) return
