@@ -99,6 +99,15 @@ export function ReportFlow({ onSubmit, className }: ReportFlowProps) {
   const [photo, setPhoto] = useState<File | null>(null)
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({})
+  /**
+   * Bumped on every *failed* validation, not derived from `errors`.
+   *
+   * Pressing „Dalje” twice with the same field still empty produces an
+   * identical `errors` object, so an effect keyed on the errors would run
+   * once and never again — and the second press is exactly when a visitor
+   * who did not notice the message needs to be taken to it.
+   */
+  const [errorNonce, setErrorNonce] = useState(0)
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
   const [reference, setReference] = useState<string | null>(null)
   const [locating, setLocating] = useState(false)
@@ -124,6 +133,56 @@ export function ReportFlow({ onSubmit, className }: ReportFlowProps) {
     headingRef.current?.focus({ preventScroll: true })
     scrollRef.current?.scrollTo({ top: 0 })
   }, [step])
+
+  /**
+   * Takes the visitor to the first thing that is wrong.
+   *
+   * The phone screen is a fixed 9:19.5 box with its own scroller, and the
+   * appearance step is taller than that box on a small handset. Measured at
+   * 320px: pressing „Dalje” with the step untouched raised three messages, of
+   * which the description one sat below the screen's fold — so a visitor who
+   * fixed the two they could see pressed „Dalje” again and watched nothing
+   * happen, with the reason out of sight. Only the *first* error is brought
+   * into view; once it is dealt with, the next press promotes the next one.
+   *
+   * Focus moves with `preventScroll`, then the scroll is done by hand against
+   * the inner box: `scrollIntoView` walks every scrollable ancestor, so on the
+   * home page — where this same flow sits inside a section — it also yanked
+   * the document to re-centre the phone.
+   */
+  useEffect(() => {
+    if (errorNonce === 0) return
+    const root = scrollRef.current
+    const alert = root?.querySelector('[role="alert"]')
+    if (!root || !alert) return
+
+    // The message renders under its field, so scrolling to the field rather
+    // than to the message keeps the control that caused it on screen too.
+    const field = alert.closest('[data-field], fieldset') ?? alert
+    field.querySelector<HTMLElement>('input, textarea, select, button')?.focus({
+      preventScroll: true,
+    })
+
+    const box = root.getBoundingClientRect()
+    const fieldBox = field.getBoundingClientRect()
+    const alertBox = alert.getBoundingClientRect()
+
+    // Show the whole field when it fits, and only the message when it does
+    // not. Measured on a 280×653 handset: the first step's three choices plus
+    // their message are taller than the screen, so aligning the field's top
+    // left the message exactly where it already was — below the fold.
+    let delta = 0
+    if (fieldBox.height + 24 <= box.height) {
+      if (fieldBox.top < box.top || fieldBox.bottom > box.bottom) {
+        delta = fieldBox.top - box.top - 12
+      }
+    } else if (alertBox.bottom > box.bottom - 12 || alertBox.top < box.top) {
+      delta = alertBox.bottom - box.bottom + 12
+    }
+    if (delta === 0) return
+
+    root.scrollTo({ top: root.scrollTop + delta, behavior: reduced ? 'auto' : 'smooth' })
+  }, [errorNonce, reduced])
 
   /**
    * Warns before a reload or a close throws away a report in progress.
@@ -197,7 +256,10 @@ export function ReportFlow({ onSubmit, className }: ReportFlowProps) {
     // attempt. Without this a validation-only press still showed it.
     setStatus((current) => (current === 'error' ? 'idle' : current))
 
-    if (!validateStep(step)) return
+    if (!validateStep(step)) {
+      setErrorNonce((current) => current + 1)
+      return
+    }
 
     if (step < 3) {
       setDirection(1)
@@ -552,7 +614,7 @@ function StepLocation({
         <MiniMap active={value.length > 0} />
       </div>
 
-      <div>
+      <div data-field>
         <label htmlFor="report-location" className="sr-only">
           Naselje, ulica ili koordinate
         </label>
@@ -612,7 +674,11 @@ function StepAppearance({
     <div className="space-y-4">
       <fieldset>
         <legend className="mb-2 text-xs font-medium text-ink-muted">Veličina</legend>
-        <div className="flex gap-2">
+        {/* Wraps like the colour row below it. Three chips need 199px and a
+            280px handset gives this column 176, so the row pushed itself — and
+            the error message that shares its box — past the phone's screen,
+            where `overflow-hidden` cut the last chip in half. */}
+        <div className="flex flex-wrap gap-2">
           {SIZES.map((size) => (
             <Chip key={size} active={form.size === size} onClick={() => onSize(size)}>
               {size}
@@ -689,7 +755,7 @@ function StepAppearance({
         />
       </div>
 
-      <div>
+      <div data-field>
         <label
           htmlFor="report-description"
           className="mb-2 block text-xs font-medium text-ink-muted"
@@ -701,7 +767,7 @@ function StepAppearance({
           rows={3}
           value={form.description}
           onChange={(event) => onDescription(event.target.value)}
-          placeholder="Rasa, ogrlica, ponašanje, kad je poslednji put viđen…"
+          placeholder="Rasa, ogrlica, ponašanje, kad je viđen…"
           aria-invalid={Boolean(errors.description)}
           aria-describedby={errors.description ? 'report-description-error' : undefined}
           className={cn(inputClass, 'resize-none')}
@@ -729,7 +795,7 @@ function StepContact({
     <fieldset className="space-y-4">
       <legend className="sr-only">Kontakt</legend>
 
-      <div>
+      <div data-field>
         <label htmlFor="report-name" className="mb-2 block text-xs font-medium text-ink-muted">
           Ime
         </label>
@@ -745,7 +811,7 @@ function StepContact({
         <FieldError id="report-name-error">{errors.contactName}</FieldError>
       </div>
 
-      <div>
+      <div data-field>
         <label htmlFor="report-contact" className="mb-2 block text-xs font-medium text-ink-muted">
           Telefon ili email
         </label>

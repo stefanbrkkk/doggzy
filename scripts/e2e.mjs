@@ -81,6 +81,8 @@ import { setTimeout as sleep } from 'node:timers/promises'
  *   53. Zaglavljen zahtev se prekine umesto da se vrti zauvek
  *   54. Traka učitavanja je živa i pre nego što React stigne
  *   55. Otkucana prijava se ne baca bez pitanja
+ *   56. Nijedna stranica ne traži fajl koji ne postoji
+ *   57. Prijava staje i na 280px, i vodi do prve greške
  */
 
 const BASE = process.env.E2E_BASE_URL ?? `http://localhost:${process.env.PORT ?? 3000}`
@@ -2807,6 +2809,158 @@ await group('Otkucana prijava se ne baca bez pitanja', async () => {
   await page.locator('#report-location').fill('Zemun, kod pijace')
   await sleep(500)
   check('otkucana prijava upozorava pre odlaska', (await fire()) === true)
+  await ctx.close()
+})
+
+// ---------------------------------------------------- ništa ne visi u vazduhu ---
+await group('Nijedna stranica ne traži fajl koji ne postoji', async () => {
+  /**
+   * Every asset the HTML points at must come back, and come back as the thing
+   * its extension claims.
+   *
+   * A build whose manifest and files disagree does not fail loudly: every route
+   * still answers 200, the HTML still renders, and only the stylesheet is
+   * missing — so the page is fully functional and completely unstyled. That is
+   * indistinguishable, from the outside, from a page with broken layout, and it
+   * cost a full round of chasing "bugs" that were all one stale server. It is
+   * also exactly what a mis-set asset prefix or a half-copied deploy produces.
+   */
+  const seen = new Set()
+  for (const route of ROUTES) {
+    const html = await (await context.request.get(`${BASE}${route}`)).text()
+    const refs = new Set(
+      [...html.matchAll(/["'(](\/_next\/static\/[A-Za-z0-9._/-]+\.(?:js|css|woff2?))["')]/g)].map(
+        (match) => match[1],
+      ),
+    )
+    check(`${route} uopšte traži svoje fajlove`, refs.size > 0, `${refs.size}`)
+
+    const missing = []
+    for (const ref of refs) {
+      if (seen.has(ref)) continue
+      seen.add(ref)
+      const response = await context.request.get(`${BASE}${ref}`, { failOnStatusCode: false })
+      const type = response.headers()['content-type'] ?? ''
+      const wanted = ref.endsWith('.css') ? /css/ : ref.endsWith('.js') ? /javascript/ : /font/
+      if (response.status() !== 200 || !wanted.test(type)) {
+        missing.push(`${ref} → ${response.status()} ${type}`)
+      }
+    }
+    check(
+      `${route}: svi fajlovi postoje i pravog su tipa`,
+      missing.length === 0,
+      missing.join(', '),
+    )
+  }
+})
+
+// --------------------------------------------- prijava na najužem telefonu ---
+await group('Prijava staje i na 280px, i vodi do prve greške', async () => {
+  /**
+   * Two things at the narrowest screen anyone still ships (a folded Galaxy Fold
+   * outer display, 280px).
+   *
+   * Nothing inside the phone's own scroller may overflow it sideways: the
+   * screen is `overflow-hidden`, so an overflowing row is not a scrollbar, it
+   * is a control cut in half. Measured before the fix: the three size chips
+   * needed 199px of a 176px column and took their error message out of the
+   * frame with them.
+   *
+   * And a failed „Dalje” must land the visitor on the first thing that is
+   * wrong. The appearance step is taller than the screen, so its last message
+   * sits below the fold — a visitor who fixed the two they could see pressed
+   * „Dalje” again and watched nothing happen.
+   */
+  const ctx = await phone(280, 653)
+  const page = await ctx.newPage()
+  await page.goto(`${BASE}/prijava`, { waitUntil: 'load' })
+  await sleep(1800)
+
+  const next = async () => {
+    await page.getByRole('button', { name: /Dalje|Pošalji prijavu/ }).click()
+    await sleep(1000)
+  }
+
+  /** The screen box, its scroller, and where the first message sits in it. */
+  const state = () =>
+    page.evaluate(() => {
+      const screen = document.querySelector('[aria-label="Prijava psa"]')
+      const scroller = screen.querySelector('.overflow-y-auto')
+      const alert = scroller.querySelector('[role="alert"]')
+      const box = scroller.getBoundingClientRect()
+      const frame = screen.getBoundingClientRect()
+      const wide = []
+      for (const el of scroller.querySelectorAll('*')) {
+        const r = el.getBoundingClientRect()
+        if (r.width > 0 && (r.right > frame.right + 0.5 || r.left < frame.left - 0.5)) {
+          wide.push(`${el.tagName}.${String(el.className).slice(0, 28)}`)
+        }
+      }
+      const rect = alert?.getBoundingClientRect()
+      return {
+        sideways: scroller.scrollWidth - scroller.clientWidth,
+        escaped: [...new Set(wide)],
+        message: alert?.textContent?.trim() ?? null,
+        visible: rect ? rect.top >= box.top - 1 && rect.bottom <= box.bottom + 1 : null,
+        focused: document.activeElement?.id ?? document.activeElement?.tagName ?? null,
+      }
+    })
+
+  await next()
+  let now = await state()
+  check('korak 1: poruka je u ekranu', now.visible === true, JSON.stringify(now))
+  check(
+    'korak 1: ništa ne izlazi iz telefona',
+    now.sideways <= 0 && now.escaped.length === 0,
+    JSON.stringify(now),
+  )
+
+  await page.getByRole('button', { name: /Nestao mi je pas/ }).click()
+  await sleep(250)
+  await next()
+  await next()
+  now = await state()
+  check('korak 2: poruka je u ekranu', now.visible === true, JSON.stringify(now))
+  check(
+    'korak 2: fokus je na polju koje fali',
+    now.focused === 'report-location',
+    JSON.stringify(now),
+  )
+
+  await page.locator('#report-location').fill('Vračar, Njegoševa')
+  await sleep(300)
+  await next()
+  await next()
+  now = await state()
+  check(
+    'korak 3: ništa ne izlazi iz telefona',
+    now.sideways <= 0 && now.escaped.length === 0,
+    JSON.stringify(now),
+  )
+  check('korak 3: prva poruka je u ekranu', now.visible === true, JSON.stringify(now))
+
+  // Fix the two that are visible; the description one is then the only one
+  // left, and the next press has to go and get it.
+  await page.getByRole('button', { name: 'Srednji', exact: true }).click()
+  await page.getByRole('button', { name: 'Beo', exact: true }).click()
+  await sleep(250)
+  await next()
+  now = await state()
+  check('korak 3: preostala poruka se dovuče u ekran', now.visible === true, JSON.stringify(now))
+  check('korak 3: fokus prelazi na opis', now.focused === 'report-description', JSON.stringify(now))
+
+  await page.locator('#report-description').fill('Beli pas srednje veličine, šepa na zadnju nogu.')
+  await sleep(250)
+  await next()
+  await next()
+  now = await state()
+  check('korak 4: poruka je u ekranu', now.visible === true, JSON.stringify(now))
+  check('korak 4: fokus je na imenu', now.focused === 'report-name', JSON.stringify(now))
+  check(
+    'korak 4: ništa ne izlazi iz telefona',
+    now.sideways <= 0 && now.escaped.length === 0,
+    JSON.stringify(now),
+  )
   await ctx.close()
 })
 
