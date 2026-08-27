@@ -562,6 +562,16 @@
        control at viewport y=0, directly underneath the header, so tabbing
        forward appears to focus nothing. */
     scroll-padding-top: 6.5rem;
+    /* The scroll container for every `useScroll({ target })` on the site, and
+       Motion measures a target by walking `offsetParent` up until it reaches
+       this element. While it was `static` that walk never arrived — `body`'s
+       `offsetParent` is null — so the sum came out right only because `body`
+       has no margin to miss, and Motion warned about it on every route in
+       development. Positioning it terminates the walk properly. Verified inert:
+       all 17 routes are pixel-identical at 1440×900 and 390×844 before and
+       after, because nothing on the site resolves against the initial
+       containing block. */
+    position: relative;
   }
 
   /* Lenis drives scrolling; native smooth-scroll would fight it. The class is

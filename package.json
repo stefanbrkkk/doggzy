@@ -17,7 +17,8 @@
     "admin:hash": "node scripts/hash-password.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
     "test:e2e": "node scripts/e2e.mjs",
-    "test:perf": "node scripts/perf.mjs"
+    "test:perf": "node scripts/perf.mjs",
+    "check:console": "node scripts/check-dev-console.mjs"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",

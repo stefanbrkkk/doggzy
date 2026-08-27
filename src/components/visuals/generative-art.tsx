@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import type { ArtShape } from '@/lib/art'
 
@@ -106,14 +107,7 @@ export function GenerativeArt({
           // ground the same strokes flatten into a pale wash.
           style={{ filter: 'var(--art-ink)' }}
         >
-          {shape === 'orbit' ? <Orbit random={random} gradientId={gradientId} /> : null}
-          {shape === 'waves' ? <Waves random={random} /> : null}
-          {shape === 'grid' ? <Grid random={random} gradientId={gradientId} /> : null}
-          {shape === 'bloom' ? <Bloom random={random} gradientId={gradientId} /> : null}
-          {shape === 'pulse' ? <Pulse random={random} /> : null}
-          {shape === 'ridge' ? <Ridge random={random} /> : null}
-          {shape === 'prism' ? <Prism random={random} gradientId={gradientId} /> : null}
-          {shape === 'trace' ? <Trace random={random} /> : null}
+          {SHAPES[shape](random, gradientId)}
         </g>
       </svg>
 
@@ -129,7 +123,37 @@ export function GenerativeArt({
 
 type Rand = () => number
 
-function Orbit({ random, gradientId }: { random: Rand; gradientId: string }) {
+/**
+ * The eight compositions, as drawing functions rather than components.
+ *
+ * That distinction is the whole correctness of this file. `random` is a
+ * closure over mutable state, and it used to be handed to a child component as
+ * a prop — so the sequence was consumed inside a *different* render than the
+ * one that created it. React only promises that a component renders at least
+ * once per commit: in development StrictMode runs every body twice, so the
+ * second pass drew from further along the sequence than the server had, and
+ * `d-mrvica` hydrated as an eight-petal bloom over a nine-petal one, every
+ * ellipse in a different place. React cannot patch that, so it threw the
+ * server's markup away and rebuilt the tree on the client.
+ *
+ * Called directly, the sequence is consumed exactly once per render of
+ * <GenerativeArt>, which builds a fresh generator each time — so the same seed
+ * draws the same picture however many times React decides to run the body.
+ * These take no props, hold no state and own no hooks; a component is the
+ * wrong shape for them.
+ */
+const SHAPES: Record<ArtShape, (random: Rand, gradientId: string) => ReactNode> = {
+  orbit: (random, gradientId) => drawOrbit(random, gradientId),
+  waves: (random) => drawWaves(random),
+  grid: (random, gradientId) => drawGrid(random, gradientId),
+  bloom: (random, gradientId) => drawBloom(random, gradientId),
+  pulse: (random) => drawPulse(random),
+  ridge: (random) => drawRidge(random),
+  prism: (random, gradientId) => drawPrism(random, gradientId),
+  trace: (random) => drawTrace(random),
+}
+
+function drawOrbit(random: Rand, gradientId: string) {
   const rings = Array.from({ length: 5 }, (_, i) => ({
     r: 52 + i * 32,
     rotate: random() * 60 - 30,
@@ -155,7 +179,7 @@ function Orbit({ random, gradientId }: { random: Rand; gradientId: string }) {
   )
 }
 
-function Waves({ random }: { random: Rand }) {
+function drawWaves(random: Rand) {
   const lines = Array.from({ length: 16 }, (_, i) => {
     const y = 40 + i * 20
     const amp = 14 + random() * 26
@@ -175,7 +199,7 @@ function Waves({ random }: { random: Rand }) {
   )
 }
 
-function Grid({ random, gradientId }: { random: Rand; gradientId: string }) {
+function drawGrid(random: Rand, gradientId: string) {
   const cells = Array.from({ length: 36 }, (_, i) => ({
     x: 44 + (i % 6) * 54,
     y: 44 + Math.floor(i / 6) * 54,
@@ -202,7 +226,7 @@ function Grid({ random, gradientId }: { random: Rand; gradientId: string }) {
   )
 }
 
-function Bloom({ random, gradientId }: { random: Rand; gradientId: string }) {
+function drawBloom(random: Rand, gradientId: string) {
   // Count, phase and petal width all vary with the seed. With those fixed,
   // every bloom in a grid renders as the same flower in different colours.
   const count = 7 + Math.floor(random() * 10)
@@ -236,7 +260,7 @@ function Bloom({ random, gradientId }: { random: Rand; gradientId: string }) {
   )
 }
 
-function Pulse({ random }: { random: Rand }) {
+function drawPulse(random: Rand) {
   const points = Array.from({ length: 46 }, (_, i) => {
     const x = i * 9
     const spike = random() > 0.86
@@ -269,7 +293,7 @@ function Pulse({ random }: { random: Rand }) {
   )
 }
 
-function Ridge({ random }: { random: Rand }) {
+function drawRidge(random: Rand) {
   const layers = Array.from({ length: 9 }, (_, i) => {
     const base = 130 + i * 26
     const peaks = Array.from({ length: 9 }, (_, p) => `${p * 50},${base - random() * 46}`).join(
@@ -291,7 +315,7 @@ function Ridge({ random }: { random: Rand }) {
   )
 }
 
-function Prism({ random, gradientId }: { random: Rand; gradientId: string }) {
+function drawPrism(random: Rand, gradientId: string) {
   const shards = Array.from({ length: 7 }, (_, i) => {
     const x = 40 + i * 48
     const skew = random() * 40 - 20
@@ -313,7 +337,7 @@ function Prism({ random, gradientId }: { random: Rand; gradientId: string }) {
   )
 }
 
-function Trace({ random }: { random: Rand }) {
+function drawTrace(random: Rand) {
   /** One wandering route; the seed decides where it turns. */
   const route = (startX: number, startY: number, steps: number) => {
     let x = startX
