@@ -254,73 +254,82 @@ export function SiteHeader() {
             role="dialog"
             aria-modal="true"
             aria-label="Meni"
-            className="fixed inset-0 z-[75] overflow-y-auto overscroll-contain bg-canvas/97 outline-none backdrop-blur-2xl lg:hidden"
+            className="fixed inset-0 z-[75] bg-canvas/97 outline-none backdrop-blur-2xl lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: duration.fast }}
           >
-            {/* `min-h-full`, not `h-full`: on a landscape phone this content is
-                ~300px taller than the viewport, and a fixed height simply cut
-                it off — with `lockScroll()` holding the page still behind it,
-                eight destinations were unreachable, this overlay being the
-                only navigation below `lg`. `min-h-full` still spreads the
-                block on a tall screen and grows into the panel's scroll on a
-                short one. */}
-            <div className="flex min-h-full flex-col justify-between px-6 pb-10 pt-28">
-              <ul className="space-y-1">
-                {primaryNav.map((item, index) => (
-                  <motion.li
-                    key={item.href}
-                    initial={{ opacity: 0, y: 24 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      delay: 0.05 + index * 0.055,
-                      duration: duration.base,
-                      ease: ease.outExpo,
-                    }}
-                  >
-                    <Link
-                      href={item.href}
-                      className="block border-b border-line py-4 text-headline text-ink"
-                    >
-                      {item.label}
-                      <span className="mt-1 block text-sm font-normal text-ink-subtle">
-                        {item.description}
-                      </span>
-                    </Link>
-                  </motion.li>
-                ))}
-              </ul>
+            {/* The scroller starts below the header bar rather than at the top
+                of the viewport. The bar is a rounded pill inset from the edge,
+                so anything scrolling the full height passed through the
+                transparent strip above it and printed over the logo; clipping
+                here leaves the panel's own background as the only thing ever
+                behind the bar.
 
-              <motion.div
-                className="space-y-6"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: duration.base, ease: ease.outExpo }}
-              >
-                <div className="flex flex-wrap gap-x-5 gap-y-2">
-                  {secondaryNav.map((item) => (
-                    <Link
+                And `min-h-full` inside it, not `h-full`: on a landscape phone
+                this content is ~300px taller than the viewport, and a fixed
+                height simply cut it off — with `lockScroll()` holding the page
+                still behind it, eight destinations were unreachable, this
+                overlay being the only navigation below `lg`. `min-h-full`
+                still spreads the block on a tall screen and grows into the
+                scroll on a short one. */}
+            <div className="absolute inset-x-0 bottom-0 top-[5.25rem] overflow-y-auto overscroll-contain">
+              <div className="flex min-h-full flex-col justify-between px-6 pb-10 pt-6">
+                <ul className="space-y-1">
+                  {primaryNav.map((item, index) => (
+                    <motion.li
                       key={item.href}
-                      href={item.href}
-                      className="text-sm text-ink-subtle hover:text-ink"
+                      initial={{ opacity: 0, y: 24 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        delay: 0.05 + index * 0.055,
+                        duration: duration.base,
+                        ease: ease.outExpo,
+                      }}
                     >
-                      {item.label}
-                    </Link>
+                      <Link
+                        href={item.href}
+                        className="block border-b border-line py-4 text-headline text-ink"
+                      >
+                        {item.label}
+                        <span className="mt-1 block text-sm font-normal text-ink-subtle">
+                          {item.description}
+                        </span>
+                      </Link>
+                    </motion.li>
                   ))}
-                </div>
-                <div className="flex items-center gap-3">
-                  <Link
-                    href={routes.donate}
-                    className={cn(buttonStyles({ size: 'lg', full: true }))}
-                  >
-                    <Heart className="h-4 w-4" />
-                    Doniraj
-                  </Link>
-                  <ThemeToggle />
-                </div>
-              </motion.div>
+                </ul>
+
+                <motion.div
+                  className="space-y-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: duration.base, ease: ease.outExpo }}
+                >
+                  <div className="flex flex-wrap gap-x-5 gap-y-2">
+                    {secondaryNav.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className="text-sm text-ink-subtle hover:text-ink"
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Link
+                      href={routes.donate}
+                      className={cn(buttonStyles({ size: 'lg', full: true }))}
+                    >
+                      <Heart className="h-4 w-4" />
+                      Doniraj
+                    </Link>
+                    <ThemeToggle />
+                  </div>
+                </motion.div>
+              </div>
             </div>
           </motion.div>
         ) : null}

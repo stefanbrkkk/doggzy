@@ -1526,8 +1526,16 @@ await group('Meni na položenom telefonu dohvata sve destinacije', async () => {
     await sleep(700)
 
     const reach = await page.evaluate(() => {
-      const panel = document.getElementById('mobile-menu')
-      const links = [...panel.querySelectorAll('a[href]')]
+      const dialog = document.getElementById('mobile-menu')
+      // Whichever element actually scrolls: the dialog owns the background and
+      // an inner box owns the scroll, so the bar never has content behind it.
+      const panel =
+        dialog.scrollHeight > dialog.clientHeight
+          ? dialog
+          : ([...dialog.querySelectorAll('*')].find(
+              (node) => node.scrollHeight > node.clientHeight,
+            ) ?? dialog)
+      const links = [...dialog.querySelectorAll('a[href]')]
       const onScreen = (node) => {
         const box = node.getBoundingClientRect()
         return box.top >= 0 && box.bottom <= window.innerHeight
@@ -1563,6 +1571,34 @@ await group('Meni na položenom telefonu dohvata sve destinacije', async () => {
           .backgroundColor,
     )
     check(`meni @${width}×${height}: traka nije providna`, !/[,/]\s*0\)$/.test(bar), bar)
+
+    // Scrolled to the bottom, nothing from the menu may be painted in the strip
+    // around the bar: it is a rounded pill inset from the edge, and content
+    // running the full height passed through and printed over the logo.
+    // Hit-tested rather than measured — `getBoundingClientRect` reports the
+    // unclipped box, so an item scrolled safely out of the scroller still looks
+    // like it is up there.
+    const behind = await page.evaluate(() => {
+      const nav = document
+        .querySelector('nav[aria-label="Glavna navigacija"]')
+        .getBoundingClientRect()
+      const dialog = document.getElementById('mobile-menu')
+      const hits = new Set()
+      for (let x = 8; x < window.innerWidth; x += 40) {
+        for (const y of [2, Math.round(nav.top / 2), Math.round(nav.bottom) - 2]) {
+          for (const node of document.elementsFromPoint(x, y)) {
+            const target = node.closest?.('a[href], button')
+            if (target && dialog.contains(target)) hits.add(target.textContent.trim().slice(0, 24))
+          }
+        }
+      }
+      return [...hits]
+    })
+    check(
+      `meni @${width}×${height}: ništa ne prolazi iza trake`,
+      behind.length === 0,
+      behind.join(', '),
+    )
     await ctx.close()
   }
 })
