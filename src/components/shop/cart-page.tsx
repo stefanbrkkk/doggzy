@@ -75,17 +75,24 @@ export function CartPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, x: 40, height: 0, marginBottom: 0 }}
               transition={spring.surface}
-              className="flex gap-5 rounded-3xl border border-line bg-elevated p-4 sm:p-5"
+              // Tighter below `sm`. At 320px the gutter, the card padding and a
+              // 112px thumbnail left 116px for the column — and the stepper plus
+              // "Ukloni" need 160px of it, with nothing allowed to shrink. The
+              // row pushed 27px past the viewport.
+              className="flex gap-3 rounded-3xl border border-line bg-elevated p-4 sm:gap-5 sm:p-5"
             >
               <Link
                 href={routes.product(entry.product.slug)}
-                className="h-28 w-28 shrink-0 overflow-hidden rounded-2xl"
+                className="h-20 w-20 shrink-0 overflow-hidden rounded-2xl sm:h-28 sm:w-28"
               >
                 <ProductArt product={entry.product} className="h-full w-full" />
               </Link>
 
               <div className="flex min-w-0 flex-1 flex-col justify-between gap-3">
-                <div className="flex items-start justify-between gap-4">
+                {/* Wraps rather than squeezing the name to nothing: the price
+                    is `shrink-0`, so on a narrow card it would otherwise take
+                    its width out of the title's. */}
+                <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1">
                   <div className="min-w-0">
                     <Link
                       href={routes.product(entry.product.slug)}
@@ -103,7 +110,7 @@ export function CartPage() {
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <Stepper
                     value={entry.quantity}
                     onChange={(next) => setQuantity(entry.product.id, next)}

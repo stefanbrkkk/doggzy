@@ -69,17 +69,18 @@ import { setTimeout as sleep } from 'node:timers/promises'
  *   41. Filtriranje ne ostavlja posetioca u podnožju
  *   42. Lepljiva traka pušta niske ekrane
  *   43. Greške u formama su na srpskom i ne zumiraju ekran
- *   44. Mete za prst i preklopi koji ostaju u svojoj kartici
- *   45. Bezbednosna zaglavlja i keširanje stvarno stižu
- *   46. Šejder pozadine stvarno radi, i staje kad treba
- *   47. Godina u podnožju prati posetioca, ne build
- *   48. Značke ostaju čitljive i preko crteža, u obe teme
- *   49. Tab i Shift+Tab ostaju u dijalogu
- *   50. Potvrda slanja poruke se najavi i zadrži fokus
- *   51. Iznos donacije se ne izvikuje na svaki znak
- *   52. Zaglavljen zahtev se prekine umesto da se vrti zauvek
- *   53. Traka učitavanja je živa i pre nego što React stigne
- *   54. Otkucana prijava se ne baca bez pitanja
+ *   44. Puna korpa staje i na najuži telefon
+ *   45. Mete za prst i preklopi koji ostaju u svojoj kartici
+ *   46. Bezbednosna zaglavlja i keširanje stvarno stižu
+ *   47. Šejder pozadine stvarno radi, i staje kad treba
+ *   48. Godina u podnožju prati posetioca, ne build
+ *   49. Značke ostaju čitljive i preko crteža, u obe teme
+ *   50. Tab i Shift+Tab ostaju u dijalogu
+ *   51. Potvrda slanja poruke se najavi i zadrži fokus
+ *   52. Iznos donacije se ne izvikuje na svaki znak
+ *   53. Zaglavljen zahtev se prekine umesto da se vrti zauvek
+ *   54. Traka učitavanja je živa i pre nego što React stigne
+ *   55. Otkucana prijava se ne baca bez pitanja
  */
 
 const BASE = process.env.E2E_BASE_URL ?? `http://localhost:${process.env.PORT ?? 3000}`
@@ -2001,6 +2002,73 @@ await group('Greške u formama su na srpskom i ne zumiraju ekran', async () => {
   })
   const body = await answer.text()
   check('/api/kontakt: odgovor je na srpskom', !english.test(body), body.slice(0, 160))
+})
+
+// ------------------------------------------------------- puna korpa uska ----
+await group('Puna korpa staje i na najuži telefon', async () => {
+  // The empty cart was covered and clean; populated it was not. At 320px the
+  // gutter, the card padding and a 112px thumbnail left 116px for the column,
+  // and the stepper plus "Ukloni" need 160px of it with nothing allowed to
+  // shrink — the row pushed 27px past the viewport and the whole page scrolled
+  // sideways.
+  for (const [width, height] of [
+    [280, 653],
+    [320, 568],
+    [390, 844],
+  ]) {
+    const ctx = await browser.newContext({
+      viewport: { width, height },
+      hasTouch: true,
+      isMobile: true,
+    })
+    await ctx.addInitScript(() => {
+      try {
+        sessionStorage.setItem('doggzy.visited', '1')
+      } catch {}
+    })
+    const page = await ctx.newPage()
+    await page.goto(`${BASE}/prodavnica`, { waitUntil: 'load' })
+    await sleep(2200)
+
+    for (let index = 0; index < 3; index += 1) {
+      await page
+        .locator('button', { hasText: 'Dodaj u korpu' })
+        .nth(index)
+        .evaluate((node) => node.click())
+      await sleep(650)
+      await page.keyboard.press('Escape')
+      await sleep(400)
+    }
+    const drawer = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    )
+    check(`fioka @${width}: bez prelivanja sa tri stavke`, drawer === 0, String(drawer))
+
+    await page.goto(`${BASE}/korpa`, { waitUntil: 'load' })
+    await sleep(1900)
+    const cart = await page.evaluate(() => {
+      const viewport = document.documentElement.clientWidth
+      const past = [...document.querySelectorAll('main *')]
+        .filter((node) => {
+          const box = node.getBoundingClientRect()
+          if (box.width === 0 || box.right <= viewport + 0.5) return false
+          // Only the deepest offender, so one wide child does not report its
+          // whole ancestry.
+          return ![...node.children].some(
+            (child) => child.getBoundingClientRect().right > viewport + 0.5,
+          )
+        })
+        .map((node) => `${node.tagName}:${(node.textContent || '').trim().slice(0, 18)}`)
+      return {
+        overflow: document.documentElement.scrollWidth - viewport,
+        past: [...new Set(past)].slice(0, 3),
+        lines: document.querySelectorAll('main li').length,
+      }
+    })
+    check(`/korpa @${width}: bez prelivanja`, cart.overflow === 0, JSON.stringify(cart))
+    check(`/korpa @${width}: sve tri stavke su tu`, cart.lines === 3, String(cart.lines))
+    await ctx.close()
+  }
 })
 
 // ---------------------------------------------------------------- mete ------
