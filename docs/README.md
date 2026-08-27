@@ -1,11 +1,22 @@
 # Docs Index
 
-This repository contains two documentation tracks:
+This repository contains three documentation tracks:
 
+- Technical documentation for the website itself, below
 - Business-facing documents (final polished artifacts) in `docs/business-plan/`
 - Execution/working documents (plans, research, progress) in `docs/execution-plan/`
 
 Use this page as the central index and navigation.
+
+## The website
+
+- [Architecture](high-level-architecture.md) — stack, routes, content model, auth
+- [Editing Guide](editing-guide.md) — adding a dog, a product or a story
+- [Media Guide](media-guide.md) — the generative artwork, icons, fonts
+- [Release Checklist](release-checklist.md) — what must pass before a deploy
+
+`README.md` at the repository root covers the reasoning behind the harder
+choices; these four are the reference.
 
 ## Business Plan (final documents)
 - [Document List](business-plan/documents-list.md)
