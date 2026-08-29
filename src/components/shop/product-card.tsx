@@ -1,249 +1,225 @@
 'use client'
 
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { Heart, ShoppingCart, Star, Eye, Truck, Shield } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter } from '@/components/ui/card'
+import Link from 'next/link'
+import { useRef } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Expand, Heart, Plus } from 'lucide-react'
+import { cn, formatRsd } from '@/lib/utils'
+import { duration, ease, spring } from '@/lib/motion'
+import { routes } from '@/config/site'
+import type { Product, ProductBadge } from '@/content/products'
+import { useShop } from '@/lib/store/shop-store'
 import { Badge } from '@/components/ui/badge'
-import { cn } from '@/lib/utils'
-import { track } from '@/lib/analytics'
+import { TiltCard } from '@/components/motion'
+import { ProductArt } from './product-art'
 
-interface Product {
-  id: string
-  name: string
-  price: number
-  originalPrice?: number
-  image: string
-  rating: number
-  reviewCount: number
-  category: string
-  tags: string[]
-  description: string
-  inStock: boolean
-  isEcoFriendly?: boolean
-  isBestSeller?: boolean
-  isNew?: boolean
+const BADGE_TONE: Record<ProductBadge, 'brand' | 'accent' | 'positive' | 'neutral'> = {
+  bestseler: 'brand',
+  novo: 'accent',
+  eko: 'positive',
+  ograničeno: 'neutral',
 }
 
-interface ProductCardProps {
+export function ProductCard({
+  product,
+  index = 0,
+  onQuickView,
+}: {
   product: Product
-  onAddToCart: (product: Product) => void
-  onAddToWishlist: (product: Product) => void
-  onQuickView?: (product: Product) => void
-}
+  index?: number
+  /** When provided, the card offers a quick-view affordance on hover. */
+  onQuickView?: (product: Product, originRect: DOMRect | null) => void
+}) {
+  const { addToCart, toggleFavorite, isFavorite, openCart, hydrated } = useShop()
+  const artRef = useRef<HTMLDivElement>(null)
+  const favorite = hydrated && isFavorite(product.id)
 
-export function ProductCard({ product, onAddToCart, onAddToWishlist, onQuickView }: ProductCardProps) {
-  const [isHovered, setIsHovered] = useState(false)
-  const [imageLoaded, setImageLoaded] = useState(false)
-
-  const discountPercentage = product.originalPrice 
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-    : 0
+  const handleAdd = () => {
+    addToCart(product.id, 1, artRef.current?.getBoundingClientRect() ?? null)
+    openCart()
+  }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
+    <motion.article
+      layout
+      initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      whileHover={{ y: -10 }}
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
-      className="group"
+      // Leaving is quick and un-staggered: a filter that takes a second to
+      // settle reads as lag, not as polish.
+      exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.16, ease: ease.swift } }}
+      transition={{ duration: duration.base, ease: ease.outExpo, delay: Math.min(index, 5) * 0.03 }}
+      className="group h-full"
     >
-      <Card className="border-0 shadow-lg hover:shadow-2xl dark:hover:shadow-white/10 transition-all duration-300 overflow-hidden bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm group">
-        {/* Product Image */}
-        <div className="relative overflow-hidden">
-          <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center">
-            {!imageLoaded && (
-              <div className="w-16 h-16 bg-gradient-to-br from-orange-200 to-red-200 rounded-full animate-pulse" />
-            )}
-            <motion.div
-              className={cn(
-                "w-full h-full bg-gradient-to-br from-orange-100 to-red-100 flex items-center justify-center text-6xl",
-                imageLoaded ? "opacity-100" : "opacity-0"
-              )}
-              animate={{ scale: isHovered ? 1.1 : 1 }}
-              transition={{ duration: 0.3 }}
-              onAnimationComplete={() => setImageLoaded(true)}
-            >
-              🐕
-            </motion.div>
-          </div>
-
-          {/* Badges */}
-          <div className="absolute top-3 left-3 flex flex-col gap-2">
-            {product.isNew && (
-              <Badge className="bg-green-500 text-white border-0">
-                New
-              </Badge>
-            )}
-            {product.isBestSeller && (
-              <Badge className="bg-yellow-500 text-white border-0">
-                Best Seller
-              </Badge>
-            )}
-            {product.isEcoFriendly && (
-              <Badge className="bg-emerald-500 text-white border-0">
-                Eco-Friendly
-              </Badge>
-            )}
-            {discountPercentage > 0 && (
-              <Badge className="bg-red-500 text-white border-0">
-                -{discountPercentage}%
-              </Badge>
-            )}
-          </div>
-
-          {/* Quick Actions */}
-          <motion.div
-            className="absolute top-3 right-3 flex flex-col gap-2"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ 
-              opacity: isHovered ? 1 : 0, 
-              x: isHovered ? 0 : 20 
-            }}
-            transition={{ duration: 0.3 }}
-          >
-            <Button
-              size="icon"
-              variant="secondary"
-              className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg"
-              onClick={() => onAddToWishlist(product)}
-            >
-              <Heart className="h-4 w-4" />
-            </Button>
-            <Button
-              size="icon"
-              variant="secondary"
-              className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg"
-              onClick={() => onQuickView && onQuickView(product)}
-            >
-              <Eye className="h-4 w-4" />
-            </Button>
-          </motion.div>
-
-          {/* Category Tag */}
-          <div className="absolute bottom-3 left-3">
-            <Badge variant="secondary" className="bg-white/90 text-gray-700">
-              {product.category}
-            </Badge>
-          </div>
-        </div>
-
-        <CardContent className="p-6">
-          {/* Rating */}
-          <div className="flex items-center gap-2 mb-3">
-            <div className="flex items-center">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
+      <div className="flex h-full flex-col overflow-hidden rounded-4xl border border-line bg-elevated transition-[border-color,transform] duration-500 ease-out-expo group-hover:-translate-y-1 group-hover:border-line-strong">
+        {/* Only the artwork tilts. Controls stay in an untransformed layer so
+            their hit areas match what the pointer can see. */}
+        <TiltCard
+          max={8}
+          lift={12}
+          className="aspect-square overflow-hidden"
+          layerClassName="absolute inset-0"
+          layer={<ProductArt product={product} interactive className="h-full w-full" />}
+        >
+          <div ref={artRef} className="absolute inset-0">
+            {onQuickView ? (
+              <button
+                type="button"
+                onClick={() =>
+                  onQuickView(product, artRef.current?.getBoundingClientRect() ?? null)
+                }
+                data-cursor="expand"
+                data-cursor-label="Pogledaj"
+                aria-label={`Brzi pregled — ${product.name}`}
+                className="absolute inset-0 z-10 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-brand"
+              >
+                <span
+                  aria-hidden="true"
                   className={cn(
-                    "h-4 w-4",
-                    i < Math.floor(product.rating)
-                      ? "fill-yellow-400 text-yellow-400"
-                      : "text-gray-300"
+                    'pointer-events-none absolute inset-x-4 bottom-4 flex h-10 items-center justify-center gap-2',
+                    'rounded-xl border border-line-strong bg-canvas/80 text-sm text-ink backdrop-blur',
+                    'translate-y-3 opacity-0 transition-all duration-300 ease-out-expo',
+                    'group-hover:translate-y-0 group-hover:opacity-100',
+                    'group-focus-within:translate-y-0 group-focus-within:opacity-100',
                   )}
-                />
-              ))}
+                >
+                  <Expand className="h-4 w-4" />
+                  Brzi pregled
+                </span>
+              </button>
+            ) : null}
+
+            {product.badges.length > 0 ? (
+              <ul className="pointer-events-none absolute inset-x-4 top-4 pr-11 z-20 flex flex-wrap gap-1.5">
+                {product.badges.map((badge) => (
+                  <li key={badge}>
+                    <Badge tone={BADGE_TONE[badge]} size="sm">
+                      {badge}
+                    </Badge>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+
+            {!product.inStock ? (
+              <div className="pointer-events-none absolute inset-0 z-20 grid place-items-center bg-canvas/70 backdrop-blur-sm">
+                <span className="rounded-full border border-line bg-elevated px-4 py-1.5 text-xs text-ink-muted">
+                  Trenutno nedostupno
+                </span>
+              </div>
+            ) : null}
+
+            <FavoriteButton
+              active={favorite}
+              productName={product.name}
+              onToggle={() => toggleFavorite(product.id)}
+            />
+          </div>
+        </TiltCard>
+
+        <div className="flex flex-1 flex-col gap-3 p-5">
+          <div className="flex items-start justify-between gap-3">
+            <h3 className="text-base font-medium leading-snug text-ink">
+              <Link
+                href={routes.product(product.slug)}
+                className="transition-colors hover:text-brand-text focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand"
+              >
+                {product.name}
+              </Link>
+            </h3>
+            <div className="shrink-0 text-right">
+              <p data-numeric className="text-base font-semibold text-ink">
+                {formatRsd(product.price)}
+              </p>
+              {product.compareAt ? (
+                <p data-numeric className="text-xs text-ink-subtle line-through">
+                  {formatRsd(product.compareAt)}
+                </p>
+              ) : null}
             </div>
-            <span className="text-sm text-gray-600 dark:text-gray-300">
-              ({product.reviewCount})
-            </span>
           </div>
 
-          {/* Product Name */}
-          <h3 className="font-semibold text-lg mb-2 line-clamp-2 group-hover:text-orange-600 dark:text-white transition-colors">
-            {product.name}
-          </h3>
+          <p className="line-clamp-2 text-sm text-ink-subtle">{product.tagline}</p>
 
-          {/* Description */}
-          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
-            {product.description}
+          <p className="rounded-xl bg-brand/8 px-3 py-2 text-xs leading-relaxed text-brand-text">
+            {product.impact}
           </p>
 
-          {/* Tags */}
-          <div className="flex flex-wrap gap-1 mb-4">
-            {product.tags.slice(0, 2).map((tag) => (
-              <Badge
-                key={tag}
-                variant="outline"
-                className="text-xs border-gray-200 dark:border-slate-600 text-gray-600 dark:text-gray-300"
-              >
-                {tag}
-              </Badge>
-            ))}
-          </div>
-
-          {/* Price */}
-          <div className="flex items-center gap-2 mb-4">
-            <span className="text-2xl font-bold text-orange-600 dark:text-orange-400">
-              ${product.price}
-            </span>
-            {product.originalPrice && (
-              <span className="text-lg text-gray-500 dark:text-gray-400 line-through">
-                ${product.originalPrice}
-              </span>
-            )}
-          </div>
-
-          {/* Stock Status */}
-          <div className="flex items-center gap-2 mb-4">
-            {product.inStock ? (
-              <div className="flex items-center gap-1 text-green-600 text-sm">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                In Stock
-              </div>
-            ) : (
-              <div className="flex items-center gap-1 text-red-600 text-sm">
-                <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                Out of Stock
-              </div>
-            )}
-          </div>
-        </CardContent>
-
-        <CardFooter className="p-6 pt-0">
-          <Button
-            className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white"
+          <button
+            type="button"
+            onClick={handleAdd}
             disabled={!product.inStock}
-            onClick={() => { track('add_to_cart', { id: product.id, name: product.name, price: product.price }); onAddToCart(product) }}
+            className={cn(
+              'mt-auto flex h-11 items-center justify-center gap-2 rounded-xl text-sm font-medium',
+              'border border-line bg-surface text-ink transition-all duration-300 ease-out-expo',
+              'hover:border-transparent hover:bg-brand hover:text-brand-ink',
+              'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand',
+              'active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40',
+            )}
           >
-            <ShoppingCart className="h-4 w-4 mr-2" />
-            {product.inStock ? 'Add to Cart' : 'Out of Stock'}
-          </Button>
-        </CardFooter>
-
-        {/* Hover Overlay */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-          initial={false}
-          animate={{ opacity: isHovered ? 1 : 0 }}
-        />
-
-        {/* Shipping Info */}
-        <motion.div
-          className="absolute bottom-20 left-6 right-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ 
-            opacity: isHovered ? 1 : 0, 
-            y: isHovered ? 0 : 20 
-          }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm rounded-lg p-3 shadow-lg">
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-              <Truck className="h-4 w-4 text-green-500" />
-              <span>Free shipping on orders over $50</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300 mt-1">
-              <Shield className="h-4 w-4 text-blue-500" />
-              <span>30-day money-back guarantee</span>
-            </div>
-          </div>
-        </motion.div>
-      </Card>
-    </motion.div>
+            <Plus className="h-4 w-4" />
+            Dodaj u korpu
+          </button>
+        </div>
+      </div>
+    </motion.article>
   )
 }
 
+/**
+ * Heart toggle with a one-shot particle burst. The particles are decorative and
+ * unmount as soon as they finish, so nothing keeps animating off-screen.
+ */
+function FavoriteButton({
+  active,
+  productName,
+  onToggle,
+}: {
+  active: boolean
+  productName: string
+  onToggle: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-pressed={active}
+      aria-label={active ? `Ukloni ${productName} iz omiljenih` : `Dodaj ${productName} u omiljene`}
+      // The pill reads 36px by design; the pseudo-element grows the touch
+      // target to 44 without changing a pixel of the layout. Same technique the
+      // report flow's chips use. It sits above the quick-view overlay (`z-20`
+      // over `z-10`), so a thumb aiming at the heart gets the heart.
+      className="absolute right-4 top-4 z-20 grid h-9 w-9 place-items-center rounded-full bg-canvas/80 text-ink-muted backdrop-blur transition-colors hover:text-critical focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand before:absolute before:-inset-1 before:content-['']"
+    >
+      <motion.span
+        animate={active ? { scale: [1, 1.35, 1] } : { scale: 1 }}
+        transition={spring.pop}
+      >
+        <Heart
+          className={cn('h-4 w-4 transition-colors', active && 'fill-critical text-critical')}
+        />
+      </motion.span>
+
+      <AnimatePresence>
+        {active
+          ? Array.from({ length: 6 }).map((_, particle) => (
+              <motion.span
+                key={particle}
+                aria-hidden="true"
+                data-decor
+                className="pointer-events-none absolute h-1 w-1 rounded-full bg-critical"
+                initial={{ scale: 1, x: 0, y: 0, opacity: 1 }}
+                animate={{
+                  scale: 0,
+                  x: Math.cos((particle / 6) * Math.PI * 2) * 22,
+                  y: Math.sin((particle / 6) * Math.PI * 2) * 22,
+                  opacity: 0,
+                }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.55, ease: ease.outQuart }}
+              />
+            ))
+          : null}
+      </AnimatePresence>
+    </button>
+  )
+}

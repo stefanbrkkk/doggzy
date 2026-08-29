@@ -1,63 +1,19 @@
-import { MetadataRoute } from 'next'
+import type { MetadataRoute } from 'next'
+import { site } from '@/config/site'
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = 'https://doggzy.org'
-  
   return {
-    rules: [
-      {
-        userAgent: '*',
-        allow: [
-          '/',
-          '/about',
-          '/adopt',
-          '/foster',
-          '/sponsor',
-          '/shop',
-          '/donate',
-          '/impact',
-          '/careers',
-          '/contact',
-          '/partners',
-          '/privacy',
-          '/terms',
-          '/accessibility',
-          '/refunds',
-          '/cookies',
-        ],
-        disallow: [
-          '/admin',
-          '/api/',
-          '/_next/',
-          '/test-lang',
-          '/basket',
-          '/favorites',
-          '/*.json',
-          '/*?*', // Query parameters
-        ],
-      },
-      {
-        userAgent: 'GPTBot',
-        disallow: '/',
-      },
-      {
-        userAgent: 'ChatGPT-User',
-        disallow: '/',
-      },
-      {
-        userAgent: 'CCBot',
-        disallow: '/',
-      },
-      {
-        userAgent: 'anthropic-ai',
-        disallow: '/',
-      },
-      {
-        userAgent: 'Claude-Web',
-        disallow: '/',
-      },
-    ],
-    sitemap: `${baseUrl}/sitemap.xml`,
-    host: baseUrl,
+    rules: {
+      userAgent: '*',
+      allow: '/',
+      // Only what has no crawlable HTML to carry its own directive. /korpa and
+      // /omiljeno are `noindex` on the page, and a crawler that obeys a
+      // disallow never fetches them — so the two mechanisms cancelled out and
+      // both URLs, linked from the header on every page, could still be listed
+      // as bare URLs with no snippet.
+      disallow: ['/admin', '/api/'],
+    },
+    sitemap: `${site.url}/sitemap.xml`,
+    host: site.url,
   }
 }

@@ -1,87 +1,31 @@
-'use client'
+import type { Metadata } from 'next'
+import { Hero } from '@/components/home/hero'
+import { Ticker } from '@/components/home/ticker'
+import { HowItWorks } from '@/components/home/how-it-works'
+import { ImpactCalculator } from '@/components/home/impact-calculator'
+import { DogsRail } from '@/components/home/dogs-rail'
+import { ShopTeaser } from '@/components/home/shop-teaser'
+import { StoryFeature } from '@/components/home/story-feature'
+import { ClosingCta } from '@/components/home/closing-cta'
+import { JsonLd } from '@/components/seo/json-ld'
+import { organizationSchema, websiteSchema } from '@/lib/structured-data'
 
-import { Suspense } from 'react'
-import { motion } from 'framer-motion'
-import { HeroSection } from '@/components/hero-section'
-import { ImpactStats } from '@/components/impact-stats'
-import { SuccessStories } from '@/components/success-stories'
-import { GlobalPartners } from '@/components/global-partners'
-import { ShopPreview } from '@/components/home/shop-preview'
-import { LargeStoryCard } from '@/components/shared/large-story-card'
-import { ComponentSkeleton } from '@/lib/lazy-loading'
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+}
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="min-h-screen">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <HeroSection />
-      </motion.div>
-      
-      <Suspense fallback={<ComponentSkeleton />}>
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-        >
-          <ImpactStats />
-        </motion.div>
-      </Suspense>
-      
-      <Suspense fallback={<ComponentSkeleton />}>
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-        >
-          <SuccessStories />
-        </motion.div>
-      </Suspense>
-      
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        viewport={{ once: true }}
-      >
-        <section className="py-16">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-            <h2 className="text-3xl font-display font-bold">Latest Stories</h2>
-            <LargeStoryCard
-              title="Bella’s First Day Home"
-              subtitle="💛🐶"
-              quote="She was shy for an hour, then decided the couch was hers."
-              badges={["Adopted", "Family"]}
-              media={{ type: 'image', src: '/api/placeholder/800/600', caption: 'Bella - A happy rescued dog in her new home' }}
-              primaryCta={{ label: 'Read full story', onClick: () => { window.location.href = '/sponsor' } }}
-              secondaryCta={{ label: 'Meet similar dogs', onClick: () => { window.location.href = '/sponsor' } }}
-            />
-          </div>
-        </section>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        viewport={{ once: true }}
-      >
-        <ShopPreview />
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        viewport={{ once: true }}
-      >
-        <GlobalPartners />
-      </motion.div>
-    </div>
+    <>
+      <JsonLd data={[organizationSchema(), websiteSchema()]} />
+      <Hero />
+      <Ticker />
+      <HowItWorks />
+      <ImpactCalculator />
+      <DogsRail />
+      <ShopTeaser />
+      <StoryFeature />
+      <ClosingCta />
+    </>
   )
 }

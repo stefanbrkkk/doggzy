@@ -1,19 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
+import { sessionCookieOptions } from '@/lib/auth'
 
-export async function POST(_request: NextRequest) {
-  try {
-    return NextResponse.json({
-      success: true,
-      message: 'Logout successful'
-    })
-  } catch (error) {
-    console.error('Logout error:', error)
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Logout failed'
-      },
-      { status: 500 }
-    )
-  }
+export const runtime = 'nodejs'
+
+export async function POST() {
+  const response = NextResponse.json({ ok: true })
+  response.cookies.set({ ...sessionCookieOptions(), value: '', maxAge: 0 })
+  return response
 }

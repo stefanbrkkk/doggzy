@@ -1,0 +1,105 @@
+'use client'
+
+import { useMemo, useState } from 'react'
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
+import { cn, plural } from '@/lib/utils'
+import { spring } from '@/lib/motion'
+import { statusFilterLabels, type Dog, type DogStatus } from '@/content/dogs'
+import { DogCard } from './dog-card'
+
+const ALL = 'sve' as const
+type Filter = typeof ALL | DogStatus
+
+const ORDER: DogStatus[] = ['nestao', 'trazi-dom', 'u-lecenju', 'udomljen']
+
+export function DogsBrowser({ dogs }: { dogs: Dog[] }) {
+  const [filter, setFilter] = useState<Filter>(ALL)
+
+  const counts = useMemo(() => {
+    const map = new Map<Filter, number>([[ALL, dogs.length]])
+    for (const status of ORDER) {
+      map.set(status, dogs.filter((dog) => dog.status === status).length)
+    }
+    return map
+  }, [dogs])
+
+  const visible = useMemo(
+    () => (filter === ALL ? dogs : dogs.filter((dog) => dog.status === filter)),
+    [dogs, filter],
+  )
+
+  return (
+    <div className="space-y-8">
+      {/* The cards are h3s, so without a level here the page jumps h1 to h3.
+          It doubles as the filter's result announcement: the text changes with
+          the selection, so a screen-reader user hears what the list now holds
+          instead of having to go looking. */}
+      <h2 className="sr-only" aria-live="polite">
+        {filter === ALL ? 'Svi psi' : statusFilterLabels[filter]} — {visible.length}{' '}
+        {plural(visible.length, 'pas', 'psa', 'pasa')}
+      </h2>
+
+      <LayoutGroup id="dogs-filter">
+        <ul className="flex flex-wrap gap-1.5">
+          {[ALL, ...ORDER].map((option) => {
+            const active = filter === option
+            const count = counts.get(option) ?? 0
+            return (
+              <li key={option}>
+                <button
+                  type="button"
+                  onClick={() => setFilter(option)}
+                  aria-pressed={active}
+                  className={cn(
+                    'relative rounded-full border border-line px-4 py-2 text-sm transition-colors',
+                    // 38px of visual, 44px of target — the row's own gap
+                    // keeps neighbouring areas from overlapping.
+                    "before:absolute before:-inset-1 before:content-['']",
+                    active ? 'border-transparent text-brand-ink' : 'text-ink-muted hover:text-ink',
+                  )}
+                >
+                  {active ? (
+                    <motion.span
+                      layoutId="dogs-filter-pill"
+                      className="absolute inset-0 rounded-full bg-brand"
+                      transition={spring.surface}
+                    />
+                  ) : null}
+                  <span className="relative z-10">
+                    {option === ALL ? 'Svi' : statusFilterLabels[option]}{' '}
+                    <span data-numeric className="opacity-60">
+                      {count}
+                    </span>
+                  </span>
+                </button>
+              </li>
+            )
+          })}
+        </ul>
+      </LayoutGroup>
+
+      {visible.length === 0 ? (
+        <p className="mx-auto max-w-xl rounded-4xl border border-dashed border-rule py-16 text-center text-sm text-ink-muted">
+          Trenutno nema pasa u ovoj kategoriji.
+        </p>
+      ) : (
+        <motion.ul layout className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <AnimatePresence mode="popLayout">
+            {visible.map((dog) => (
+              <motion.li
+                key={dog.id}
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={spring.surface}
+              >
+                <DogCard dog={dog} className="h-full" />
+              </motion.li>
+            ))}
+          </AnimatePresence>
+        </motion.ul>
+      )}
+    </div>
+  )
+}

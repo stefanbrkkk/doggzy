@@ -1,287 +1,73 @@
-# Media Management Guide
+[Back to Docs Index](README.md)
 
-This guide explains how to manage media assets (images and videos) in the Doggzy platform.
+# Media Guide
 
-## Overview
+This site ships no photographs, no video, and no raster image files at all. That
+is a deliberate constraint, not a gap waiting to be filled.
 
-The media system is designed to:
-- Provide optimized images and videos for web performance
-- Support responsive images for different screen sizes
-- Maintain organized asset structure
-- Enable easy content management
+A rescue that has just been founded has no photo library, and stock photographs
+of dogs it has never met would contradict the one thing the site is for: showing
+what actually happened, with receipts. So the visual system is generative.
 
-## Directory Structure
+## Generative artwork
 
-```
-public/
-├── images/
-│   ├── dogs/                 # Dog photos and illustrations
-│   ├── categories/           # Shop category images
-│   ├── team/                 # Team member photos
-│   ├── thumbnails/           # Video thumbnails
-│   └── optimized/            # Generated responsive variants
-├── videos/                   # Video assets
-├── og-image.jpg              # Social media preview image
-└── logo.png                  # Main logo
+Every dog, product and story carries an art descriptor:
+
+```ts
+art: { shape: 'orbit', from: 'var(--color-mint-400)', to: 'var(--color-iris-500)' }
 ```
 
-## Image Guidelines
+`src/lib/art.ts` holds the vocabulary — the eight shapes and the descriptor
+type — and `src/components/visuals/generative-art.tsx` draws it: the entry's id
+is hashed (FNV-1a) into the seed of an xorshift sequence, which places every
+element of the composition. The same entry produces the same artwork on every
+render, on the server and in the browser, with no file to store, optimise, or
+serve.
 
-### Formats
-- **Primary**: WebP (modern browsers, best compression)
-- **Fallback**: JPEG (universal compatibility)
-- **Avoid**: PNG for photos (use only for graphics with transparency)
+Eight shapes are available: `orbit`, `waves`, `grid`, `bloom`, `pulse`, `ridge`,
+`prism`, `trace`.
 
-### Sizes
-We generate responsive variants at these widths:
-- 400px (mobile)
-- 800px (tablet)
-- 1200px (desktop)
-- 1600px (large desktop)
-- 2000px (retina displays)
+Guidance when picking one:
 
-### Quality Settings
-- **Thumbnails**: 75% quality (small file size priority)
-- **Standard**: 85% quality (balanced)
-- **High**: 95% quality (hero images only)
+- Vary the shape between neighbouring cards. A grid of eight `orbit` covers reads
+  as a rendering bug rather than a set.
+- Use theme tokens for `from` and `to`, never literal colours. The artwork is
+  drawn over a light ground as well as a dark one, and `--art-alpha` and
+  `--art-ink` in `globals.css` adjust it per theme. A hard-coded colour ignores
+  both.
+- Match the subject loosely — `orbit` for a tracker, `waves` for water, `pulse`
+  for something medical. It should read as considered, not literal.
 
-### Naming Convention
-```
-category-name-size.format
-```
+## If real photography arrives later
 
-Examples:
-- `hero-adoption-1200w.webp`
-- `dog-bella-400w.jpg`
-- `category-toys-800w.webp`
+Nothing in the design system depends on the absence of photographs, but adding
+them is a real change, not a drop-in:
 
-## Video Guidelines
+- The art descriptor stays as the fallback. Every dog and product needs a cover
+  whether or not a photograph exists.
+- Photographs of a dog that is up for adoption are personal data about the people
+  who surrendered it as often as they are about the dog. Check
+  `src/app/privatnost/page.tsx` before publishing any.
+- Add width and height so the layout does not shift, and keep the aspect ratios
+  the cards already use (square for products, square for dog covers).
 
-### Formats
-- **Primary**: MP4 (H.264)
-- **Progressive**: WebM (where supported)
+## Icons and social images
 
-### Specifications
-- **Hero Videos**: 
-  - Max 5MB file size
-  - 30 seconds or less
-  - 1920×1080 max resolution
-  - Muted by default
-  - Loop enabled
+- `src/app/icon.tsx` and `src/app/apple-icon.tsx` render the paw mark at request
+  time via `ImageResponse`. The mark sits at ~62% of the canvas so it survives a
+  maskable crop.
+- `src/app/opengraph-image.tsx` renders the social card the same way. Every page
+  points at it through `pageMetadata()` in `src/lib/metadata.ts`; a route that
+  declares its own `openGraph` block without an `images` entry silently detaches
+  from the file-based one, which is why pages go through that helper.
+- `src/app/manifest.ts` lists the icon at both `any` and `maskable` purposes.
 
-### Naming Convention
-```
-category-name.format
-```
+`npm run test:e2e` fetches each of these and fails if one 404s or comes back
+empty — a blank install tile is not visible in review.
 
-Examples:
-- `hero-adoption.mp4`
-- `story-success.mp4`
+## Fonts
 
-## Using Media in Code
-
-### Images with Media Registry
-
-```typescript
-import { getImageAsset, generateSrcSet } from '@/lib/media'
-
-// Get a specific image asset
-const dogImage = getImageAsset('dogs', 'bella')
-
-// Generate responsive srcSet
-const srcSet = generateSrcSet(dogImage.src)
-```
-
-### Next.js Image Component
-
-```tsx
-import Image from 'next/image'
-import { getImageAsset } from '@/lib/media'
-
-const asset = getImageAsset('dogs', 'bella')
-
-<Image
-  src={asset.src}
-  alt={asset.alt}
-  width={asset.width}
-  height={asset.height}
-  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-  priority // Only for above-the-fold images
-/>
-```
-
-### Videos
-
-```tsx
-import { getVideoAsset } from '@/lib/media'
-
-const video = getVideoAsset('hero-default')
-
-<video
-  src={video.src}
-  poster={video.thumbnail}
-  autoPlay={video.autoplay}
-  muted={video.muted}
-  loop={video.loop}
-  aria-label={video.alt}
->
-  Your browser does not support the video tag.
-</video>
-```
-
-## Content Management
-
-### Adding New Images
-
-1. **Place original image** in appropriate `public/images/` subdirectory
-2. **Run optimization script**: `node scripts/optimize-images.js`
-3. **Update media registry** in `src/lib/media.ts`
-4. **Update content files** to reference the new asset
-
-### Image Optimization Script
-
-```bash
-# Optimize all images in public/images/
-node scripts/optimize-images.js
-
-# Optimize specific directory
-node scripts/optimize-images.js public/images/dogs public/images/optimized/dogs
-```
-
-The script will:
-- Convert images to WebP format
-- Generate responsive variants
-- Create thumbnails
-- Compress to target file sizes
-- Generate optimization report
-
-### Manual Optimization
-
-If you need to manually optimize images:
-
-1. **Install Sharp** (if not already installed):
-   ```bash
-   npm install sharp
-   ```
-
-2. **Use online tools**:
-   - [Squoosh](https://squoosh.app/) - Google's image optimization tool
-   - [TinyPNG](https://tinypng.com/) - PNG/JPEG compression
-   - [Convertio](https://convertio.co/) - Format conversion
-
-3. **Command line tools**:
-   ```bash
-   # Convert to WebP
-   cwebp -q 85 input.jpg -o output.webp
-   
-   # Resize image
-   convert input.jpg -resize 800x output.jpg
-   ```
-
-## Performance Best Practices
-
-### Image Loading
-- Use `priority` prop for above-the-fold images
-- Lazy load below-the-fold images (default behavior)
-- Provide appropriate `sizes` attribute
-- Use placeholder images for better UX
-
-### Video Loading
-- Preload critical hero videos
-- Use poster images for video thumbnails
-- Keep file sizes under 5MB for hero videos
-- Consider lazy loading for non-critical videos
-
-### Responsive Images
-```tsx
-// Good: Responsive with proper sizes
-<Image
-  src="/images/hero.jpg"
-  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-  fill
-/>
-
-// Bad: Fixed size that doesn't adapt
-<Image
-  src="/images/hero.jpg"
-  width={1200}
-  height={600}
-/>
-```
-
-## Accessibility
-
-### Alt Text Guidelines
-- **Descriptive**: Describe what's in the image
-- **Contextual**: Consider the image's purpose
-- **Concise**: Keep under 125 characters
-- **Empty for decorative**: Use `alt=""` for purely decorative images
-
-Examples:
-```typescript
-// Good
-alt: "Bella, a golden retriever, playing in a sunny park with her new family"
-
-// Bad
-alt: "dog image"
-alt: "IMG_1234.jpg"
-```
-
-### Video Accessibility
-- Provide captions for videos with speech
-- Use `aria-label` for background videos
-- Ensure videos don't auto-play with sound
-- Provide controls for user-initiated videos
-
-## File Size Targets
-
-### Images
-- **Thumbnails**: < 50KB
-- **Card Images**: < 150KB
-- **Hero Images**: < 500KB
-- **Full-size Images**: < 1MB
-
-### Videos
-- **Hero Videos**: < 5MB
-- **Story Videos**: < 10MB
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Images not loading**
-   - Check file paths are correct
-   - Verify files exist in public directory
-   - Check Next.js image domains configuration
-
-2. **Poor performance**
-   - Ensure responsive images are being used
-   - Check if images are too large
-   - Verify WebP format is being served
-
-3. **Optimization script errors**
-   - Make sure Sharp is installed: `npm install sharp`
-   - Check file permissions
-   - Verify source directory exists
-
-### Debug Commands
-
-```bash
-# Check image file sizes
-du -sh public/images/**/*.{jpg,png,webp}
-
-# List large files
-find public/images -type f -size +500k
-
-# Check WebP support
-node -e "console.log(require('sharp').format)"
-```
-
-## Future Enhancements
-
-Planned improvements:
-- [ ] Automatic image optimization on upload
-- [ ] CDN integration for global delivery
-- [ ] Advanced compression algorithms
-- [ ] Automatic format detection and serving
-- [ ] Image analytics and performance monitoring
+Four families, all self-hosted through `next/font`: Inter (text), Space Grotesk
+(display), Instrument Serif (accents), JetBrains Mono (figures). Every one
+includes the `latin-ext` subset. Without it the serif silently drops č, ć, š, ž
+and đ mid-word.

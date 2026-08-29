@@ -1,286 +1,167 @@
-# Doggzy - Global Dog Rescue Charity Website
+# Doggzy
 
-A world-class, emotionally moving, and visually dynamic fundraising + e-commerce website for Doggzy, a global dog rescue charity. The platform inspires donations, drives merchandise sales, and complies with international nonprofit and tax regulations.
+Pomoć psima koja se može proveriti.
 
-## 🌟 Features
+Doggzy je platforma za Srbiju koja spaja tri stvari: prijavu nestalog,
+pronađenog ili ugroženog psa; udomljavanje i virtuelno starateljstvo; i prodavnicu
+čiji profit ide u negu. Svaki trošak je javan — svaki pas ima stranicu na kojoj
+stoji šta je urađeno, koliko je koštalo i da li postoji dokaz.
 
-### 🎯 Core Functionality
-- **Dual Functionality**: Donation hub + merchandise store
-- **Emotional Design**: Cinematic storytelling with heartwarming imagery
-- **Global Compliance**: Tax-deductible donations, VAT handling, GDPR/CCPA compliance
-- **Impact Tracking**: Real-time statistics and progress visualization
-
-### 💝 Donation System
-- One-time and recurring donations
-- Sponsor-a-pet profiles with live updates
-- Tax-compliant receipts (IRS, UK Gift Aid, EU VAT)
-- Multiple payment methods (Stripe, PayPal)
-- Automated branded receipts with rescue photos
-
-### 🛍️ E-commerce Store
-- Curated, eco-friendly dog products
-- Print-on-demand apparel
-- Custom dog portraits
-- GPS collars and eco-friendly beds
-- Transparent profit routing to shelters
-
-### 🎨 Visual Design
-- Bold, futuristic typography with heartwarming imagery
-- Flashy, high-end animations and microinteractions
-- Parallax scrolling and hover effects
-- Real-time counters and animated progress bars
-- 3D/AR features for interactive experiences
-
-### 🌍 Global Features
-- Multi-language support
-- Global partner network visualization
-- Regional compliance handling
-- Currency localization
-
-## 🚀 Tech Stack
-
-- **Framework**: Next.js 15 with App Router
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS v4
-- **Animations**: Framer Motion
-- **3D Graphics**: Three.js + React Three Fiber
-- **UI Components**: Radix UI + Custom components
-- **Payments**: Stripe + PayPal
-- **Forms**: React Hook Form + Zod validation
-- **State Management**: React hooks + Context
-- **Icons**: Lucide React
-
-## 📁 Project Structure
-
-```
-src/
-├── app/                    # Next.js app router pages
-│   ├── page.tsx           # Homepage
-│   ├── donate/            # Donation pages
-│   ├── shop/              # E-commerce pages
-│   ├── sponsor/           # Sponsor a pet pages
-│   ├── admin/             # CMS admin dashboard
-│   ├── privacy/           # Legal pages
-│   └── layout.tsx         # Root layout
-├── components/            # Reusable components
-│   ├── ui/                # Base UI components
-│   ├── hero-section.tsx   # Homepage hero
-│   ├── impact-stats.tsx   # Statistics display
-│   ├── success-stories.tsx # Story showcase
-│   ├── global-partners.tsx # Partner network
-│   ├── donation/          # Donation components
-│   ├── shop/              # E-commerce components
-│   ├── sponsor/           # Sponsorship components
-│   ├── navigation.tsx     # Site navigation
-│   └── footer.tsx         # Site footer
-└── lib/                   # Utilities and helpers
-    └── utils.ts           # Common utilities
-```
-
-## 🎨 Design System
-
-### Colors
-- **Primary**: Orange (#f97316) to Red (#ef4444) gradient
-- **Secondary**: Blue (#3b82f6) to Indigo (#6366f1) gradient
-- **Success**: Green (#10b981) to Emerald (#059669) gradient
-- **Neutral**: Gray scale for text and backgrounds
-
-### Typography
-- **Display**: Space Grotesk (headlines)
-- **Body**: Inter (body text)
-- **Weights**: 300-900 for full flexibility
-
-### Animations
-- **Microinteractions**: Hover effects, button animations
-- **Page Transitions**: Smooth page-to-page navigation
-- **Loading States**: Skeleton screens and progress indicators
-- **Scroll Animations**: Reveal animations on scroll
-
-## 🛠️ Getting Started
-
-### Prerequisites
-- Node.js 18+ 
-- npm or yarn
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd doggzy
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables**
-   ```bash
-   cp .env.example .env.local
-   ```
-   
-   Add your configuration:
-   ```env
-   STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
-   STRIPE_SECRET_KEY=your_stripe_secret_key
-   NEXT_PUBLIC_SITE_URL=http://localhost:3000
-   ```
-
-4. **Run the development server**
-   ```bash
-   npm run dev
-   ```
-
-5. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
-
-## 📱 Pages & Features
-
-### Homepage (`/`)
-- Cinematic hero section with video background
-- Animated statistics and impact metrics
-- Success stories carousel
-- Global partner network map
-- Call-to-action sections
-
-### Donation Hub (`/donate`)
-- Multi-step donation form
-- Preset amounts and custom input
-- Recurring donation options
-- Tax-deductible receipt generation
-- Payment processing with Stripe
-
-### Merchandise Store (`/shop`)
-- Product catalog with filtering
-- Shopping cart functionality
-- Product detail pages
-- Checkout process
-- Order management
-
-### Sponsor a Pet (`/sponsor`)
-- Individual dog profiles
-- Progress tracking for fundraising
-- Medical needs and updates
-- Photo galleries
-- Sponsor management
-
-### Admin Dashboard (`/admin`)
-- Content management system
-- Statistics overview
-- Story and product management
-- User activity monitoring
-- Settings configuration
-
-### Legal Pages (`/privacy`, `/terms`)
-- GDPR/CCPA compliant privacy policy
-- Terms of service
-- Cookie policy
-- Accessibility statement
-
-## 🔧 Configuration
-
-### Stripe Integration
-The donation system integrates with Stripe for secure payment processing:
-
-```typescript
-// Example donation processing
-const handleDonation = async (amount: number, frequency: string) => {
-  const response = await fetch('/api/donations', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ amount, frequency })
-  });
-  // Process payment with Stripe
-};
-```
-
-### Analytics Integration
-Google Analytics 4 and Hotjar are configured for comprehensive tracking:
-
-```typescript
-// Analytics setup
-import { gtag } from 'gtag';
-
-gtag('config', 'GA_MEASUREMENT_ID', {
-  page_title: 'Doggzy Homepage',
-  page_location: window.location.href
-});
-```
-
-## 🌐 Deployment
-
-### Vercel (Recommended)
-1. Connect your GitHub repository to Vercel
-2. Set environment variables in Vercel dashboard
-3. Deploy automatically on push to main branch
-
-### Other Platforms
-- **Netlify**: Configure build settings for Next.js
-- **AWS Amplify**: Use Next.js build specification
-- **Docker**: Use the included Dockerfile
-
-## 🔒 Security & Compliance
-
-### Data Protection
-- GDPR compliance with cookie consent
-- CCPA compliance for California residents
-- Secure data handling and encryption
-- Regular security audits
-
-### Payment Security
-- PCI DSS compliant payment processing
-- Tokenized payment information
-- Fraud detection and prevention
-- Secure API endpoints
-
-### Legal Compliance
-- 501(c)(3) tax-deductible donation handling
-- UK Gift Aid compliance
-- EU VAT regulation compliance
-- Accessibility standards (WCAG 2.1)
-
-## 📊 Performance
-
-### Optimization Features
-- Image optimization with Next.js Image component
-- Code splitting and lazy loading
-- Service worker for offline functionality
-- CDN integration for global performance
-- Lighthouse score: 95+ across all metrics
-
-### Monitoring
-- Real-time performance monitoring
-- Error tracking and reporting
-- User experience analytics
-- Conversion funnel analysis
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
-
-For support and questions:
-- Email: support@doggzy.org
-- Documentation: [docs.doggzy.org](https://docs.doggzy.org)
-- Issues: [GitHub Issues](https://github.com/doggzy/website/issues)
-
-## 🙏 Acknowledgments
-
-- Framer Motion for amazing animations
-- Radix UI for accessible components
-- Stripe for secure payment processing
-- All the rescue organizations and volunteers worldwide
+Ovaj repozitorijum je sam sajt.
 
 ---
 
-**Made with ❤️ for rescue dogs everywhere**
+## Šta je unutra
+
+| Ruta                                       | Šta radi                                                                                               |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `/`                                        | Početna: hero sa interaktivnim telefonom, objašnjenje toka, kalkulator uticaja, psi, prodavnica, priče |
+| `/prijava`                                 | Prijava psa u pet koraka — radi bez naloga, šalje se na `/api/prijava`                                 |
+| `/psi`, `/psi/[slug]`                      | Lista pasa i pojedinačna stranica sa javnim dnevnikom troškova                                         |
+| `/doniraj`                                 | Iznos, učestalost i cilj donacije; generiše podatke za uplatu sa pozivom na broj                       |
+| `/prodavnica`, `/prodavnica/[slug]`        | Katalog sa animiranim filtriranjem i stranice proizvoda                                                |
+| `/korpa`, `/omiljeno`                      | Korpa i lista sačuvanih proizvoda (čuva se u pregledaču)                                               |
+| `/price`, `/price/[slug]`                  | Dugačke priče, povezane sa dnevnikom psa o kome govore                                                 |
+| `/transparentnost`                         | Zbirni dnevnik svih unosa, sa filtriranjem                                                             |
+| `/o-nama`, `/kontakt`                      | Ko smo i forma za kontakt (`/api/kontakt`)                                                             |
+| `/privatnost`, `/uslovi`, `/pristupacnost` | Pravne stranice                                                                                        |
+| `/admin`                                   | Pregled sadržaja iza prijave                                                                           |
+
+## Tehnologija
+
+Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS v4 ·
+Framer Motion · Lenis · Zod · jose · Resend
+
+Trinaest zavisnosti u produkciji, bez ijedne koja se ne koristi.
+
+## Pokretanje
+
+```bash
+npm install
+cp .env.example .env.local     # popuni šta ti treba
+npm run dev
+```
+
+Sajt radi i bez ijedne promenljive okruženja. Bez njih:
+
+- prijave i poruke se validiraju i upisuju u log servera umesto da idu na mejl;
+- admin prijava je isključena i stranica to jasno kaže.
+
+### Admin
+
+```bash
+npm run admin:hash             # ispisuje AUTH_SECRET i ADMIN_PASSWORD_HASH
+```
+
+Upiši oba u `.env.local`, dodaj `ADMIN_EMAIL`, i prijava radi. Heš je razdvojen
+dvotačkom (`scrypt:so:heš`), a ne dolarom — `dotenv` proširuje `$` u vrednostima
+i tiho bi odsekao heš.
+
+## Provere
+
+```bash
+npm run check                  # tipovi, lint, latinica, kontrast, iznosi, build
+npm run test:e2e               # 264 provere kroz pravi pregledač
+npm run test:perf              # LCP, CLS, težina, ispušteni kadrovi
+```
+
+Pet provera postoji zato što su odgovarajuće greške već napravljene u ovom
+projektu i nisu se videle na pregled:
+
+- **`check:script`** traži ćirilične karaktere u latiničnom tekstu. Homoglifi
+  (`о` vs `o`) izgledaju identično, a razbijaju pretragu i URL-ove.
+- **`check:contrast`** računa WCAG odnose direktno iz `globals.css`
+  (OKLCH → linearni sRGB → luminansa) i pada ako neki par padne ispod praga.
+  Uhvatila je četiri para u svetloj temi, uključujući natpis na glavnom dugmetu.
+  Alfa se kompozituje u gama prostoru, kao u pregledaču — u linearnom je svaka
+  providna boja izgledala kontrastnije nego što jeste.
+- **`test:e2e`** proverava i ono što se ne vidi u kodu: `Intl` piše srpske
+  mesece ćirilicom ako se lokal ne zaključa na `sr-Latn-RS`.
+- **`check:figures`** proverava svaki iznos na sajtu prema dnevnicima pasa.
+  Ista stavka je koštala 2.600 RSD u kalkulatoru i 3.800 u dnevniku, a jedan
+  duks je „plaćao mikročipovanje pet pasa” — što traži 1.098 RSD profita po
+  čipu. Sada tvrdnja proizvoda mora da izdrži množenje.
+- **`test:perf`** meri ispuštene kadrove tokom skrolovanja. Zrno preko celog
+  ekrana sa `mix-blend-mode` obaralo je 67% kadrova na stranici prodavnice, a
+  zamućena lepljiva traka nad istom mrežom 30–48%. Zamućenje pozadine se plaća
+  po površini, ne po poluprečniku: 22px, 10px i 6px mere isto.
+
+- **`check:console`** vozi razvojni server, a ne produkcijski build. React šalje
+  poređenje hidracije i StrictMode duplo iscrtavanje samo u razvoju, pa je cela
+  klasa kvarova nevidljiva svemu ostalom. Traži i razvojni server: `npm run dev
+-- -p 3100`, pa `npm run check:console`.
+
+Neke od tih provera postoje zato što se kvar ne vidi u izvornom kodu. Lightning
+CSS je iz `backdrop-filter` pravila izbacivao standardno svojstvo i ostavljao
+samo `-webkit-` oblik, pa nijedna staklena površina nije imala zamućenje —
+pravilo u `globals.css` je izgledalo ispravno. `body { overflow: hidden }` je
+izgledao kao brava, a Lenis je i dalje pomerao stranicu iza svakog modala — a
+kad je i to sređeno, `<ReactLenis>` je instancu držao u stanju React-a, pa je
+za vreme hidracije 300ms postojala a nije se mogla zaustaviti.
+`transform-style: preserve-3d` je terao Chromium da testira pogotke po ravni
+koja se ne poklapa sa crtežom, pa 53% ekrana telefona nije primalo klikove. A
+404 je jedna unapred izgrađena ljuska za sve nepoznate putanje, pa je
+`usePathname()` u zaglavlju značio jedno na serveru a drugo u pregledaču i
+React je odbacivao ceo dokument. Nijedan od tih kvarova ne postoji u izvornom
+kodu — E2E zato čita izračunate vrednosti u pravom pregledaču, a ne tekst u
+stilu.
+
+Tri poslednja su naučila po jednu stvar više. Generator slučajnih brojeva za
+crteže predavao se detetu kao svojstvo, pa se niz trošio u drugom iscrtavanju
+nego što je nastao — a React garantuje samo da će telo komponente pozvati _bar_
+jednom po komitu. Ista greška u prozirnosti: `style={reduced ? undefined : …}`
+oduzme Motionu upravljanje ali ne obriše ono što je već upisao, pa je reč u
+podnožju stajala nevidljiva na svih 14 ruta. I `resend` poseže za opcionim
+peer-om u grani koju ovaj sajt nikad ne pozove: npm ga instalira podrazumevano,
+pa je ovde prolazilo, a pucalo svakome ko koristi pnpm ili yarn — zato spisak
+pred izdanje traži `npm ci` na čisto pre nego što se išta zapakuje.
+
+## Struktura
+
+```
+src/
+├─ app/              rute (App Router) + API rute
+├─ components/
+│  ├─ motion/        primitive: Reveal, SplitText, Magnetic, TiltCard, …
+│  ├─ visuals/       generativna grafika i WebGL pozadina
+│  ├─ phone/         okvir telefona i tok prijave
+│  ├─ shop/          katalog, korpa, kartice proizvoda
+│  ├─ dogs/          kartice pasa i javni dnevnik
+│  ├─ layout/        zaglavlje, podnožje, preloader
+│  └─ ui/            dugme, polje, značka, sekcije
+├─ content/          psi, proizvodi, priče (TypeScript, ne CMS)
+├─ config/           rute, kontakt, metapodaci
+└─ lib/              utils, motion tokeni, šeme, auth, rate limit
+```
+
+Sadržaj živi u `src/content/` i objavljuje se deploy-om. Uređivanje kroz veb
+zahteva bazu; dok je nema, admin panel prikazuje stanje umesto da nudi dugmad
+koja ništa ne čuvaju.
+
+## Dizajn
+
+Sistem je definisan u `src/app/globals.css`, u Tailwind v4 `@theme` bloku.
+`tailwind.config.ts` **ne postoji namerno** — v4 ga ignoriše osim ako se
+eksplicitno poveže sa `@config`, i upravo je to ranije tiho ugasilo sve
+prilagođene tokene: `shadow-glow` i `bg-mesh-gradient` nisu generisali nikakav
+CSS.
+
+Boje su u OKLCH. Tamna tema je podrazumevana; dubina se gradi svetlom, ne
+senkom — svaka površina je svetlija od pozadine. Svetla tema nije ista paleta
+sa manjom prozirnošću: brend se u njoj potamnjuje, jer belo na svetlonarandžastom
+matematički ne može da dostigne 4.5:1.
+
+Nema fotografija. Svaki pas i svaki proizvod nosi opis generativne ilustracije
+koju `<GenerativeArt>` crta iz heša njegovog ID-a — isti pas, ista slika, svaki
+put, bez ijednog rasterskog fajla.
+
+## Pristupačnost
+
+Ceo sajt radi tastaturom, poštuje „smanji animacije”, ima vidljiv fokus koji
+prolazi 3:1, i vraća fokus na element koji je otvorio dijalog. Šta još nije
+urađeno piše na `/pristupacnost` — uključujući to da nezavisna revizija nije
+rađena.
+
+## Licenca
+
+Privatno. Sva prava zadržana.

@@ -1,130 +1,94 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
+
+/**
+ * Content Security Policy.
+ *
+ * Every asset this site uses is same-origin: fonts are self-hosted by
+ * `next/font`, there is no analytics script, and there is no image CDN. That
+ * lets the policy stay tight. Two allowances are unavoidable:
+ *
+ * - `'unsafe-inline'` for scripts, because the App Router streams the RSC
+ *   payload through inline `<script>` tags. Removing it requires per-request
+ *   nonces, which in turn forces every page to render dynamically.
+ * - `'unsafe-inline'` for styles, which Next injects for critical CSS.
+ *
+ * `blob:` is in `img-src` for the photo the report flow previews locally before
+ * upload; it never leaves the browser.
+ */
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob:",
+  "font-src 'self'",
+  "connect-src 'self'",
+  "media-src 'self'",
+  "worker-src 'self' blob:",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'none'",
+  'upgrade-insecure-requests',
+].join('; ')
+
+const securityHeaders = [
+  { key: 'Content-Security-Policy', value: contentSecurityPolicy },
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'X-Frame-Options', value: 'DENY' },
+  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+  { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+  { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
+  {
+    key: 'Permissions-Policy',
+    // Geolocation stays enabled for self: the report flow offers "use my location".
+    value:
+      'camera=(self), microphone=(), geolocation=(self), payment=(), usb=(), interest-cohort=()',
+  },
+]
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
+  compress: true,
+  reactStrictMode: true,
+
+  /**
+   * Resend is required at runtime instead of bundled.
+   *
+   * Its `render()` helper does `import('@react-email/render')` so that callers
+   * can pass a React component as the body. We never do — `notify.ts` sends a
+   * plain `text` field — but a bundler has to resolve every import it can see,
+   * and that package is an *optional* peer of resend. npm installs optional
+   * peers by default, so the build passed here and failed for anyone using
+   * pnpm, yarn, or `npm install --omit=optional`: `Module not found: Can't
+   * resolve '@react-email/render'`, from a dependency of a dependency, on a
+   * clean checkout. Reproduced by deleting the package and rebuilding.
+   *
+   * Listing it here leaves it as a runtime `require` from node_modules, so the
+   * dead branch is never resolved at build time and nothing has to be installed
+   * to satisfy code we do not call. Verified: the build succeeds with the
+   * package absent.
+   */
+  serverExternalPackages: ['resend'],
+
+  compiler: {
+    // Keep warn/error in production; they carry the only diagnostics we have.
+    removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
+  },
+
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'framer-motion'],
+  },
+
   async headers() {
     return [
+      { source: '/(.*)', headers: securityHeaders },
       {
-        // Apply security headers to all routes
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY',
-          },
-          {
-            key: 'Permissions-Policy',
-            value: 'geolocation=(), camera=(), microphone=(), payment=(), usb=(), magnetometer=(), accelerometer=(), gyroscope=(), fullscreen=(self), picture-in-picture=()',
-          },
-          {
-            key: 'X-DNS-Prefetch-Control',
-            value: 'on',
-          },
-          {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=31536000; includeSubDomains; preload',
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
-          },
-          {
-            key: 'Cross-Origin-Opener-Policy',
-            value: 'same-origin',
-          },
-          {
-            key: 'Cross-Origin-Resource-Policy',
-            value: 'cross-origin',
-          },
-          // Basic CSP - can be made stricter once all third-party domains are finalized
-          {
-            key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; media-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com https://vitals.vercel-analytics.com; frame-ancestors 'none';",
-          },
-        ],
-      },
-      // Cache static assets
-      {
-        source: '/images/(.*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-      {
-        source: '/_next/static/(.*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-      {
-        source: '/videos/(.*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
+        // Hashed build output is immutable by construction.
+        source: '/_next/static/:path*',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
       },
     ]
   },
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'images.pexels.com',
-        port: '',
-        pathname: '/**',
-      },
-    ],
-    formats: ['image/webp', 'image/avif'],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 31536000, // 1 year
-    dangerouslyAllowSVG: true,
-    contentDispositionType: 'attachment',
-    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-  },
-  experimental: {
-    optimizePackageImports: ['lucide-react', 'framer-motion', '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
-    webVitalsAttribution: ['CLS', 'LCP'],
-  },
-  compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
-  },
-  // Performance optimizations
-  compress: true,
-  poweredByHeader: false,
-  
-  // Bundle analyzer (conditional)
-  ...(process.env.ANALYZE === 'true' && {
-    webpack: (config: any) => {
-      config.plugins.push(
-        new (require('@next/bundle-analyzer')({
-          enabled: true,
-        }))()
-      );
-      return config;
-    },
-  }),
-};
+}
 
-export default nextConfig;
+export default nextConfig

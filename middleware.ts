@@ -1,72 +1,57 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { isAuthenticated } from '@/lib/auth'
+import { NextResponse, type NextRequest } from 'next/server'
+import { SESSION_COOKIE, verifySession } from '@/lib/auth-edge'
 
-// Admin routes that require authentication
-const adminRoutes = [
-  '/admin',
-  '/api/admin',
-]
+/**
+ * Marks a response as depending on the session cookie.
+ *
+ * Every branch below decides from `SESSION_COOKIE`, and a bare
+ * `NextResponse.redirect` goes out with no caching directives at all — so the
+ * browser filed the pre-login 307 in its history entry and replayed it after
+ * the session existed, dropping a logged-in admin back onto the login form.
+ * With a longer history the replay deadlocks into ERR_TOO_MANY_REDIRECTS.
+ *
+ * `Vary` reaches the browser on the redirect and on the API routes; on a
+ * rendered page Next replaces it with its own RSC list, so `/admin/login` ships
+ * without `Cookie` in it. That costs nothing — `no-store` forbids storing the
+ * response at all, which is strictly stronger than varying on it — but it is
+ * worth knowing that only one of these two headers is load-bearing everywhere.
+ */
+function perSession(response: NextResponse): NextResponse {
+  response.headers.set('Cache-Control', 'no-store, must-revalidate')
+  response.headers.set('Vary', 'Cookie')
+  return response
+}
 
-// Admin routes that should redirect to login if not authenticated
-const adminPages = [
-  '/admin/dashboard',
-  '/admin/stories',
-  '/admin/dogs',
-  '/admin/media',
-]
-
+/**
+ * Guards everything under /admin.
+ *
+ * Only token verification happens here — the middleware runs on the Edge
+ * runtime, where Node's crypto and `next/headers` are unavailable.
+ */
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
-  
-  // Skip middleware for static files and API routes (except admin APIs)
-  if (
-    pathname.startsWith('/_next/') ||
-    pathname.startsWith('/api/forms/') ||
-    pathname.startsWith('/api/health/') ||
-    pathname.startsWith('/api/placeholder/') ||
-    pathname.includes('.') ||
-    pathname === '/favicon.ico'
-  ) {
-    return NextResponse.next()
+  const session = await verifySession(request.cookies.get(SESSION_COOKIE)?.value)
+  const isLoginRoute = pathname === '/admin/login' || pathname === '/api/admin/login'
+
+  if (isLoginRoute) {
+    if (session && pathname === '/admin/login') {
+      return perSession(NextResponse.redirect(new URL('/admin', request.url)))
+    }
+    return perSession(NextResponse.next())
   }
-  
-  // Handle admin routes
-  const isAdminRoute = adminRoutes.some(route => pathname.startsWith(route))
-  const isAdminPage = adminPages.some(page => pathname.startsWith(page)) || pathname === '/admin'
-  
-  if (isAdminRoute || isAdminPage) {
-    const authenticated = await isAuthenticated(request)
-    
-    // If accessing /admin/login and already authenticated, redirect to dashboard
-    if (pathname === '/admin/login' && authenticated) {
-      return NextResponse.redirect(new URL('/admin/dashboard', request.url))
-    }
-    
-    // If not authenticated and not on login page, redirect to login
-    if (!authenticated && pathname !== '/admin/login') {
-      const loginUrl = new URL('/admin/login', request.url)
-      loginUrl.searchParams.set('redirect', pathname)
-      return NextResponse.redirect(loginUrl)
-    }
-    
-    // If authenticated and accessing /admin root, redirect to dashboard
-    if (authenticated && pathname === '/admin') {
-      return NextResponse.redirect(new URL('/admin/dashboard', request.url))
-    }
+
+  if (session) return perSession(NextResponse.next())
+
+  // API callers get a status they can act on; people get sent to the form.
+  if (pathname.startsWith('/api/')) {
+    return perSession(NextResponse.json({ error: 'Neautorizovano.' }, { status: 401 }))
   }
-  
-  return NextResponse.next()
+
+  const loginUrl = new URL('/admin/login', request.url)
+  if (pathname !== '/admin') loginUrl.searchParams.set('dalje', pathname)
+  return perSession(NextResponse.redirect(loginUrl))
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public files (public folder)
-     */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js)$).*)',
-  ],
+  matcher: ['/admin/:path*', '/api/admin/:path*'],
 }
