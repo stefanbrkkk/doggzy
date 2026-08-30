@@ -22,8 +22,15 @@ export function resolveChromium() {
   const candidates = readdirSync(root)
     .filter((name) => name.startsWith('chromium'))
     // Highest build number first, and the full browser before the headless
-    // shell — the shell cannot render the WebGL paths the suite checks.
-    .sort((a, b) => (Number(b.split('-').pop()) || 0) - (Number(a.split('-').pop()) || 0))
+    // shell — the shell cannot render the WebGL paths the suite checks. The
+    // two ship under the same build number, so the tie-break is not decoration:
+    // without it the order depends on the sort being stable and on whatever
+    // order the directory happened to be read in.
+    .sort((a, b) => {
+      const byBuild = (Number(b.split('-').pop()) || 0) - (Number(a.split('-').pop()) || 0)
+      if (byBuild !== 0) return byBuild
+      return Number(a.includes('headless')) - Number(b.includes('headless'))
+    })
     .flatMap((name) => [
       join(root, name, 'chrome-linux', 'chrome'),
       join(root, name, 'chrome-linux', 'headless_shell'),

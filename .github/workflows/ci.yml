@@ -13,7 +13,13 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+
+    env:
+      # Both the install step and scripts/chromium-path.mjs read this, so the
+      # suite looks for the browser exactly where it was put — rather than in
+      # whatever the runner's home directory happens to be.
+      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright
 
     steps:
       - uses: actions/checkout@v4
@@ -46,8 +52,22 @@ jobs:
       - name: Build
         run: npm run build
 
+      # The suite needs the full browser, not the headless shell: it checks a
+      # WebGL background, which the shell cannot render.
+      - name: Browser for the end-to-end suite
+        run: npx playwright install --with-deps chromium
+
       - name: End-to-end
-        run: npm run test:e2e
+        # The suite does not start a server — it expects one already listening,
+        # built from a clean `.next`. Saying otherwise in a comment is how this
+        # step came to launch a browser at nothing.
+        run: |
+          npm run start &
+          for _ in $(seq 1 60); do
+            curl -sf -o /dev/null http://localhost:3000/ && break
+            sleep 1
+          done
+          curl -sf -o /dev/null http://localhost:3000/ || { echo "server never came up"; exit 1; }
+          npm run test:e2e
         env:
-          # The suite starts its own production server on this port.
           PORT: 3000

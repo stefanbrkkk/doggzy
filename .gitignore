@@ -2,6 +2,9 @@
 
 # dependencies
 /node_modules
+
+# Where CI puts the browser the end-to-end suite launches.
+/.playwright
 /.pnp
 .pnp.*
 .yarn/*
