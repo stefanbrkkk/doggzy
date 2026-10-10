@@ -30,10 +30,15 @@ export function rateLimit(key: string, limit: number, windowMs: number): RateLim
   if (!existing || existing.resetAt <= now) {
     // Opportunistic sweep: keeps the map from growing without bound on a
     // long-lived instance, without needing a timer.
-    if (buckets.size > MAX_TRACKED_KEYS) {
+    if (buckets.size >= MAX_TRACKED_KEYS) {
       for (const [candidate, bucket] of buckets) {
         if (bucket.resetAt <= now) buckets.delete(candidate)
       }
+    }
+    // Fail closed on new identities when all slots are active. Dropping active
+    // buckets would erase lockouts; inserting anyway would allow unbounded RAM.
+    if (!existing && buckets.size >= MAX_TRACKED_KEYS) {
+      return { allowed: false, remaining: 0, retryAfter: Math.ceil(windowMs / 1000) }
     }
     buckets.set(key, { count: 1, resetAt: now + windowMs })
     return { allowed: true, remaining: limit - 1, retryAfter: 0 }

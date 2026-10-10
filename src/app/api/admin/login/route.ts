@@ -6,6 +6,7 @@ import '@/lib/zod-locale'
 import { createSession, sessionCookieOptions, verifyPassword } from '@/lib/auth'
 import { isAuthConfigured } from '@/lib/auth-edge'
 import { clientKey, rateLimit } from '@/lib/rate-limit'
+import { BODY_LIMIT, withBodyLimit, rejectCrossOrigin } from '@/lib/request-limits'
 
 export const runtime = 'nodejs'
 
@@ -28,6 +29,9 @@ const loginSchema = z.object({
 const INVALID = 'Pogrešan email ili lozinka.'
 
 export async function POST(request: Request) {
+  const rejected = rejectCrossOrigin(request)
+  if (rejected) return rejected
+
   if (!isAuthConfigured()) {
     return NextResponse.json(
       {
@@ -48,9 +52,12 @@ export async function POST(request: Request) {
     )
   }
 
+  const capped = await withBodyLimit(request, BODY_LIMIT.login)
+  if (!capped.ok) return capped.response
+
   let json: unknown
   try {
-    json = await request.json()
+    json = await capped.request.json()
   } catch {
     return NextResponse.json({ error: 'Neispravan zahtev.' }, { status: 400 })
   }
@@ -62,12 +69,13 @@ export async function POST(request: Request) {
 
   const email = parsed.data.email.toLowerCase()
 
-  // A second bucket, keyed on the account rather than on the caller. The IP
+  // A second bucket, shared by the single configured account rather than the caller. The IP
   // bucket above is best-effort by construction — `x-forwarded-for` is a header
   // — so on its own it left password guessing unlimited to anyone willing to
   // change one line of a request. This one cannot be rotated: there is a single
-  // admin credential, and guessing it means hitting this key.
-  const accountLimit = rateLimit(`admin-login-acct:${email}`, 8, 15 * 60 * 1000)
+  // admin credential. Even a wrong submitted email runs scrypt, so this key
+  // must not depend on either user-controlled email or IP.
+  const accountLimit = rateLimit('admin-login-acct', 8, 15 * 60 * 1000)
   if (!accountLimit.allowed) {
     return NextResponse.json(
       { error: 'Previše pokušaja. Sačekaj pa probaj ponovo.' },

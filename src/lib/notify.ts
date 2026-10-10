@@ -45,12 +45,12 @@ export async function deliverNotification(notification: Notification): Promise<b
     })
 
     if (error) {
-      console.error('[notify:failed]', error)
+      console.error('[notify:failed]')
       return false
     }
     return true
-  } catch (error) {
-    console.error('[notify:threw]', error)
+  } catch {
+    console.error('[notify:threw]')
     return false
   }
 }

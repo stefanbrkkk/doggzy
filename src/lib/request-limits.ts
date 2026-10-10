@@ -9,6 +9,7 @@ import { NextResponse } from 'next/server'
  */
 export const BODY_LIMIT = {
   report: 9 * 1024 * 1024,
+  login: 16 * 1024,
   contact: 64 * 1024,
 } as const
 
@@ -88,4 +89,13 @@ function tooLarge() {
 
 function badRequest() {
   return NextResponse.json({ error: 'Neispravan format zahteva.' }, { status: 400 })
+}
+
+/** Browser form mutations must originate from this deployment. */
+export function rejectCrossOrigin(request: Request): NextResponse | null {
+  const origin = request.headers.get('origin')
+  if (origin && origin !== new URL(request.url).origin) {
+    return NextResponse.json({ error: 'Zahtev sa drugog sajta nije dozvoljen.' }, { status: 403 })
+  }
+  return null
 }

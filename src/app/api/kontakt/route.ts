@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { contactSchema } from '@/lib/schemas'
 import { clientKey, rateLimit } from '@/lib/rate-limit'
-import { BODY_LIMIT, withBodyLimit } from '@/lib/request-limits'
+import { BODY_LIMIT, withBodyLimit, rejectCrossOrigin } from '@/lib/request-limits'
 import { deliverNotification } from '@/lib/notify'
 
 export const runtime = 'nodejs'
@@ -15,6 +15,9 @@ const TOPIC_LABELS: Record<string, string> = {
 }
 
 export async function POST(request: Request) {
+  const rejected = rejectCrossOrigin(request)
+  if (rejected) return rejected
+
   const limit = rateLimit(`kontakt:${clientKey(request)}`, 5, 15 * 60 * 1000)
   if (!limit.allowed) {
     return NextResponse.json(
