@@ -1,0 +1,3 @@
+# Previously published admin cookie: expired 2025-09-24, not accepted by current issuer/audience/session checks.
+# This exact historical finding stays documented; future cookies remain detectable.
+8e4294198f33e03c76ed45d29afb87c2fb7b76f0:cookies.txt:jwt:5
